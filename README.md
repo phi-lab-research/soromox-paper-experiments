@@ -72,16 +72,3 @@ version, and environment lockfiles. Cite the paper using [CITATION.cff](CITATION
 and report the exact experiment release or commit and SoRoMoX version used.
 The manuscript link currently identifies the preprint; this migration does not
 assign an unverified arXiv revision number to the stored results.
-
-## Anonymous submission archives
-
-The archive tool operates on this repository's committed tree:
-
-```bash
-uv run --no-sync python tools/create_anonymized_archive.py --output /tmp/soromox-experiments-anonymous.zip
-```
-
-Review its generated report and retained figures before submission. The library
-has its own archive tool; this experiment archive does not bundle the library.
-Run `git lfs pull` first: the tool verifies and includes committed LFS contents
-and stops if any required object is missing or corrupted.
