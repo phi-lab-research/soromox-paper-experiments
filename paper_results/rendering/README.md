@@ -82,4 +82,3 @@ the saved captures and does not start a renderer or simulation.
 
 To include the figure in the manuscript, copy the PDF to its `figures/`
 directory and insert the contents of `figure.tex` near the rendering discussion.
-The source manuscript has not been edited by this figure-generation task.

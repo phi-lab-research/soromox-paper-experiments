@@ -7,8 +7,5 @@ __pycache__/
 .DS_Store
 .coverage*
 *.egg-info/
-# Legacy local outputs from the retired archive tool.
-/anonymous-supplementary-material.zip
-/ANONYMIZATION_REPORT.txt
 /.open3d-uv-build/
 paper_results/secVd_control_gain_optimization/outputs/*_diagnostics/
