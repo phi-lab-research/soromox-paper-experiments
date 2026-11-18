@@ -1,5 +1,9 @@
 # Migration validation
 
+This records checks performed at the v1.0.0 migration baseline. The anonymized
+archive generator and its tests were subsequently retired; archive checks below
+are historical validation results.
+
 The migration baseline is SoRoMoX commit
 `b4856ec7c4ca5c6509255945f004aa7516bbe114`. Validation used Python 3.12.11 on
 macOS with the root lockfile and installed `soromox==0.6.0`, without importing
