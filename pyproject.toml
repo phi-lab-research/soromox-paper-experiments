@@ -5,7 +5,20 @@ description = "Code, datasets, checkpoints, and figures for reproducing the SoRo
 readme = "README.md"
 requires-python = ">=3.11,<3.15"
 license = "MIT"
-authors = [{ name = "Maximilian Stölzle" }, { name = "Solange Gribonval" }, { name = "Daniel Feliu-Talegon" }, { name = "Vito Daniele Perfetta" }, { name = "Michele Martini" }, { name = "Chuhan Zhang" }, { name = "Kiwan Wong" }, { name = "Daniela Rus" }, { name = "Cosimo Della Santina" }]
+authors = [
+  { name = "Maximilian Stölzle" },
+  { name = "Solange Gribonval" },
+  { name = "Daniel Feliu-Talegon" },
+  { name = "Vito Daniele Perfetta" },
+  { name = "Michele Martini" },
+  { name = "Chuhan Zhang" },
+  { name = "Kiwan Wong" },
+  { name = "Daniela Rus" },
+  { name = "Cosimo Della Santina" },
+]
+maintainers = [
+  { name = "Maximilian Stölzle" },
+]
 dependencies = [
   "soromox[warp]==0.6.0",
   "cbfpy",
