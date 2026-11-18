@@ -19,6 +19,11 @@ the library from its source checkout.
 - The sampling-based MPC summary reproduced the success counts, errors, and
   timings documented in its section README.
 - All relative Markdown links in the experiment READMEs resolve locally.
+- The actual anonymous archive was generated successfully: 414 included files,
+  17 sanitized text files, 47 files with sanitized metadata, and two excluded
+  files. Its LFS contents were materialized and verified.
+- On the library side, 37 relevant tests, the documentation build, and both
+  source/wheel distribution checks passed.
 - The root and both MPC environment lockfiles were regenerated with fixed
   SoRoMoX and Newton-Cosserat dependencies.
 
