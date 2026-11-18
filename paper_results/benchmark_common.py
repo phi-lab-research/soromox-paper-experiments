@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import importlib.metadata
+import json
 import subprocess
 import sys
 from collections.abc import Callable, Mapping, MutableMapping, Sequence
@@ -36,7 +37,7 @@ from soromox.systems import (
 )
 
 Array = jax.Array
-REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
+REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 
 
 def _distribution_version(distribution: str) -> str | None:
@@ -80,12 +81,21 @@ def benchmark_environment_metadata(device: jax.Device) -> dict[str, Any]:
     """
 
     git_revision = _git_output("rev-parse", "HEAD")
+    try:
+        direct_url = json.loads(
+            importlib.metadata.distribution("soromox").read_text("direct_url.json") or "{}"
+        )
+    except importlib.metadata.PackageNotFoundError:
+        direct_url = {}
+    soromox_revision = direct_url.get("vcs_info", {}).get("commit_id")
     tracked_changes = _git_output("status", "--porcelain", "--untracked-files=no")
     device_kind = getattr(device, "device_kind", None)
     platform_version = getattr(device.client, "platform_version", None)
     return {
         "timestamp_utc": datetime.now(UTC).isoformat(),
         "git_revision": git_revision,
+        "experiments_git_revision": git_revision,
+        "soromox_git_revision": soromox_revision,
         "git_dirty": None if tracked_changes is None else bool(tracked_changes),
         "python_version": sys.version.split()[0],
         "soromox_version": _distribution_version("soromox"),

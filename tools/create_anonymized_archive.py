@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import argparse
 import binascii
+import hashlib
 import io
 import os
 import re
@@ -255,6 +256,35 @@ def _write_git_tar(repo: Path, ref: str, destination: Path) -> None:
     _run_git(repo, ["rev-parse", "--verify", f"{ref}^{{commit}}"])
     with destination.open("wb") as output:
         _run_git(repo, ["archive", "--format=tar", ref], stdout=output)
+
+
+def _materialize_lfs(repo: Path, name: str, data: bytes) -> bytes:
+    """Read and verify a committed LFS object without downloading or using worktree files."""
+    if not data.startswith(b"version https://git-lfs.github.com/spec/v1\n"):
+        return data
+    pointer = re.fullmatch(
+        rb"version https://git-lfs.github.com/spec/v1\n"
+        rb"oid sha256:([0-9a-f]{64})\nsize ([0-9]+)\n?",
+        data,
+    )
+    if pointer is None:
+        raise AnonymizationError(f"Unsupported Git LFS pointer: {name}")
+    oid = pointer[1].decode("ascii")
+    # git-lfs resolves custom storage locations and linked worktrees for us.
+    environment = _run_git(repo, ["lfs", "env"]).stdout.decode("utf-8")
+    media = next(
+        (line.split("=", 1)[1] for line in environment.splitlines() if line.startswith("LocalMediaDir=")),
+        None,
+    )
+    if media is None:
+        raise AnonymizationError("Git LFS did not report its local object directory.")
+    path = Path(media) / oid[:2] / oid[2:4] / oid
+    if not path.is_file():
+        raise AnonymizationError(f"Missing Git LFS object for {name}; run git lfs pull first.")
+    content = path.read_bytes()
+    if len(content) != int(pointer[2]) or hashlib.sha256(content).hexdigest() != oid:
+        raise AnonymizationError(f"Git LFS checksum or size mismatch: {name}")
+    return content
 
 
 def _discovery_texts(tar_path: Path) -> dict[str, str]:
@@ -1153,7 +1183,7 @@ def create_archive(
                     excluded.append((member.name, reason))
                     continue
 
-                original = _read_member(source, member)
+                original = _materialize_lfs(repo, member.name, _read_member(source, member))
                 text = _safe_decode(original)
                 if text is None:
                     result, metadata_change = _sanitize_binary_metadata(

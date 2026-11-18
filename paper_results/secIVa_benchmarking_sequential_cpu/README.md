@@ -72,7 +72,7 @@ from [upstream PR #11](https://github.com/hanson-hschang/COOMM/pull/11).
 ## Runtime comparison
 
 Recreate the publication-style grouped bar chart from the four-case wall-clock
-time table in [`docs/research.md`](../../docs/research.md#sequential-cpu-rollouts),
+time table in [`docs/research.md`](https://github.com/phi-lab-research/soromox/blob/b4856ec7c4ca5c6509255945f004aa7516bbe114/docs/research.md#sequential-cpu-rollouts),
 updated in commit `3b3815c` (paper Table IV):
 
 ```bash

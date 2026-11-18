@@ -56,7 +56,7 @@ jax.config.update("jax_enable_x64", True)
 
 from soromox.simulation import SemiImplicitEuler  # noqa: E402
 from soromox.systems import DynamicalSystem, SystemState  # noqa: E402
-from tools.benchmarks._benchmark_common import (  # noqa: E402
+from paper_results.benchmark_common import (  # noqa: E402
     add_backend_arg,
     add_gauss_point_args,
     add_integration_args,
@@ -314,6 +314,8 @@ def _write_csv(
         "device_id",
         "timestamp_utc",
         "git_revision",
+        "experiments_git_revision",
+        "soromox_git_revision",
         "git_dirty",
         "python_version",
         "soromox_version",

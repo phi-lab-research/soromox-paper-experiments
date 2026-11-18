@@ -5,7 +5,7 @@ This case runs closed-loop sampling-based MPC, iCEM by default and MPPI with
 floating base pushes a box or cylinder around a 10 cm square. The arm is
 defined in `code/four_tendon_soft_arm.py`, and the planner primitives and push
 cost live in `code/smpc.py`. Each replan samples rollouts against the full
-simulation, which runs on [newton-cosserat](https://github.com/tud-phi/newton-cosserat):
+simulation, which runs on [newton-cosserat](https://github.com/phi-lab-research/newton-cosserat):
 it couples the SoRoMoX Cosserat rod model of the arm to the rigid-body physics
 of [Newton](https://github.com/newton-physics/newton), and resolves the
 arm-object-table contacts with its SAP contact solver.
@@ -21,14 +21,16 @@ uv sync --project env   # experiments
 uv sync --project .              # renderers and summary figure
 ```
 
-Both projects use this checkout's SoRoMoX through `override-dependencies`.
+Both projects pin `soromox==0.6.0` through `override-dependencies` and use
+fixed Newton-Cosserat revisions. Install with `uv sync --locked` to retain
+the recorded dependency versions; neither project requires a library checkout.
 
 The experiment project, [`env/pyproject.toml`](env/pyproject.toml),
 pins the stack the paper data was generated on:
 
 | Package | Version |
 | --- | --- |
-| `newton-cosserat` | [`phi-lab-research/newton-cosserat`](https://github.com/phi-lab-research/newton-cosserat) `main` (Newton 1.7) |
+| `newton-cosserat` | [`phi-lab-research/newton-cosserat`](https://github.com/phi-lab-research/newton-cosserat) `8ac49ac9bdd5f411b1ed1a277d4979550c52501c` (Newton 1.7) |
 | `newton` | `1.7.0` |
 | `warp-lang` | `1.18.0` |
 | `jax` | `0.11.1` |
@@ -39,7 +41,7 @@ clouds black:
 
 | Package | Version |
 | --- | --- |
-| `newton-cosserat` | [`tud-phi/newton-cosserat`](https://github.com/tud-phi/newton-cosserat) `main` |
+| `newton-cosserat` | [`tud-phi/newton-cosserat`](https://github.com/phi-lab-research/newton-cosserat) `05c705592370ad6ff95bc1504face194fcdd3c5e` |
 | `newton` | `1.6.0.dev0`, git rev `7c677b95` (adds `log_mesh` opacity for the sample clouds) |
 | `ovrtx` | `0.4.1` |
 | `warp-lang` | `1.16.0` |

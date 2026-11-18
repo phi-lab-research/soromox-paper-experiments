@@ -6,7 +6,7 @@ the JAX backend and accelerator, so the committed CSV files record the paper
 machine's results and should not be expected to match on different hardware.
 
 The parallel-rollout generator reuses the model registry and timing helpers from
-`tools/benchmarks/_benchmark_common.py`; the publication plotter remains
+`paper_results/benchmark_common.py`; the publication plotter remains
 case-local so it can apply the common paper style.
 
 GPU execution is the default. If JAX cannot initialize a compatible GPU, the
@@ -40,7 +40,7 @@ screened for numerical divergence rather than interpreted on timing alone.
 Install dependencies and confirm that JAX sees the intended GPU:
 
 ```bash
-uv sync --extra paper_results
+uv sync --locked --extra cuda13
 uv run python -c "import jax; print(jax.devices())"
 ```
 

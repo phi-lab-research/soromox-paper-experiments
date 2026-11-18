@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.cache/
+.DS_Store
+.coverage*
+*.egg-info/
+/anonymous-supplementary-material.zip
+/ANONYMIZATION_REPORT.txt
+/.open3d-uv-build/
+paper_results/secVd_control_gain_optimization/outputs/*_diagnostics/

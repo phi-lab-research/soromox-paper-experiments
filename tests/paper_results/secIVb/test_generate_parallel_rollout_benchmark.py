@@ -166,6 +166,8 @@ def test_csv_records_environment_metadata(tmp_path):
     header = path.read_text(encoding="utf-8").splitlines()[0].split(",")
 
     assert "git_revision" in header
+    assert "experiments_git_revision" in header
+    assert "soromox_git_revision" in header
     assert "jax_version" in header
     assert "device_id" in header
     assert "backend" in header

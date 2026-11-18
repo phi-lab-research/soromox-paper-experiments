@@ -1,5 +1,8 @@
 # Paper Results
 
+These experiments use the [SoRoMoX library](https://github.com/phi-lab-research/soromox).
+Start with the [repository setup and provenance](../README.md).
+
 This directory maps sections of the
 [SoRoMoX preprint](https://arxiv.org/abs/2608.06650) to the code, data, and
 canonical outputs used to produce the reported results. Each section keeps
@@ -66,9 +69,8 @@ is installed from the repository's `paper-benchmarks` dependency group:
 uv sync --extra paper_results --group paper-benchmarks
 ```
 
-With pip 25.1 or newer, run `python -m pip install -e ".[paper_results]" --group paper-benchmarks`
-from the repository root. The published `paper_results` and `all` extras contain
-registry dependencies; the COOMM fork is installed separately for these benchmarks.
+Use the repository lockfile for a reproducible environment. The COOMM fork is
+installed separately through the `paper-benchmarks` dependency group.
 
 ## Shared conventions
 

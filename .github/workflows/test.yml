@@ -1,0 +1,51 @@
+name: Experiments
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      MPLBACKEND: Agg
+      JAX_PLATFORMS: cpu
+      CMAKE_BUILD_PARALLEL_LEVEL: 4
+      SOROMOX_OPEN3D_CACHE: ${{ github.workspace }}/.cache/soromox/open3d
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          lfs: true
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: '3.12'
+          enable-cache: true
+      - name: Install rendering and publication dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            git build-essential cmake ninja-build glslang-tools \
+            xorg-dev libxcb-shm0 libglu1-mesa-dev libssl-dev \
+            libc++-dev libc++abi-dev libsdl2-dev libxi-dev libtbb-dev \
+            libegl1-mesa-dev libudev-dev libusb-1.0-0-dev mesa-vulkan-drivers \
+            autoconf libtool clang gfortran ffmpeg texlive-latex-extra dvipng cm-super
+      - uses: actions/cache@v5
+        with:
+          path: ${{ env.SOROMOX_OPEN3D_CACHE }}
+          key: open3d-ubuntu-py312-${{ hashFiles('third_party/open3d/**') }}
+      - name: Install pinned experiment environment
+        run: uv sync --locked --group test --group paper-benchmarks
+      - name: Verify canonical paper artifacts
+        run: uv run --no-sync python tools/verify_artifacts.py
+      - name: Test experiment code and short CPU rollouts
+        run: uv run --no-sync python -m pytest -m "not memory_intensive"
+      - name: Recompute saved-data metrics
+        run: |
+          uv run --no-sync python paper_results/secVc_model_based_control/code/report_metrics.py
+          uv run --no-sync python paper_results/secVf_sampling_based_mpc/code/summarize_runs.py

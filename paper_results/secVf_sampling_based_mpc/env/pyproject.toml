@@ -13,8 +13,8 @@ dependencies = ["soromox[cuda13]", "newton[sim]==1.7.0", "newton-cosserat", "sci
 [tool.uv]
 package = false
 constraint-dependencies = ["warp-lang==1.18.0", "jax==0.11.1"]
-# newton-cosserat requires a released soromox; use this checkout instead.
-override-dependencies = ["soromox[cuda13] @ file:///${PROJECT_ROOT}/../../.."]
+# newton-cosserat requires a released soromox; use the pinned SoRoMoX release instead.
+override-dependencies = ["soromox[cuda13]==0.6.0"]
 
 [[tool.uv.index]]
 name = "nvidia"
@@ -22,6 +22,5 @@ url = "https://pypi.nvidia.com/"
 explicit = true
 
 [tool.uv.sources]
-newton-cosserat = { git = "https://github.com/phi-lab-research/newton-cosserat.git", branch = "main" }
-soromox = { path = "../../..", editable = true }
+newton-cosserat = { git = "https://github.com/phi-lab-research/newton-cosserat.git", rev = "8ac49ac9bdd5f411b1ed1a277d4979550c52501c" }
 warp-lang = { index = "nvidia" }

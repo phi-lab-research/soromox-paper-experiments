@@ -1,8 +1,8 @@
 cff-version: 1.2.0
 message: "For academic use, cite the preferred paper below. When reproducibility depends on a particular release, also report and, where appropriate, cite the exact software version."
 type: software
-title: "SoRoMoX: Soft Robot Models in JAX"
-abstract: "Kinematic and dynamic models of continuum and articulated soft robots implemented in JAX."
+title: "SoRoMoX paper experiments"
+abstract: "Code, datasets, checkpoints, and figures for reproducing the SoRoMoX paper experiments."
 authors:
   - family-names: "Stölzle"
     given-names: "Maximilian"
@@ -22,12 +22,9 @@ authors:
     given-names: "Daniela"
   - family-names: "Della Santina"
     given-names: "Cosimo"
-repository-code: "https://github.com/phi-lab-research/soromox"
-repository-artifact: "https://pypi.org/project/soromox/0.6.0/"
-url: "https://phi-lab-research.github.io/soromox"
+repository-code: "https://github.com/phi-lab-research/soromox-paper-experiments"
+url: "https://github.com/phi-lab-research/soromox-paper-experiments"
 license: MIT
-version: "0.6.0"
-date-released: "2026-11-10"
 keywords:
   - "JAX"
   - "Soft Robotics"

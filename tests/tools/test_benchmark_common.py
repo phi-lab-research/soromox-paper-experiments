@@ -3,7 +3,7 @@ import jax.numpy as jnp
 import pytest
 from numpy.testing import assert_allclose
 
-from tools.benchmarks._benchmark_common import (
+from paper_results.benchmark_common import (
     SystemConfig,
     benchmark_environment_metadata,
     build_system_with_gauss_points,
@@ -19,6 +19,8 @@ def test_benchmark_environment_metadata_identifies_runtime_and_source() -> None:
     metadata = benchmark_environment_metadata(jax.devices("cpu")[0])
 
     assert metadata["git_revision"]
+    assert metadata["experiments_git_revision"] == metadata["git_revision"]
+    assert "soromox_git_revision" in metadata
     assert metadata["python_version"]
     assert metadata["soromox_version"]
     assert metadata["jax_version"] == jax.__version__

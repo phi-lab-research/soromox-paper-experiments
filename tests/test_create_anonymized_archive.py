@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import binascii
+import hashlib
 import importlib.util
 import io
 import struct
@@ -19,6 +20,38 @@ assert SPEC and SPEC.loader
 archive_module = importlib.util.module_from_spec(SPEC)
 sys.modules[SPEC.name] = archive_module
 SPEC.loader.exec_module(archive_module)
+
+
+@pytest.mark.parametrize("state", ["present", "missing", "corrupt"])
+def test_archive_resolves_committed_lfs_objects(source_repo, tmp_path, state):
+    import numpy as np
+
+    buffer = io.BytesIO()
+    np.savez(buffer, trajectory=np.array([0.0, 1.0]))
+    content = buffer.getvalue()
+    oid = hashlib.sha256(content).hexdigest()
+    pointer = (
+        "version https://git-lfs.github.com/spec/v1\n"
+        f"oid sha256:{oid}\nsize {len(content)}\n"
+    )
+    name = "paper_results/case/data/trajectory.npz"
+    _write(source_repo / name, pointer)
+    _git(source_repo, "add", name)
+    _git(source_repo, "commit", "-qm", "Add LFS trajectory pointer")
+    obj = source_repo / ".git/lfs/objects" / oid[:2] / oid[2:4] / oid
+    if state != "missing":
+        _write(obj, content if state == "present" else b"corrupt")
+    # A modified checkout must never override the committed LFS object.
+    _write(source_repo / name, b"modified local trajectory")
+    output = tmp_path / "lfs-archive.zip"
+    if state != "present":
+        with pytest.raises(archive_module.AnonymizationError, match="Git LFS"):
+            archive_module.create_archive(source_repo, output)
+        assert not output.exists()
+    else:
+        archive_module.create_archive(source_repo, output)
+        with zipfile.ZipFile(output) as archive:
+            assert archive.read(f"{archive_module.ARCHIVE_ROOT}/{name}") == content
 
 
 def _git(repo: Path, *arguments: str) -> None:

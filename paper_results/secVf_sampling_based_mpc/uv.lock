@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.11, <3.14"
 resolution-markers = [
     "python_full_version >= '3.13'",
@@ -14,7 +14,7 @@ constraints = [
 ]
 overrides = [
     { name = "newton", extras = ["rtx", "sim", "importers"], git = "https://github.com/newton-physics/newton.git?rev=7c677b955e813f31edda5ba2e00c6ae4e992c9a9" },
-    { name = "soromox", extras = ["cuda13"], editable = "../../" },
+    { name = "soromox", extras = ["cuda13"], specifier = "==0.6.0" },
 ]
 
 [[package]]
@@ -1453,7 +1453,7 @@ sim = [
 [[package]]
 name = "newton-cosserat"
 version = "0.1.0.dev0"
-source = { git = "https://github.com/tud-phi/newton-cosserat.git?branch=main#05c705592370ad6ff95bc1504face194fcdd3c5e" }
+source = { git = "https://github.com/phi-lab-research/newton-cosserat.git?rev=05c705592370ad6ff95bc1504face194fcdd3c5e#05c705592370ad6ff95bc1504face194fcdd3c5e" }
 dependencies = [
     { name = "jax", version = "0.10.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
     { name = "jax", version = "0.12.0.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
@@ -2383,9 +2383,9 @@ requires-dist = [
     { name = "gitpython" },
     { name = "matplotlib" },
     { name = "newton", extras = ["rtx", "sim", "importers"], git = "https://github.com/newton-physics/newton.git?rev=7c677b955e813f31edda5ba2e00c6ae4e992c9a9" },
-    { name = "newton-cosserat", git = "https://github.com/tud-phi/newton-cosserat.git?branch=main" },
+    { name = "newton-cosserat", git = "https://github.com/phi-lab-research/newton-cosserat.git?rev=05c705592370ad6ff95bc1504face194fcdd3c5e" },
     { name = "scipy" },
-    { name = "soromox", extras = ["cuda13"], editable = "../../" },
+    { name = "soromox", extras = ["cuda13"] },
 ]
 
 [[package]]
@@ -2470,8 +2470,8 @@ wheels = [
 
 [[package]]
 name = "soromox"
-version = "0.5.0"
-source = { editable = "../../" }
+version = "0.6.0"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "diffrax" },
     { name = "equinox" },
@@ -2484,6 +2484,10 @@ dependencies = [
     { name = "slsqp-jax" },
     { name = "tqdm" },
 ]
+sdist = { url = "https://files.pythonhosted.org/packages/f9/d5/1d84fa976e87f37a76a989a9d461f4030df2f122dc869347fbc3f26c4745/soromox-0.6.0.tar.gz", hash = "sha256:33aa1e18738be79ae80ce16a35b421ec441eaf45df83e7df39652b0f991fba0b", size = 686974, upload-time = "2026-11-12T12:30:34.441Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/fe/fe/e902cde06cc5fae28222e1151af7262d68aa9a496f39b61a624c1c1e1c06/soromox-0.6.0-py3-none-any.whl", hash = "sha256:6d5fb3a9e5a32ce18e9e2f87e9b1759a045f529d3f06a531a436c0d6eafeade7", size = 812178, upload-time = "2026-11-12T12:30:32.62Z" },
+]
 
 [package.optional-dependencies]
 cuda13 = [
@@ -2492,129 +2496,6 @@ cuda13 = [
     { name = "torch", marker = "sys_platform == 'linux'" },
     { name = "warp-lang", marker = "sys_platform == 'linux'" },
 ]
-
-[package.metadata]
-requires-dist = [
-    { name = "bump2version", marker = "extra == 'all'" },
-    { name = "bump2version", marker = "extra == 'dev'" },
-    { name = "cbfpy", marker = "extra == 'all'" },
-    { name = "cbfpy", marker = "extra == 'paper-results'" },
-    { name = "cbfpy", marker = "extra == 'test'" },
-    { name = "check-manifest", marker = "extra == 'all'" },
-    { name = "check-manifest", marker = "extra == 'dev'" },
-    { name = "codecov", marker = "extra == 'all'" },
-    { name = "codecov", marker = "extra == 'dev'" },
-    { name = "codecov", marker = "extra == 'test'" },
-    { name = "coomm", marker = "extra == 'all'", git = "https://github.com/mstoelzle/COOMM.git?rev=0df454a44e70be941941be3c6b521b1cd891aef3" },
-    { name = "coomm", marker = "extra == 'paper-results'", git = "https://github.com/mstoelzle/COOMM.git?rev=0df454a44e70be941941be3c6b521b1cd891aef3" },
-    { name = "coverage", extras = ["toml"], marker = "extra == 'all'" },
-    { name = "coverage", extras = ["toml"], marker = "extra == 'dev'" },
-    { name = "coverage", extras = ["toml"], marker = "extra == 'test'" },
-    { name = "diffrax", specifier = ">=0.7.2" },
-    { name = "equinox" },
-    { name = "gymnasium", marker = "extra == 'all'" },
-    { name = "gymnasium", marker = "extra == 'paper-results'" },
-    { name = "gymnasium", marker = "extra == 'rl'" },
-    { name = "ipython", marker = "extra == 'all'" },
-    { name = "ipython", marker = "extra == 'examples'" },
-    { name = "ipython", marker = "extra == 'paper-results'" },
-    { name = "ipywidgets", marker = "extra == 'all'", specifier = ">=8.0.4" },
-    { name = "ipywidgets", marker = "extra == 'examples'", specifier = ">=8.0.4" },
-    { name = "ipywidgets", marker = "extra == 'paper-results'", specifier = ">=8.0.4" },
-    { name = "ipywidgets", marker = "extra == 'rendering'", specifier = ">=8.0.4" },
-    { name = "jax", specifier = ">=0.10.0" },
-    { name = "jax", extras = ["cuda13"], marker = "sys_platform == 'linux' and extra == 'cuda13'", specifier = ">=0.10.0" },
-    { name = "matplotlib", marker = "extra == 'all'" },
-    { name = "matplotlib", marker = "extra == 'examples'" },
-    { name = "matplotlib", marker = "extra == 'paper-results'" },
-    { name = "matplotlib", marker = "extra == 'rendering'" },
-    { name = "matplotlib", marker = "extra == 'rl'" },
-    { name = "matplotlib", marker = "extra == 'test'" },
-    { name = "mkdocstrings", marker = "extra == 'all'" },
-    { name = "mkdocstrings", marker = "extra == 'docs'" },
-    { name = "mkdocstrings-python", marker = "extra == 'all'" },
-    { name = "mkdocstrings-python", marker = "extra == 'docs'" },
-    { name = "numpy" },
-    { name = "numpy", marker = "extra == 'all'" },
-    { name = "numpy", marker = "extra == 'examples'" },
-    { name = "numpy", marker = "extra == 'paper-results'" },
-    { name = "open3d", marker = "(platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra == 'all') or (platform_machine == 'arm64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra == 'all') or (platform_machine == 'x86_64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra == 'all') or (sys_platform == 'darwin' and extra == 'all') or (sys_platform == 'win32' and extra == 'all')", directory = "../../third_party/open3d" },
-    { name = "open3d", marker = "(platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra == 'examples') or (platform_machine == 'arm64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra == 'examples') or (platform_machine == 'x86_64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra == 'examples') or (sys_platform == 'darwin' and extra == 'examples') or (sys_platform == 'win32' and extra == 'examples')", directory = "../../third_party/open3d" },
-    { name = "open3d", marker = "(platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra == 'paper-results') or (platform_machine == 'arm64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra == 'paper-results') or (platform_machine == 'x86_64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra == 'paper-results') or (sys_platform == 'darwin' and extra == 'paper-results') or (sys_platform == 'win32' and extra == 'paper-results')", directory = "../../third_party/open3d" },
-    { name = "open3d", marker = "(platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra == 'rendering') or (platform_machine == 'arm64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra == 'rendering') or (platform_machine == 'x86_64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra == 'rendering') or (sys_platform == 'darwin' and extra == 'rendering') or (sys_platform == 'win32' and extra == 'rendering')", directory = "../../third_party/open3d" },
-    { name = "open3d", marker = "(platform_machine != 'aarch64' and platform_machine != 'arm64' and platform_machine != 'x86_64' and sys_platform == 'linux' and extra == 'all') or (platform_machine == 'aarch64' and platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'all') or (platform_machine == 'arm64' and platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'all') or (platform_machine == 'x86_64' and platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'all') or (sys_platform != 'darwin' and sys_platform != 'linux' and sys_platform != 'win32' and extra == 'all')", specifier = ">=0.20" },
-    { name = "open3d", marker = "(platform_machine != 'aarch64' and platform_machine != 'arm64' and platform_machine != 'x86_64' and sys_platform == 'linux' and extra == 'examples') or (platform_machine == 'aarch64' and platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'examples') or (platform_machine == 'arm64' and platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'examples') or (platform_machine == 'x86_64' and platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'examples') or (sys_platform != 'darwin' and sys_platform != 'linux' and sys_platform != 'win32' and extra == 'examples')", specifier = ">=0.20" },
-    { name = "open3d", marker = "(platform_machine != 'aarch64' and platform_machine != 'arm64' and platform_machine != 'x86_64' and sys_platform == 'linux' and extra == 'paper-results') or (platform_machine == 'aarch64' and platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'paper-results') or (platform_machine == 'arm64' and platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'paper-results') or (platform_machine == 'x86_64' and platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'paper-results') or (sys_platform != 'darwin' and sys_platform != 'linux' and sys_platform != 'win32' and extra == 'paper-results')", specifier = ">=0.20" },
-    { name = "open3d", marker = "(platform_machine != 'aarch64' and platform_machine != 'arm64' and platform_machine != 'x86_64' and sys_platform == 'linux' and extra == 'rendering') or (platform_machine == 'aarch64' and platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'rendering') or (platform_machine == 'arm64' and platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'rendering') or (platform_machine == 'x86_64' and platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'rendering') or (sys_platform != 'darwin' and sys_platform != 'linux' and sys_platform != 'win32' and extra == 'rendering')", specifier = ">=0.20" },
-    { name = "opencv-python", marker = "extra == 'all'" },
-    { name = "opencv-python", marker = "extra == 'examples'" },
-    { name = "opencv-python", marker = "extra == 'paper-results'" },
-    { name = "opencv-python", marker = "extra == 'rendering'" },
-    { name = "opencv-python", marker = "extra == 'test'" },
-    { name = "openpyxl", marker = "extra == 'all'" },
-    { name = "openpyxl", marker = "extra == 'paper-results'" },
-    { name = "optax", marker = "extra == 'examples'" },
-    { name = "optax", marker = "extra == 'paper-results'" },
-    { name = "optax", marker = "extra == 'test'" },
-    { name = "optimistix", marker = "extra == 'all'" },
-    { name = "optimistix", marker = "extra == 'examples'" },
-    { name = "optimistix", marker = "extra == 'paper-results'" },
-    { name = "pandas", marker = "extra == 'all'" },
-    { name = "pandas", marker = "extra == 'paper-results'" },
-    { name = "plotly", marker = "extra == 'all'" },
-    { name = "plotly", marker = "extra == 'examples'" },
-    { name = "plotly", marker = "extra == 'paper-results'" },
-    { name = "plotly", marker = "extra == 'rendering'" },
-    { name = "plotly", marker = "extra == 'test'" },
-    { name = "pre-commit", marker = "extra == 'all'" },
-    { name = "pre-commit", marker = "extra == 'dev'" },
-    { name = "pyelastica", marker = "extra == 'all'", specifier = ">=0.3.3.post2,<2" },
-    { name = "pyelastica", marker = "extra == 'paper-results'", specifier = ">=0.3.3.post2,<2" },
-    { name = "pytest", marker = "extra == 'all'" },
-    { name = "pytest", marker = "extra == 'dev'" },
-    { name = "pytest", marker = "extra == 'test'" },
-    { name = "pytest-cov", marker = "extra == 'all'" },
-    { name = "pytest-cov", marker = "extra == 'dev'" },
-    { name = "pytest-cov", marker = "extra == 'test'" },
-    { name = "pytest-html", marker = "extra == 'all'" },
-    { name = "pytest-html", marker = "extra == 'dev'" },
-    { name = "pytest-html", marker = "extra == 'test'" },
-    { name = "ruff", marker = "extra == 'all'" },
-    { name = "ruff", marker = "extra == 'dev'" },
-    { name = "scipy" },
-    { name = "seaborn", marker = "extra == 'all'" },
-    { name = "seaborn", marker = "extra == 'dev'" },
-    { name = "seaborn", marker = "extra == 'examples'" },
-    { name = "seaborn", marker = "extra == 'paper-results'" },
-    { name = "slsqp-jax", specifier = ">=0.21.1" },
-    { name = "stable-baselines3", marker = "extra == 'all'" },
-    { name = "stable-baselines3", marker = "extra == 'paper-results'" },
-    { name = "stable-baselines3", marker = "extra == 'rl'" },
-    { name = "torch", marker = "sys_platform == 'linux' and extra == 'cuda13'", specifier = ">=2.13.0" },
-    { name = "tox", marker = "extra == 'all'" },
-    { name = "tox", marker = "extra == 'dev'" },
-    { name = "tox", marker = "extra == 'test'" },
-    { name = "tqdm" },
-    { name = "trimesh", marker = "extra == 'all'" },
-    { name = "trimesh", marker = "extra == 'examples'" },
-    { name = "trimesh", marker = "extra == 'paper-results'" },
-    { name = "trimesh", marker = "extra == 'rendering'" },
-    { name = "trimesh", marker = "extra == 'test'" },
-    { name = "twine", marker = "extra == 'dev'", specifier = ">=7.0.0" },
-    { name = "viser", marker = "extra == 'all'" },
-    { name = "viser", marker = "extra == 'examples'" },
-    { name = "viser", marker = "extra == 'paper-results'" },
-    { name = "viser", marker = "extra == 'rendering'" },
-    { name = "viser", marker = "extra == 'test'" },
-    { name = "warp-lang", marker = "sys_platform == 'linux' and extra == 'cuda13'", specifier = ">=1.16.0" },
-    { name = "warp-lang", marker = "extra == 'all'", specifier = ">=1.16.0" },
-    { name = "warp-lang", marker = "extra == 'docs'", specifier = ">=1.16.0" },
-    { name = "warp-lang", marker = "extra == 'test'", specifier = ">=1.16.0" },
-    { name = "warp-lang", marker = "extra == 'warp'", specifier = ">=1.16.0" },
-    { name = "zensical", marker = "extra == 'all'" },
-    { name = "zensical", marker = "extra == 'docs'" },
-]
-provides-extras = ["cuda13", "warp", "dev", "docs", "examples", "paper-results", "rendering", "rl", "test", "all"]
 
 [[package]]
 name = "stack-data"
@@ -2778,7 +2659,9 @@ version = "2.3.0"
 source = { registry = "https://pypi.org/simple" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/f7/ba/0f1a4c76c46c0a3ec3f0fb06a7920a429acafbbbb75a80db897a350dca13/usd_exchange-2.3.0-cp311-cp311-manylinux_2_35_aarch64.whl", hash = "sha256:1c8f470bf52c9d96d95c65ccd275377679ae349b8dac8044995ce5ff43ffd2e1", size = 20424378, upload-time = "2026-05-20T20:36:00.629Z" },
+    { url = "https://files.pythonhosted.org/packages/bb/73/84358ce77968c99b7762fb71f109fda703abefa7bb222094d29a0d1b0f5f/usd_exchange-2.3.0-cp311-cp311-win_amd64.whl", hash = "sha256:72497aa288e79732964bb1cb5a1f0446863f2987e219a46da61878e9894eda17", size = 29014784, upload-time = "2026-05-20T20:36:00.445Z" },
     { url = "https://files.pythonhosted.org/packages/9a/66/9a630f44a6fc980e3fbc728c13efc79736ac8cf02b50b3215149a4e07310/usd_exchange-2.3.0-cp312-cp312-manylinux_2_35_aarch64.whl", hash = "sha256:3beddb68abb89b1f3be207a35275604a6eb89b179ba052ca3eada5cd7202e534", size = 20462820, upload-time = "2026-05-20T20:36:03.947Z" },
+    { url = "https://files.pythonhosted.org/packages/11/f2/dbf7a49c7b33dd07b22fe1cb21f06a0e1c9a3b28db0f8a29006e63fca1c6/usd_exchange-2.3.0-cp312-cp312-win_amd64.whl", hash = "sha256:f5ab1b54ce670d8e36786c40750f86396463f2185cfaa5f5e813d6c5207e35ae", size = 29040115, upload-time = "2026-05-20T20:36:04.446Z" },
 ]
 
 [[package]]

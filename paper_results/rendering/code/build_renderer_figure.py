@@ -31,7 +31,6 @@ ROOT = Path(__file__).resolve().parents[3]
 CASE = Path(__file__).resolve().parents[1]
 CAPTURES = CASE / "outputs" / "captures"
 OUTPUT = ROOT / "paper_results" / "final_outputs" / "renderers_and_presets"
-sys.path.insert(0, str(ROOT / "examples" / "rendering"))
 sys.path.insert(0, str(ROOT / "paper_results"))
 from equilibrium_scene import SOLUTION, load_scene  # noqa: E402
 from paper_style import PAPER_COLORS  # noqa: E402
