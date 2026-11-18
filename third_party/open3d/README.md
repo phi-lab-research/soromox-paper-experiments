@@ -1,8 +1,8 @@
 # Patched Open3D build
 
-This is the Open3D recipe copied from [SoRoMoX `b4856ec7`](https://github.com/phi-lab-research/soromox/tree/b4856ec7c4ca5c6509255945f004aa7516bbe114/third_party/open3d).
-The source revision, patches, and native build behavior are preserved.
-See the [upstream build instructions](https://github.com/phi-lab-research/soromox/blob/b4856ec7c4ca5c6509255945f004aa7516bbe114/third_party/open3d/README.md)
+This recipe builds the Open3D release pinned in `OPEN3D_REVISION` with the
+renderer patches in this directory. See the
+[build instructions](https://github.com/phi-lab-research/soromox/blob/61a5ebd9cc5e56786044b0c35d33dac7893a9f46/third_party/open3d/README.md)
 for platform prerequisites, cache settings, and renderer fixes.
 
 From this experiments repository, build and install with:

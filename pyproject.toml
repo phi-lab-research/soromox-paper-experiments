@@ -43,7 +43,7 @@ dependencies = [
 
 [project.optional-dependencies]
 cuda13 = ["soromox[cuda13]==0.6.0"]
-# Compatibility aliases for the commands preserved in the section READMEs.
+# Optional extras used by the commands in the section READMEs.
 paper_results = []
 rendering = []
 rl = []

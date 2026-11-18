@@ -20,7 +20,7 @@ uv sync --locked --group test --group paper-benchmarks
 
 The root environment pins **SoRoMoX 0.6.0** and supports Python 3.11–3.14.
 It installs the library as a dependency; no separate SoRoMoX checkout is needed.
-The bundled [Open3D build recipe](third_party/open3d/README.md) preserves the
+The bundled [Open3D build recipe](third_party/open3d/README.md) applies the
 renderer patches used for the paper. Its first installation requires native
 build tools and may take several minutes. Run commands with `uv run --no-sync`
 after syncing to retain the chosen dependency groups and GPU extra.
@@ -38,10 +38,8 @@ root environment.
 ## Reproduce results
 
 The [experiment index](paper_results/README.md) maps the paper sections to code,
-input data, and canonical outputs. Each case retains `code/`, `data/`, and
+input data, and canonical outputs. Each case contains `code/`, `data/`, and
 `outputs/`; composed figures are in `paper_results/final_outputs/`.
-The old `paper_results`, `rendering`, `rl`, and `test` extra names remain as
-aliases for the commands in the section READMEs.
 
 Use the saved data to regenerate plots before rerunning simulations or training.
 Write new runs to another directory: some generators overwrite their default
@@ -53,22 +51,11 @@ uv run --no-sync python tools/verify_artifacts.py
 MPLBACKEND=Agg JAX_PLATFORMS=cpu uv run --no-sync python -m pytest -m "not memory_intensive"
 ```
 
-## Provenance and versions
+## Reproducibility and citation
 
-The migration was extracted from [SoRoMoX `b4856ec7`](https://github.com/phi-lab-research/soromox/tree/b4856ec7c4ca5c6509255945f004aa7516bbe114)
-with the relevant file history and authorship retained. The library code at
-that revision matches the [0.6.0 release commit](https://github.com/phi-lab-research/soromox/tree/61a5ebd9cc5e56786044b0c35d33dac7893a9f46).
-This identifies the migration baseline, not the generation date or software
-revision of every historical experiment. Original result metadata remains intact.
+The [artifact manifest](provenance/artifacts.json) records source revisions and
+checksums for the canonical data and outputs. Run `tools/verify_artifacts.py`
+to verify downloaded files. Experiment settings are documented with each case.
 
-[Provenance](provenance/migration.json) records source revisions and artifact
-checksums. The [commit map](provenance/source-commit-map.tsv) maps original
-commits to the extracted history (zero hashes denote omitted commits).
-Shared benchmark helpers, the tentacle rendering scene, the Open3D recipe,
-and the archive tool were copied from the same source revision.
-
-Each experiment release should identify its manuscript revision, SoRoMoX
-version, and environment lockfiles. Cite the paper using [CITATION.cff](CITATION.cff)
-and report the exact experiment release or commit and SoRoMoX version used.
-The manuscript link currently identifies the preprint; this migration does not
-assign an unverified arXiv revision number to the stored results.
+Cite the paper using [CITATION.cff](CITATION.cff) and report the experiment
+release or commit, SoRoMoX version, and environment lockfile used.
