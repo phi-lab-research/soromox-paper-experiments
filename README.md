@@ -55,9 +55,7 @@ MPLBACKEND=Agg JAX_PLATFORMS=cpu uv run --no-sync python -m pytest -m "not memor
 
 The [artifact manifest](provenance/artifacts.json) records source revisions and
 checksums for the canonical data and outputs. Run `tools/verify_artifacts.py`
-to verify downloaded files. The [reproducibility notes](provenance/validation.md)
-describe the reference environment and known differences between saved outputs
-and regenerated results. Experiment settings are documented with each case.
+to verify downloaded files. Experiment settings are documented with each case.
 
 Cite the paper using [CITATION.cff](CITATION.cff) and report the experiment
 release or commit, SoRoMoX version, and environment lockfile used.
