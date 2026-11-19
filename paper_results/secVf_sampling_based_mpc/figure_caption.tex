@@ -20,7 +20,16 @@ first planning step, showing candidate configurations at horizon step 10.
 Translucent blue configurations show sampled predictions; opacity decreases
 with cost rank. The lowest-cost prediction and current configuration use
 solid coral for the tentacle and gold for the object. All renderings use
-the saved iCEM seed-0 trajectory and the same studio lighting and materials.}
+the saved iCEM seed-0 trajectory and the same studio lighting and materials.
+The same fixed crop is applied to each sampling view.
+(\textbf{D}) Mean planning wall-clock time and mean negative push cost per
+MPC step for the single-goal planner sweep, averaged over three seeds.
+Higher negative cost is better. Triangles denote MPPI with varying sample
+count; crosses denote iCEM with three iterations and varying sample count;
+open circles denote iCEM with $K=200$ and varying iteration count.
+The cross and circle for $K=200$ with three iterations coincide.
+The shared method colors apply to (B) and (D). This sweep is separate from
+the square-push comparison in (B); the appendix identifies each configuration.}
 
 % Appendix figure: sampling_based_mpc_diagnostics.pdf
 \caption{\textbf{Contact evolution and planner tradeoffs.}

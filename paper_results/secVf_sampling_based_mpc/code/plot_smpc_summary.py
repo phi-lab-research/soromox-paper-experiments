@@ -95,10 +95,15 @@ def load_snapshot(root: Path, view: str, step: int, source: Path) -> tuple[Path,
     }
 
 
-def image_panel(fig, rect, path):
-    """Display the complete frame at its native aspect ratio; never auto-crop."""
+def image_panel(fig, rect, path, crop=None):
+    """Preserve aspect ratio; use only explicitly specified, shared crop bounds."""
     ax = fig.add_axes(rect)
-    ax.imshow(plt.imread(path), aspect="equal", interpolation="antialiased")
+    pixels = plt.imread(path)
+    if crop is not None:
+        x0, x1, y0, y1 = crop
+        height, width = pixels.shape[:2]
+        pixels = pixels[round(y0 * height):round(y1 * height), round(x0 * width):round(x1 * width)]
+    ax.imshow(pixels, aspect="equal", interpolation="antialiased")
     ax.set_axis_off()
     return ax
 
@@ -186,23 +191,61 @@ def draw_paths(ax, methods, goals):
     )
 
 
-def build_figure(methods, goals, snapshots, sampling):
-    """Whole system, recorded paths, and three sampling iterations."""
+SAMPLING_CROP = (0.25, 0.75, 0.04, 0.88)
+
+
+def load_tradeoff(path, data_dir):
+    tradeoff = json.loads(path.read_text())
+    for source in tradeoff["sources"]:
+        if sha256(data_dir / source["file"]) != source["sha256"]:
+            raise ValueError("Planner sweep data changed; regenerate plot_smpc_diagnostics.py")
+    return tradeoff
+
+
+def draw_tradeoff(ax, tradeoff):
+    """Keep all sweep points; detailed configuration labels remain in the appendix."""
+    markers = {"mppi": "^", "icem_fixed_iters": "x", "icem_fixed_batch": "o"}
+    for point in tradeoff["points"]:
+        family = point["family"]
+        color = METHODS["MPPI" if family == "mppi" else "iCEM"][1]
+        style = {"facecolors": "none", "edgecolors": color} if family == "icem_fixed_batch" else {"color": color}
+        ax.scatter(point["mean_time_s"], point["mean_negative_cost"],
+                   marker=markers[family], s=24, linewidths=0.8,
+                   **style, zorder=3)
+    ax.set(xlim=(0, 48), ylim=(-1670, -850),
+           xlabel="Mean planning time / step [s]", ylabel="Mean $-$push cost / step")
+    ax.set_xticks((0, 10, 20, 30, 40))
+    ax.set_yticks((-1600, -1400, -1200, -1000))
+    ax.set_axisbelow(True)
+    ax.grid(color="0.9", lw=0.5)
+    ax.xaxis.label.set_size(7)
+    ax.yaxis.label.set_size(7)
+
+
+def build_figure(methods, goals, snapshots, sampling, tradeoff):
+    """Whole system and sampling views beside paths and the planner tradeoff."""
     plt.style.use(PAPER_STYLE_PATH)
     plt.rcParams.update({
         "text.usetex": False, "font.size": 8, "axes.labelsize": 8,
         "xtick.labelsize": 7, "ytick.labelsize": 7, "legend.fontsize": 7,
         "svg.fonttype": "none", "pdf.fonttype": 42, "savefig.bbox": None,
     })
-    fig = plt.figure(figsize=(18 / 2.54, 13.5 / 2.54), facecolor="white")
-    panel_letter(fig, 0.01, 0.960, "A")
-    image_panel(fig, [0.01, 0.360, 0.60, 0.60], snapshots[0][0])
-    panel_letter(fig, 0.66, 0.960, "B")
-    ax = fig.add_axes([0.685, 0.450, 0.30, 0.40])
+    width, height = 180, 140
+    fig = plt.figure(figsize=(width / 25.4, height / 25.4), facecolor="white")
+    def rect(x, y, w, h):
+        return [x / width, y / height, w / width, h / height]
+    def letter(x, y, label):
+        panel_letter(fig, x / width, y / height, label)
+    letter(2, 135.5, "A")
+    image_panel(fig, rect(2, 57.5, 100, 75), snapshots[0][0])
+    letter(111, 135.5, "B")
+    ax = fig.add_axes(rect(123, 76, 54, 54))
     draw_paths(ax, methods, goals)
-    panel_letter(fig, 0.01, 0.331, "C")
+    letter(2, 52, "C")
     for i, (path, _) in enumerate(sampling):
-        image_panel(fig, [0.01 + i * 0.33, 0.006, 0.32, 0.32], path)
+        image_panel(fig, rect(2 + i * 34.5, 8.68, 32, 40.32), path, SAMPLING_CROP)
+    letter(111, 52, "D")
+    draw_tradeoff(fig.add_axes(rect(119, 10, 58, 39)), tradeoff)
     return fig
 
 
@@ -216,6 +259,7 @@ def main(argv=None):
         "--output-dir", type=Path, default=PAPER_RESULTS_DIR / "final_outputs"
     )
     parser.add_argument("--overview-step", type=int, default=19)
+    parser.add_argument("--tradeoff-data", type=Path, default=CASE_DIR / "outputs" / "planner_tradeoff.json")
     parser.add_argument("--force", action="store_true")
     args = parser.parse_args(argv)
     stem = args.output_dir / "sampling_based_mpc"
@@ -228,7 +272,8 @@ def main(argv=None):
         load_snapshot(args.snapshot_dir, "overview", args.overview_step, source)
     ]
     sampling = [load_sampling(args.snapshot_dir, i, source) for i in range(3)]
-    fig = build_figure(methods, goals, snapshots, sampling)
+    tradeoff = load_tradeoff(args.tradeoff_data, args.data_dir)
+    fig = build_figure(methods, goals, snapshots, sampling, tradeoff)
     args.output_dir.mkdir(parents=True, exist_ok=True)
     for path in outputs[:3]:
         fig.savefig(path, dpi=300)
@@ -239,6 +284,8 @@ def main(argv=None):
         "studio": PAPER_STUDIO.manifest(),
         "snapshots": [metadata for _, metadata in snapshots],
         "sampling": [metadata for _, metadata in sampling],
+        "sampling_crop_xyxy_normalized": [SAMPLING_CROP[0], SAMPLING_CROP[2], SAMPLING_CROP[1], SAMPLING_CROP[3]],
+        "planner_tradeoff": tradeoff,
         "runs": [
             {"file": p.name, "sha256": sha256(p)}
             for m in methods.values()

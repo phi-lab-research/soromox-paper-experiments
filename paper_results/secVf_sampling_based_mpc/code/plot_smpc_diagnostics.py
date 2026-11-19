@@ -4,6 +4,8 @@
 from __future__ import annotations
 
 import dataclasses
+import hashlib
+import json
 import shutil
 import sys
 from pathlib import Path
@@ -193,14 +195,15 @@ def plot_planner_tradeoff(
     seen_families = []
     for spec, x, y in points:
         style = FAMILY_STYLE[spec.family]
-        scatter_kwargs = (
-            {"edgecolor": "black", "linewidth": 0.5} if style["marker"] != "x" else {}
-        )
+        scatter_kwargs = {"color": style["color"]}
+        if style["marker"] == "o":
+            scatter_kwargs = {"facecolors": "none", "edgecolors": style["color"], "linewidth": 1.0}
+        elif style["marker"] == "^":
+            scatter_kwargs.update(edgecolor="black", linewidth=0.5)
         ax.scatter(
             x,
             y,
             marker=style["marker"],
-            color=style["color"],
             s=60,
             zorder=3,
             label=style["name"] if spec.family not in seen_families else None,
@@ -245,13 +248,24 @@ def main() -> int:
     configure_matplotlib()
     robot = FourTendonSoftArm().model
     points = load_seed_mean_points(TRADEOFF_RESULTS_DIRS, build_params(robot))
-    fig = plt.figure(figsize=(18 / 2.54, 8.6 / 2.54))
-    panel_letter(fig, 0.01, 0.966, "A")
-    for step, y in ((12, 0.490), (19, 0.012)):
+    # Export scored data so the main figure remains reproducible without JAX/RTX.
+    sources = sorted({directory / spec.filename for directory in TRADEOFF_RESULTS_DIRS for spec in RUNS})
+    export = {
+        "points": [{**dataclasses.asdict(spec), "mean_time_s": x, "mean_negative_cost": y}
+                   for spec, x, y in points],
+        "sources": [{"file": str(path.relative_to(RESULTS_DIR)),
+                     "sha256": hashlib.sha256(path.read_bytes()).hexdigest()} for path in sources],
+        "definition": "Three-seed mean of per-run planning time (excluding the first step) and negative executed-trajectory push cost.",
+    }
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    (OUTPUT_DIR / "planner_tradeoff.json").write_text(json.dumps(export, indent=2) + "\n")
+    fig = plt.figure(figsize=(18 / 2.54, 9 / 2.54))
+    panel_letter(fig, 0.01, 0.950, "A")
+    for step, y in ((12, 0.475), (19, 0.012)):
         path, _ = load_snapshot(CASE_DIR / "outputs" / "paper_snapshots", "detail", step,
                                 RESULTS_DIR / "square_icem_seed0.npz")
-        image_panel(fig, [0.01, y, 0.36, 0.471], path)
-    panel_letter(fig, 0.44, 0.966, "B")
+        image_panel(fig, [0.01, y, 0.36, 0.450], path)
+    panel_letter(fig, 0.44, 0.950, "B")
     plot_planner_tradeoff(points, fig.add_axes([0.47, 0.13, 0.51, 0.78]))
     save_figure(fig, FINAL_OUTPUT_DIR, OUTPUT_FILENAME)
     return 0

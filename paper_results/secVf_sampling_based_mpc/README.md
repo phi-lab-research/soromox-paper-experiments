@@ -140,8 +140,9 @@ Planner comparison (20 steps toward the single goal):
 
 The main figure gives the complete robot the largest view: **A**, a full
 Franka–tentacle scene; **B**, object paths for all three seeds of each planner;
-**C**, a full-width row of three iCEM sampling iterations. The two matched
-contact details and full planner sweep are in the appendix. Panel letters,
+**C**, three closely framed iCEM sampling iterations; **D**, the planner
+tradeoff below the trajectory plot. The two matched contact details and the
+fully annotated planner sweep are in the appendix. Panel letters,
 axis labels, and legends remain in the figures; explanations, seed counts,
 marker meanings, success rates, and timing statistics belong in the captions.
 See [the shared rendering style](../RENDERING_STYLE.md) and
@@ -184,7 +185,17 @@ Each PNG has a JSON sidecar with source and style provenance. The physical robot
 and lowest-cost prediction use coral/gold; translucent blue denotes candidate
 predictions. All candidates are included by default.
 
-Compose the figure from these snapshots and the six saved square-push runs:
+Export the planner sweep scores once with the section environment (the scored
+JSON is also committed, so composing the main figure needs no JAX):
+
+```bash
+JAX_PLATFORMS=cpu uv run --project . python code/plot_smpc_diagnostics.py
+```
+
+This writes `outputs/planner_tradeoff.json`, including source hashes and all
+12 plotted configurations (the two iCEM sweep families share one configuration).
+
+Compose the figure from these snapshots and the saved square-push and sweep results:
 
 ```bash
 uv run --project . python code/plot_smpc_summary.py --force
@@ -194,11 +205,13 @@ This writes `../final_outputs/sampling_based_mpc.{pdf,svg,png,json}`. The genera
 needs only NumPy and Matplotlib and can also run on a CPU/macOS environment with
 those packages, without installing the RTX dependencies. It verifies snapshot
 trajectory and studio settings before composing images, retains the entire
-frame without stretching or automatic cropping, and computes caption statistics
-directly from the runs using the same reach test as
+overview frame without stretching or automatic cropping. The sampling views
+use one fixed crop (normalized x: 0.25–0.75, y: 0.04–0.88), recorded in the figure
+manifest; the original PNGs remain intact. The generator verifies the scored
+sweep source hashes and computes caption statistics directly from the runs using the same reach test as
 `code/summarize_runs.py`. Timing excludes the first MPC step and reports mean
 and population standard deviation across the three seed means. `--data-dir`,
-`--snapshot-dir`, and `--output-dir` allow staged builds. Existing figure outputs
+`--snapshot-dir`, `--tradeoff-data`, and `--output-dir` allow staged builds. Existing figure outputs
 require `--force` before replacement.
 
 ### Appendix diagnostics

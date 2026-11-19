@@ -105,3 +105,26 @@ def test_sampling_frames_require_matching_iteration_and_source(tmp_path):
     sidecar.write_text(json.dumps(metadata))
     with pytest.raises(ValueError, match="trajectory differs"):
         figure.load_sampling(tmp_path, 0, source)
+
+
+def test_tradeoff_preserves_every_scored_point_and_checks_sources(tmp_path):
+    source = tmp_path / "sweep.npz"
+    source.write_bytes(b"recorded sweep")
+    scored = {
+        "sources": [{"file": source.name, "sha256": figure.sha256(source)}],
+        "points": [
+            {"family": family, "mean_time_s": time, "mean_negative_cost": cost}
+            for family, time, cost in (("mppi", 10, -1200), ("icem_fixed_iters", 30, -1000),
+                                      ("icem_fixed_batch", 30, -1000))
+        ],
+    }
+    path = tmp_path / "scores.json"
+    path.write_text(json.dumps(scored))
+    fig, ax = figure.plt.subplots()
+    figure.draw_tradeoff(ax, figure.load_tradeoff(path, tmp_path))
+    actual = np.concatenate([artist.get_offsets() for artist in ax.collections])
+    np.testing.assert_allclose(actual, [[10, -1200], [30, -1000], [30, -1000]])
+    figure.plt.close(fig)
+    source.write_bytes(b"changed sweep")
+    with pytest.raises(ValueError, match="sweep data changed"):
+        figure.load_tradeoff(path, tmp_path)

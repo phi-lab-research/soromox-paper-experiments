@@ -39,15 +39,17 @@ must not be copied numerically into renderers with different lighting units.
   timing statistics, and other prose in the actual figure caption.
 - Use panel letters without generic titles. Add a short title only when it
   provides information that the visual and caption cannot convey clearly.
+- Leave about 3 mm between panel letters and the top of the rendered content
+  at final print size. Reserve additional room for plot legends and axis labels.
 - Keep legends outside the robot and contact regions.
 - Use the shared `paper.mplstyle` for plots and check the composed PDF at its
-  intended print size. The manipulation figure is 180 by 135 mm.
+  intended print size. The manipulation figure is 180 by 140 mm.
 
 ## Manipulation reference
 
 The main manipulation figure uses one complete Franka–tentacle view, object
-paths, and three matched iCEM sampling views. Two matched contact details and
-the planner sweep appear in the appendix. Robot poses come from the saved iCEM seed-0 trajectory; the
+paths, three matched iCEM sampling views, and the planner tradeoff. Two matched
+contact details and the fully annotated planner sweep appear in the appendix. Robot poses come from the saved iCEM seed-0 trajectory; the
 Franka is a display model following the prescribed base pose, not a simulated
 dynamic component of the experiment.
 
@@ -56,8 +58,10 @@ states. `legacy` retains the previous camera for existing uses such as sample
 cloud views. Sampling predictions use translucent blue as an overlay; the
 physical robot and lowest-cost prediction stay coral, and their objects stay
 gold. Candidate overlays share the studio, camera, and roughness across iterations. `--camera-eye` and `--camera-target` can override a preset.
-The main figure includes every supplied image in full; any cropping is done by
-the intentionally chosen detail camera, not by image postprocessing.
+The whole-system overview is shown in full. The three sampling views share an
+explicit fixed crop, keeping normalized x in [0.25, 0.75] and y in [0.04, 0.88].
+These bounds retain the entire candidate cloud and target and are recorded in
+the figure manifest. The original renders are retained unchanged.
 
 Snapshot batches use independent static render sessions for each state because
 the pinned RTX backend can lose sample accumulation after runtime pose updates.

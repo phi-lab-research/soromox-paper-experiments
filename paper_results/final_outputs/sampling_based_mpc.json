@@ -272,6 +272,235 @@
       "sha256": "0b1710508a236fa44eda819d3411e9fe85107b0c33a97645101c90e217158e3e"
     }
   ],
+  "sampling_crop_xyxy_normalized": [
+    0.25,
+    0.04,
+    0.75,
+    0.88
+  ],
+  "planner_tradeoff": {
+    "points": [
+      {
+        "filename": "cmp_mppi_k200.npz",
+        "family": "mppi",
+        "label": "K=200",
+        "mean_time_s": 8.389957428817931,
+        "mean_negative_cost": -1119.594842694529
+      },
+      {
+        "filename": "cmp_mppi_k400.npz",
+        "family": "mppi",
+        "label": "K=400",
+        "mean_time_s": 8.718773236955728,
+        "mean_negative_cost": -1121.224824297119
+      },
+      {
+        "filename": "cmp_mppi_k800.npz",
+        "family": "mppi",
+        "label": "K=800",
+        "mean_time_s": 12.93183796698628,
+        "mean_negative_cost": -1001.1306210737525
+      },
+      {
+        "filename": "cmp_mppi_k1600.npz",
+        "family": "mppi",
+        "label": "K=1600",
+        "mean_time_s": 29.525088237463745,
+        "mean_negative_cost": -982.2969816948658
+      },
+      {
+        "filename": "cmp_icem_it3_k50.npz",
+        "family": "icem_fixed_iters",
+        "label": "K=50",
+        "mean_time_s": 19.020893976798998,
+        "mean_negative_cost": -1071.9368736690792
+      },
+      {
+        "filename": "cmp_icem_it3_k100.npz",
+        "family": "icem_fixed_iters",
+        "label": "K=100",
+        "mean_time_s": 23.071567535755765,
+        "mean_negative_cost": -1090.9372384140183
+      },
+      {
+        "filename": "cmp_icem_k200_it3.npz",
+        "family": "icem_fixed_iters",
+        "label": "K=200",
+        "mean_time_s": 31.62392231817112,
+        "mean_negative_cost": -1010.2243552034347
+      },
+      {
+        "filename": "cmp_icem_it3_k400.npz",
+        "family": "icem_fixed_iters",
+        "label": "K=400",
+        "mean_time_s": 41.04506473360673,
+        "mean_negative_cost": -963.9707647614745
+      },
+      {
+        "filename": "cmp_icem_k200_it1.npz",
+        "family": "icem_fixed_batch",
+        "label": "it=1",
+        "mean_time_s": 8.30776463624237,
+        "mean_negative_cost": -1581.4201933977101
+      },
+      {
+        "filename": "cmp_icem_k200_it2.npz",
+        "family": "icem_fixed_batch",
+        "label": "it=2",
+        "mean_time_s": 19.32078668875048,
+        "mean_negative_cost": -1169.3489821319927
+      },
+      {
+        "filename": "cmp_icem_k200_it3.npz",
+        "family": "icem_fixed_batch",
+        "label": "it=3",
+        "mean_time_s": 31.62392231817112,
+        "mean_negative_cost": -1010.2243552034347
+      },
+      {
+        "filename": "cmp_icem_k200_it4.npz",
+        "family": "icem_fixed_batch",
+        "label": "it=4",
+        "mean_time_s": 44.823339662200105,
+        "mean_negative_cost": -942.0342281539014
+      }
+    ],
+    "sources": [
+      {
+        "file": "cmp_seeds/seed0/cmp_icem_it3_k100.npz",
+        "sha256": "061494b660539518001415f3a11df3190eac4d1af92b4ecbaf4cd95e421f00d9"
+      },
+      {
+        "file": "cmp_seeds/seed0/cmp_icem_it3_k400.npz",
+        "sha256": "a755d83c94fff1e4f12d50ac58a87e82b18e3c421cb47457b742443b15b331b9"
+      },
+      {
+        "file": "cmp_seeds/seed0/cmp_icem_it3_k50.npz",
+        "sha256": "ed4ff001b96370edc22585bf367ab83533f8014c02bd5bba705165cb18c62e8a"
+      },
+      {
+        "file": "cmp_seeds/seed0/cmp_icem_k200_it1.npz",
+        "sha256": "dafb6687dfb1899ea5cd5ea37a3aa083faa67cf4f869c1d5b6c8caa5a5341a17"
+      },
+      {
+        "file": "cmp_seeds/seed0/cmp_icem_k200_it2.npz",
+        "sha256": "e21f88ba0399f06c77268ab8f6c373de430e0c8d68e1699c2f3ac74429cdda8c"
+      },
+      {
+        "file": "cmp_seeds/seed0/cmp_icem_k200_it3.npz",
+        "sha256": "abb76e149270a8a6cf778c88fa21bfd3dcfc8a679f605a3f15929b18d1824f0e"
+      },
+      {
+        "file": "cmp_seeds/seed0/cmp_icem_k200_it4.npz",
+        "sha256": "27648f67364fa12afa48a4ee3c560a588f1b56485c7f90c69514893a217fba93"
+      },
+      {
+        "file": "cmp_seeds/seed0/cmp_mppi_k1600.npz",
+        "sha256": "b4b24d8950320010a47bbf4f424932286a6ef2345f0efa636450056b2501adb4"
+      },
+      {
+        "file": "cmp_seeds/seed0/cmp_mppi_k200.npz",
+        "sha256": "a9f56cddd37d099adc3171b6f558cb31e776b54ba8e402710325da858ff9edef"
+      },
+      {
+        "file": "cmp_seeds/seed0/cmp_mppi_k400.npz",
+        "sha256": "7e0667c919674ab7665a8fa85a2bfa81c121cadf1d5e827a723e916e0bc35bab"
+      },
+      {
+        "file": "cmp_seeds/seed0/cmp_mppi_k800.npz",
+        "sha256": "3fc1c09fcf04b9f124de8700e5085e07602400f83664be18c17dd63aca80390d"
+      },
+      {
+        "file": "cmp_seeds/seed1/cmp_icem_it3_k100.npz",
+        "sha256": "61e9985e29a9864ba30c7f943e965289399f5ada8ae45bf243836eb7fb2c6651"
+      },
+      {
+        "file": "cmp_seeds/seed1/cmp_icem_it3_k400.npz",
+        "sha256": "a76802cd5d37f168bc122d20d54a0ccb3e03f6758b143bd60302679a001381d0"
+      },
+      {
+        "file": "cmp_seeds/seed1/cmp_icem_it3_k50.npz",
+        "sha256": "ea7a52e92fe34fe3332641e1edf979c6c05c1d0e54471af9a7ce9a068a6392e7"
+      },
+      {
+        "file": "cmp_seeds/seed1/cmp_icem_k200_it1.npz",
+        "sha256": "bfe5f245ecbcf15534727feb550dc7888db62382b9e95a48e5962f46d8aba6eb"
+      },
+      {
+        "file": "cmp_seeds/seed1/cmp_icem_k200_it2.npz",
+        "sha256": "4ab93f1a199e491323ba3dc94ee66c5158b6605e317b5c28006d56044ec4d709"
+      },
+      {
+        "file": "cmp_seeds/seed1/cmp_icem_k200_it3.npz",
+        "sha256": "ae236e71e62000e4cc37a05fc46a859323999f106b9c422eec4c53e0eaff9333"
+      },
+      {
+        "file": "cmp_seeds/seed1/cmp_icem_k200_it4.npz",
+        "sha256": "dbdb70f0e1b03b566d4f5afde2f485930a2c40a3200f19a64b19cdad11301b81"
+      },
+      {
+        "file": "cmp_seeds/seed1/cmp_mppi_k1600.npz",
+        "sha256": "2d5580dcbaffbd546cfc5e4cd31cebfe1d6fb85e592ae646a3df424c1eaf43de"
+      },
+      {
+        "file": "cmp_seeds/seed1/cmp_mppi_k200.npz",
+        "sha256": "d65d85e18dd54824b5f9277968482e68f00dba35f769641a21f04f788f0d5800"
+      },
+      {
+        "file": "cmp_seeds/seed1/cmp_mppi_k400.npz",
+        "sha256": "46bb9eef006bb0a1e45fcb2de949c4befd2c6891d07bccb7fa7b098f8ea130bb"
+      },
+      {
+        "file": "cmp_seeds/seed1/cmp_mppi_k800.npz",
+        "sha256": "4e11913bf713d66a74725c008bb62775c6eb112f248f4b1fe738e5c67a08fa9b"
+      },
+      {
+        "file": "cmp_seeds/seed2/cmp_icem_it3_k100.npz",
+        "sha256": "20734d26bdf121337d19437ff35bbf21665b15e9f61188ce2230e927896320fd"
+      },
+      {
+        "file": "cmp_seeds/seed2/cmp_icem_it3_k400.npz",
+        "sha256": "431fc177c936617dde7cd7bbbc8e9962fd4751a2b6d80078eab9773f57689b64"
+      },
+      {
+        "file": "cmp_seeds/seed2/cmp_icem_it3_k50.npz",
+        "sha256": "65169651cb29b4442a1cdd5a093b8fe55a05d201f63d8e70aff6a2dc4d880c96"
+      },
+      {
+        "file": "cmp_seeds/seed2/cmp_icem_k200_it1.npz",
+        "sha256": "0dd3d4c4564b310ad7f99a6578e208ac969846d9172b8aa2188f5773298b3101"
+      },
+      {
+        "file": "cmp_seeds/seed2/cmp_icem_k200_it2.npz",
+        "sha256": "acbb4b699ad3a44fbece99e404bb24dadec16454b730041c9e7b8b1e56a7e9ea"
+      },
+      {
+        "file": "cmp_seeds/seed2/cmp_icem_k200_it3.npz",
+        "sha256": "b2c9f03d2fe85645fc8c35dbf79db6052e935699ff27e6806c7c2f09dea98c23"
+      },
+      {
+        "file": "cmp_seeds/seed2/cmp_icem_k200_it4.npz",
+        "sha256": "f5cef42644a406d40aef2ccb43941bf7486343a9202442ff09a7925dc41f3af9"
+      },
+      {
+        "file": "cmp_seeds/seed2/cmp_mppi_k1600.npz",
+        "sha256": "6e862480190f7503043283e92eaf1040e0b64530bc5d8acd34e22467419fd0ce"
+      },
+      {
+        "file": "cmp_seeds/seed2/cmp_mppi_k200.npz",
+        "sha256": "7adcecd5d8297ff8ce1d242ec6efd06d0d12f15c6f3949016512927d6825056c"
+      },
+      {
+        "file": "cmp_seeds/seed2/cmp_mppi_k400.npz",
+        "sha256": "6f9acc520b0a185cea3d627184c6b5324f0f1ad0507e6c4be06c82cc8e0ec321"
+      },
+      {
+        "file": "cmp_seeds/seed2/cmp_mppi_k800.npz",
+        "sha256": "08e7876f7ede5da47f36f1ac119777540586582f87b2744da5874116b2457cce"
+      }
+    ],
+    "definition": "Three-seed mean of per-run planning time (excluding the first step) and negative executed-trajectory push cost."
+  },
   "runs": [
     {
       "file": "square_icem_seed0.npz",
