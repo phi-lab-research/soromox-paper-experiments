@@ -90,6 +90,11 @@ The trajectory legend sits above the centered square plot; the tradeoff legend i
 all three marker families in unused plot space. Sampling views carry iteration
 identifiers, with candidate counts and quantitative differences in the caption.
 
-Keep the main overview at a single recorded state. Overlaying later states
-with goals that have already advanced can confuse the contact sequence. Use
-separate, time-identified views when that sequence needs to be explained.
+Use one opaque current state and at most two faint later states to illustrate
+progress toward the currently highlighted goal. Select states before any goal
+change, require decreasing cube-to-goal distance, and show the matching rigid
+robot, soft robot, and object poses together. Keep the active goal unchanged.
+Identify the faint states as later recorded motion in the caption, distinct from
+the sampled MPC predictions in panel C. Fixed robot links need no duplicate
+geometry. Exclude ghost geometry from shadows and record times, target, distances,
+and rigid-arm transforms in the snapshot manifest.

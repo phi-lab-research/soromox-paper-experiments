@@ -160,6 +160,7 @@ figure environment installed. Both JAX and Newton must use the GPU; do not set
 ```bash
 uv run --project . python code/rendering.py \
   --run-path data/square_icem_seed0.npz --view overview --snapshot-steps 19 \
+  --future-steps 21 23 --future-opacity 0.3 \
   --width 2400 --height 1800 --samples-per-pixel 128
 
 uv run --project . python code/rendering.py \
@@ -171,7 +172,13 @@ Images and provenance are written under `outputs/paper_snapshots/{overview,detai
 Pass `--force` to replace existing snapshots. Steps are saved trajectory row
 indices, including the initial row; physical time is `step * --control-dt`.
 Step 12 is the first transition to the second corner goal, and step 19 is partway
-along that push. The overview uses step 19. These times are fixed across the
+along that push. The overview uses opaque step 19 (0.95 s), with faint steps
+21 and 23 (1.05 and 1.15 s). The renderer verifies that all intervening states
+keep the same active goal and that the selected cube poses approach it
+(83.2 → 41.0 → 14.8 mm). The faint tentacle and cube use recorded configurations;
+the matching Franka poses use the existing kinematic display model. They show
+later executed motion, not predictions from the current MPC step. The active
+goal stays fixed. Omit `--future-steps` for a single-state overview. These times are fixed across the
 figure and are recorded in the manifests. Batches use a fresh render process
 for each snapshot to preserve path-tracing accumulation in the pinned RTX
 backend; the batch manifest is published after all selected states render.

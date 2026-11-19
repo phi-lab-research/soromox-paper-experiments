@@ -5,7 +5,11 @@
 push at $t=0.95$\,s. The Franka represents the kinematically prescribed
 motion of the tentacle base; its dynamics are not part of the experiment.
 The soft tentacle is coral, the manipulated box is gold, and the active goal
-and desired path are green.
+and desired path are green. Faint complete-system poses at $t=1.05$ and
+$1.15$\,s show subsequent recorded motion toward the same highlighted goal.
+The cube closes from $83$ to $41$ to $15$\,mm from that goal. These are later
+executed states, rather than MPC predictions; the rigid-arm poses follow the
+recorded tentacle-base poses kinematically.
 (\textbf{B}) Object trajectories for three seeds each of iCEM
 ($K=200,100,50$ over three iterations) and MPPI ($K=800$).
 Colors identify methods and solid, dashed, and dotted lines identify seeds

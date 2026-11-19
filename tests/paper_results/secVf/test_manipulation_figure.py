@@ -144,3 +144,34 @@ def test_composed_trajectory_plot_preserves_equal_distance_scales(tmp_path):
     assert np.linalg.norm(x_step - origin) == pytest.approx(np.linalg.norm(y_step - origin))
     assert ax.get_aspect() == 1.0
     figure.plt.close(fig)
+
+
+def test_future_poses_approach_the_same_goal_and_reject_transition():
+    from figure_states import validate_future_steps
+
+    source = CODE.parent / "data/square_icem_seed0.npz"
+    with source.open("rb") as stream:
+        if stream.read(7) == b"version":
+            pytest.skip("Fetch the released trajectory with git lfs pull")
+    with np.load(source) as data:
+        poses, goals = data["object_pose"], data["goal_xy"]
+    distances = validate_future_steps(poses, goals, 19, [21, 23])
+    np.testing.assert_allclose(distances * 1000, [83.201699, 40.950878, 14.842057], atol=1e-5)
+    with pytest.raises(ValueError, match="goal change"):
+        validate_future_steps(poses, goals, 19, [21, 24])
+    with pytest.raises(ValueError, match="chronological"):
+        validate_future_steps(poses, goals, 19, [23, 21])
+    wrong = poses.copy()
+    wrong[21, :2] = [1, 1]
+    with pytest.raises(ValueError, match="make progress"):
+        validate_future_steps(wrong, goals, 19, [21, 23])
+
+
+def test_ghost_mesh_preserves_orientation_and_scale():
+    from figure_states import transform_mesh
+
+    half = np.sqrt(0.5)
+    points, normals = transform_mesh(np.array([[1, 0, 0]]), np.array([[1, 0, 0]]),
+                                    np.array([3, 4, 5, 0, 0, half, half]), (2, 1, 1))
+    np.testing.assert_allclose(points, [[3, 6, 5]], atol=1e-6)
+    np.testing.assert_allclose(normals, [[0, 1, 0]], atol=1e-6)

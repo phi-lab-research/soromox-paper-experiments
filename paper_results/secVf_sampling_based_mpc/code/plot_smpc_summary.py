@@ -86,11 +86,22 @@ def load_snapshot(root: Path, view: str, step: int, source: Path) -> tuple[Path,
     path = manifest_path.parent / matches[0]["file"]
     if not path.is_file():
         raise FileNotFoundError(path)
+    future = manifest.get("future_overlay")
+    if future:
+        from figure_states import validate_future_steps
+        if future.get("kind") != "later_recorded_states_same_goal":
+            raise ValueError("Future overlays must preserve the highlighted goal")
+        with np.load(source) as data:
+            validate_future_steps(data["object_pose"], data["goal_xy"], step,
+                                  [entry["step"] for entry in future["states"]])
+            if not np.allclose(future["goal_xy"], data["goal_xy"][step]):
+                raise ValueError("Future overlay goal differs from the recorded active goal")
     return path, {
         **matches[0],
         "view": view,
         "camera_eye": manifest["camera_eye"],
         "camera_target": manifest["camera_target"],
+        "future_overlay": future,
         "sha256": sha256(path),
     }
 

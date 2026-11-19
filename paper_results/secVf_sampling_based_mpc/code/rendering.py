@@ -560,12 +560,18 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--camera-target", type=float, nargs=3, metavar=("X", "Y", "Z"))
     parser.add_argument("--snapshot-steps", type=int, nargs="+", help="Render only these saved trajectory rows, without encoding video.")
     parser.add_argument("--snapshot-dir", type=Path, help="Snapshot root; images go in its frames/ subdirectory.")
+    parser.add_argument("--future-steps", type=int, nargs="+", help="Overlay a few later recorded states on a single static snapshot.")
+    parser.add_argument("--future-opacity", type=float, default=0.25)
     parser.add_argument("--force", action="store_true", help="Replace existing snapshot files and their manifest.")
     args = parser.parse_args()
     if min(args.width, args.height, args.fps, args.frames_per_step, args.samples_per_pixel) < 1 or args.control_dt <= 0:
         parser.error("Image sizes, rates, sample count and control-dt must be positive")
     if args.snapshot_dir is not None and args.snapshot_steps is None:
         parser.error("--snapshot-dir requires --snapshot-steps")
+    if args.future_steps is not None and (args.snapshot_steps is None or len(args.snapshot_steps) != 1):
+        parser.error("--future-steps requires exactly one --snapshot-steps index")
+    if not 0 < args.future_opacity < 1:
+        parser.error("--future-opacity must be between zero and one")
     return args
 
 
@@ -800,6 +806,117 @@ def render_snapshot_batch(args, output_root: Path) -> None:
         (output_root / "snapshots.json").write_text(json.dumps(merged, indent=2) + "\n")
 
 
+@wp.kernel
+def _distinct_ghost_faces(vertices: wp.array(dtype=wp.vec3), triangles: wp.array(dtype=wp.int32),
+                          current_mesh: wp.uint64, tolerance: float, keep: wp.array(dtype=wp.int32)):
+    face = wp.tid()
+    center = (vertices[triangles[3 * face]] + vertices[triangles[3 * face + 1]]
+              + vertices[triangles[3 * face + 2]]) / 3.0
+    query = wp.mesh_query_point(current_mesh, center, tolerance)
+    keep[face] = 1
+    if query.result:
+        closest = wp.mesh_eval_position(current_mesh, query.face, query.u, query.v)
+        if wp.length(center - closest) < tolerance:
+            keep[face] = 0
+
+
+def add_future_overlay(viewer, robot, franka, trajectory, object_pose, goals, current_step, future_steps, opacity, object_shape, control_dt):
+    """Ghost complete later states while keeping the highlighted target unchanged."""
+    from figure_states import transform_mesh, validate_future_steps
+    from render_sample_cloud import (
+        _log_solid_mesh, _rollout_backbone_poses, _yawed_object_ghost_mesh,
+        cross_section_radii, tube_mesh_points, tube_mesh_topology,
+    )
+    distances = validate_future_steps(object_pose, goals, current_step, future_steps)
+    ndof, nbase = robot.num_internal_dofs, robot.num_base_coordinates
+    abscissae = np.linspace(0.0, float(robot.length), 35)
+    radii = cross_section_radii(robot, abscissae, ndof, nbase)
+    indices = tube_mesh_topology(1, len(abscissae), 12)
+    names, states = [], []
+    active_goal = goals[min(current_step, len(goals) - 1)]
+    arm_current = franka.body_poses(trajectory[current_step, -nbase:])
+    shape_bodies = franka.model.shape_body.numpy()
+    shape_flags = franka.model.shape_flags.numpy()
+    shape_transforms = franka.model.shape_transform.numpy()
+    shape_scales = franka.model.shape_scale.numpy()
+    shape_colors = franka.model.shape_color.numpy()
+    current_vertices, current_triangles = [], []
+    offset = 0
+    for shape, body in enumerate(shape_bodies):
+        if body < 0 or not shape_flags[shape] & int(newton.ShapeFlags.VISIBLE):
+            continue
+        source = franka.model.shape_source[shape]
+        pose = arm_current[body - franka.body_start]
+        world = wp.transform_multiply(wp.transform(wp.vec3(*pose[:3]), wp.quat(*pose[3:])),
+                                      wp.transform_expand(shape_transforms[shape]))
+        vertices, _ = transform_mesh(source._vertices, None,
+                                     np.concatenate((np.asarray(world.p), np.asarray(world.q))), shape_scales[shape])
+        current_vertices.append(vertices)
+        current_triangles.append(np.asarray(source._indices, dtype=np.int32).ravel() + offset)
+        offset += len(vertices)
+    current_surface = wp.Mesh(points=wp.array(np.concatenate(current_vertices), dtype=wp.vec3),
+                              indices=wp.array(np.concatenate(current_triangles), dtype=wp.int32))
+    for step, distance in zip(future_steps, distances[1:], strict=True):
+        row = trajectory[step]
+        poses = _rollout_backbone_poses(robot, row, ndof, nbase, abscissae)
+        points, normals = tube_mesh_points([poses], radii, 12)
+        name = f"future_tentacle_{step}"
+        _log_solid_mesh(viewer, name, (points, indices, normals), ROD_COLOR, opacity)
+        names.append(name)
+        name = f"future_object_{step}"
+        vertices, triangles, normals = _yawed_object_ghost_mesh(
+            object_shape, 0.0, 0.0, 0.0, 0.5 * run_experiment.OBJECT_FOOTPRINT, 0.0)
+        vertices, normals = transform_mesh(vertices, normals, object_pose[step])
+        _log_solid_mesh(viewer, name, (vertices, triangles, normals), OBJECT_COLOR, min(0.8, 1.5 * opacity))
+        names.append(name)
+        arm_poses = franka.body_poses(row[-nbase:])
+        arm_names = []
+        for shape, body in enumerate(shape_bodies):
+            if body < 0 or not shape_flags[shape] & int(newton.ShapeFlags.VISIBLE):
+                continue
+            body_row = body - franka.body_start
+            # Fixed links coincide exactly; drawing copies only darkens them.
+            if np.allclose(arm_poses[body_row], arm_current[body_row], rtol=0, atol=1e-5):
+                continue
+            source = franka.model.shape_source[shape]
+            if not isinstance(source, newton.Mesh):
+                raise TypeError("Expected a visual mesh for the Franka display")
+            body_pose = arm_poses[body_row]
+            world = wp.transform_multiply(wp.transform(wp.vec3(*body_pose[:3]), wp.quat(*body_pose[3:])),
+                                          wp.transform_expand(shape_transforms[shape]))
+            pose = np.concatenate((np.asarray(world.p), np.asarray(world.q)))
+            vertices, normals = transform_mesh(source._vertices, source._normals, pose, shape_scales[shape])
+            triangles = np.asarray(source._indices, dtype=np.int32).reshape(-1, 3)
+            if np.prod(shape_scales[shape]) < 0:
+                triangles = triangles[:, [0, 2, 1]]
+            # Coincident ghost/current faces z-fight in the pinned RTX backend.
+            # The solid pose already depicts them; retain only distinct surfaces.
+            keep = wp.empty(len(triangles), dtype=wp.int32)
+            wp.launch(_distinct_ghost_faces, len(triangles),
+                      inputs=[wp.array(vertices, dtype=wp.vec3), wp.array(triangles.ravel(), dtype=wp.int32),
+                              current_surface.id, 0.0005], outputs=[keep])
+            triangles = triangles[keep.numpy().astype(bool)]
+            if not len(triangles):
+                continue
+            name = f"future_franka_{step}_{shape}"
+            viewer.log_mesh(name, wp.array(vertices, dtype=wp.vec3), wp.array(triangles.ravel(), dtype=wp.int32),
+                            normals=None if normals is None else wp.array(normals, dtype=wp.vec3),
+                            color=tuple(shape_colors[shape]), roughness=0.72, metallic=0.0,
+                            opacity=0.6 * opacity)
+            names.append(name)
+            arm_names.append(name)
+        states.append({"step": step, "time_s": step * control_dt,
+                       "object_pose": object_pose[step].tolist(), "goal_xy": active_goal.tolist(),
+                       "goal_distance_m": float(distance), "franka_body_poses": arm_poses.tolist(),
+                       "franka_ghost_mesh_count": len(arm_names)})
+    viewer.shadow_excluded_mesh_names += tuple(names)
+    return {"kind": "later_recorded_states_same_goal", "tentacle_opacity": opacity,
+            "object_opacity": min(0.8, 1.5 * opacity), "franka_opacity": 0.6 * opacity,
+            "coincident_arm_surface_tolerance_m": 0.0005,
+            "goal_xy": active_goal.tolist(), "current_goal_distance_m": float(distances[0]),
+            "states": states}
+
+
 def main() -> None:
     """Render a saved run_experiment.py trajectory to an MP4 (and optionally a GIF)."""
     args = parse_args()
@@ -815,6 +932,9 @@ def main() -> None:
     goal_xy = data["goal_xy"]
     reach_tolerance = data["reach_tolerance"]
     data.close()
+    if args.future_steps is not None:
+        from figure_states import validate_future_steps
+        validate_future_steps(object_pose, goal_xy, args.snapshot_steps[0], args.future_steps)
 
     camera_eye, camera_target = PAPER_CAMERAS[args.view]
     camera_eye = tuple(args.camera_eye) if args.camera_eye is not None else camera_eye
@@ -885,6 +1005,11 @@ def main() -> None:
         initial_timestep=args.snapshot_steps[0] if args.snapshot_steps else 0,
     )
     writer.viewer.shadow_excluded_mesh_names = tuple(f"goal_tolerance_{i}" for i in range(len(goal_corners)))
+    future_overlay = None
+    if args.future_steps:
+        future_overlay = add_future_overlay(writer.viewer, robot, franka, X_final, object_pose, goal_xy,
+                                            args.snapshot_steps[0], args.future_steps, args.future_opacity,
+                                            args.object_shape, args.control_dt)
 
     body_q = state.body_q.numpy()
     body_qd = state.body_qd.numpy()
@@ -943,6 +1068,7 @@ def main() -> None:
             "samples_per_pixel": args.samples_per_pixel,
             "control_dt": args.control_dt,
             "studio": PAPER_STUDIO.manifest(),
+            "future_overlay": future_overlay,
             "snapshots": [{"step": i, "time_s": i * args.control_dt, "active_goal_xy": goal_xy[min(i, len(goal_xy) - 1)].tolist(), "file": f"frames/step_{i:04d}.png"} for i in args.snapshot_steps],
         }
         (output_root / "snapshots.json").write_text(json.dumps(manifest, indent=2) + "\n")
