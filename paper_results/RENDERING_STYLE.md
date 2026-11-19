@@ -34,20 +34,28 @@ must not be copied numerically into renderers with different lighting units.
 - Put close-ups in explicitly identified detail panels; never automatically
   crop the overview based only on saturated pixels, which excludes gray hardware.
 - Do not stretch images to fill slots. Preserve their native aspect ratio.
-- Keep legends and callouts outside the robot and contact regions.
+- Keep panel text to letters, axis labels with units, legends, and identifiers
+  needed to read the data. Put explanations, sample counts, start/goal semantics,
+  timing statistics, and other prose in the actual figure caption.
+- Use panel letters without generic titles. Add a short title only when it
+  provides information that the visual and caption cannot convey clearly.
+- Keep legends outside the robot and contact regions.
 - Use the shared `paper.mplstyle` for plots and check the composed PDF at its
-  intended print size. The manipulation figure is 180 by 126 mm.
+  intended print size. The manipulation figure is 180 by 135 mm.
 
 ## Manipulation reference
 
-The manipulation figure uses one complete Franka–tentacle view and two matched
-contact details. Robot poses come from the saved iCEM seed-0 trajectory; the
+The main manipulation figure uses one complete Franka–tentacle view, object
+paths, and three matched iCEM sampling views. Two matched contact details and
+the planner sweep appear in the appendix. Robot poses come from the saved iCEM seed-0 trajectory; the
 Franka is a display model following the prescribed base pose, not a simulated
 dynamic component of the experiment.
 
 The renderer's `overview` and `detail` camera presets are fixed across saved
 states. `legacy` retains the previous camera for existing uses such as sample
-cloud diagnostics. `--camera-eye` and `--camera-target` can override a preset.
+cloud views. Sampling predictions use translucent blue as an overlay; the
+physical robot and lowest-cost prediction stay coral, and their objects stay
+gold. Candidate overlays share the studio, camera, and roughness across iterations. `--camera-eye` and `--camera-target` can override a preset.
 The main figure includes every supplied image in full; any cropping is done by
 the intentionally chosen detail camera, not by image postprocessing.
 
@@ -60,7 +68,9 @@ Snapshots record source hashes, selected steps and physical times, camera,
 image resolution, sample count, and the full studio settings in `snapshots.json`.
 The figure generator verifies trajectory and style provenance before composing
 the PDF, SVG, and PNG, then records source hashes and computed statistics in a
-figure manifest. Re-render snapshots after changing studio settings.
+figure manifest. Sample-cloud PNGs have matching JSON sidecars recording the
+planning step, iteration, horizon step, candidate counts, opacity, source hash,
+camera, and studio settings. Re-render snapshots after changing studio settings.
 
 Reproduction commands and the panel captions are in
 [`secVf_sampling_based_mpc/README.md`](secVf_sampling_based_mpc/README.md).

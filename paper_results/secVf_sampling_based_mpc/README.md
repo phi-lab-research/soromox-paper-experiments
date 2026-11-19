@@ -139,9 +139,11 @@ Planner comparison (20 steps toward the single goal):
 ## Paper artifacts
 
 The main figure gives the complete robot the largest view: **A**, a full
-Franka–tentacle scene; **B**, two matched contact details; **C**, object paths
-for all three seeds of each planner, with success and planning-time summaries.
-The sample clouds and full planner sweep are in a separate appendix figure.
+Franka–tentacle scene; **B**, object paths for all three seeds of each planner;
+**C**, a full-width row of three iCEM sampling iterations. The two matched
+contact details and full planner sweep are in the appendix. Panel letters,
+axis labels, and legends remain in the figures; explanations, seed counts,
+marker meanings, success rates, and timing statistics belong in the captions.
 See [the shared rendering style](../RENDERING_STYLE.md) and
 [`figure_caption.tex`](figure_caption.tex) for the proposed captions.
 
@@ -171,6 +173,17 @@ figure and are recorded in the manifests. Batches use a fresh render process
 for each snapshot to preserve path-tracing accumulation in the pinned RTX
 backend; the batch manifest is published after all selected states render.
 
+Render the three sampling iterations with the same studio (from the run saved
+with `--save-samples`). The shared camera is fixed across the three frames:
+
+```bash
+OUT_DIR=outputs/paper_snapshots/sampling code/render_sample_cloud.sh data/square_icem_seed0.npz 10 --force
+```
+
+Each PNG has a JSON sidecar with source and style provenance. The physical robot
+and lowest-cost prediction use coral/gold; translucent blue denotes candidate
+predictions. All candidates are included by default.
+
 Compose the figure from these snapshots and the six saved square-push runs:
 
 ```bash
@@ -181,8 +194,8 @@ This writes `../final_outputs/sampling_based_mpc.{pdf,svg,png,json}`. The genera
 needs only NumPy and Matplotlib and can also run on a CPU/macOS environment with
 those packages, without installing the RTX dependencies. It verifies snapshot
 trajectory and studio settings before composing images, retains the entire
-frame without stretching or automatic cropping, and computes success and timing
-annotations directly from the runs using the same reach test as
+frame without stretching or automatic cropping, and computes caption statistics
+directly from the runs using the same reach test as
 `code/summarize_runs.py`. Timing excludes the first MPC step and reports mean
 and population standard deviation across the three seed means. `--data-dir`,
 `--snapshot-dir`, and `--output-dir` allow staged builds. Existing figure outputs
@@ -195,20 +208,9 @@ uv run --project . python code/plot_smpc_diagnostics.py
 ```
 
 This writes `../final_outputs/sampling_based_mpc_diagnostics.pdf`, containing the
-three sample-cloud frames and the complete single-goal planner cost/time sweep.
+two contact-detail frames and the complete single-goal planner cost/time sweep.
 The sweep requires the SoRoMoX/JAX dependencies for rescoring the saved runs;
 it does not rerun planning. On a CPU-only host, set `JAX_PLATFORMS=cpu`.
-
-Regenerate its sample-cloud frames, if required, from the run saved with
-`--save-samples`:
-
-```bash
-code/render_sample_cloud.sh data/square_icem_seed0.npz
-```
-
-An optional second argument selects the drawn horizon step (default 10);
-further arguments pass through to `code/render_sample_cloud.py`. Frames go to
-`outputs/frames/square_icem_seed0_t0_iter{0,1,2}.png`; set `OUT_DIR` to override.
 
 ### Videos and camera overrides
 
@@ -227,4 +229,4 @@ All views use the shared studio materials and lighting.
 Numbered video frames are kept under `outputs/<stem>_frames/frames/`. The
 committed legacy videos remain available and are stored with Git LFS. Encoding
 MP4/GIF requires ffmpeg; snapshot-only rendering does not. Sample-cloud scenes
-retain their blue/coral prediction encoding to explain sampling.
+use translucent blue candidate overlays with the shared coral/gold scene materials.

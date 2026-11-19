@@ -1,29 +1,32 @@
 % Suggested captions for the revised main and appendix figures.
 % The paper's existing figure labels can be retained when inserting these.
-\caption{\textbf{Contact-rich manipulation with a Franka-mounted soft tentacle.}
-(\textbf{A}) The complete system during an iCEM-controlled push. The Franka
-is rendered to represent the kinematically prescribed tentacle-base motion;
-its dynamics are not part of the experiment. The soft tentacle is coral, the
-manipulated box is gold, and the active goal and desired path are green.
-(\textbf{B}) Matched detail views at $t=0.60$ and $0.95$\,s show the tentacle
-redirecting the box after the first corner. All renderings use the saved
-iCEM seed-0 trajectory.
-(\textbf{C}) Object trajectories for three seeds each of iCEM
+\caption{\textbf{Sampling-based contact-rich manipulation with a soft tentacle.}
+(\textbf{A}) The complete Franka--tentacle system during an iCEM-controlled
+push at $t=0.95$\,s. The Franka represents the kinematically prescribed
+motion of the tentacle base; its dynamics are not part of the experiment.
+The soft tentacle is coral, the manipulated box is gold, and the active goal
+and desired path are green.
+(\textbf{B}) Object trajectories for three seeds each of iCEM
 ($K=200,100,50$ over three iterations) and MPPI ($K=800$).
 Colors identify methods and solid, dashed, and dotted lines identify seeds
 0, 1, and 2. The circle marks the start, crosses the final positions, and
 numbered green squares the ordered goals. iCEM completes all four goals in
-3/3 runs, versus 1/3 for MPPI. Planning time is the mean and standard deviation
-across the three per-seed averages, excluding each run's first MPC step:
-$26.5\pm0.2$\,s for iCEM and $8.5\pm0.8$\,s for MPPI.
-Planning is slower than real time.}
+3/3 runs, versus 1/3 for MPPI. Planning time is the mean and population standard
+deviation across the three per-seed averages, excluding each run's first MPC
+step: $26.5\pm0.2$\,s for iCEM and $8.5\pm0.8$\,s for MPPI.
+Planning is slower than real time.
+(\textbf{C}) Left to right: three successive iCEM sampling iterations at the
+first planning step, showing candidate configurations at horizon step 10.
+Translucent blue configurations show sampled predictions; opacity decreases
+with cost rank. The lowest-cost prediction and current configuration use
+solid coral for the tentacle and gold for the object. All renderings use
+the saved iCEM seed-0 trajectory and the same studio lighting and materials.}
 
 % Appendix figure: sampling_based_mpc_diagnostics.pdf
-\caption{\textbf{Sampling refinement and planner tradeoffs.}
-(\textbf{A}) Candidate tentacle and object configurations across three iCEM
-refinement passes at the first planning step, evaluated at horizon step 10.
-Transparent blue configurations show sampled predictions; the selected
-prediction is highlighted in coral.
+\caption{\textbf{Contact evolution and planner tradeoffs.}
+(\textbf{A}) Matched detail views at $t=0.60$\,s (top) and $0.95$\,s (bottom)
+show the tentacle redirecting the box after the first corner, from the saved
+iCEM seed-0 trajectory used in the main figure.
 (\textbf{B}) Mean planning time and negative push cost for the single-goal
 planner sweep, averaged over three seeds. Higher negative cost is better.
 This sweep is separate from the square-push outcome comparison in the main

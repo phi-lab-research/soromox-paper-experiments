@@ -103,9 +103,20 @@ def image_panel(fig, rect, path):
     return ax
 
 
-def heading(fig, x, y, letter, title):
+def panel_letter(fig, x, y, letter):
     fig.text(x, y, letter, fontsize=11, fontweight="bold", va="bottom")
-    fig.text(x + 0.032, y, title, fontsize=9, va="bottom")
+
+
+def load_sampling(root: Path, iteration: int, source: Path) -> tuple[Path, dict]:
+    path = root / "sampling" / f"iteration_{iteration}.png"
+    manifest = json.loads(path.with_suffix(".json").read_text())
+    if manifest["source_sha256"] != sha256(source):
+        raise ValueError("Sampling trajectory differs from the plotted run")
+    if manifest["studio"] != json.loads(json.dumps(PAPER_STUDIO.manifest())):
+        raise ValueError("Sampling style is stale; regenerate the cloud frames")
+    if (manifest["iteration"], manifest["timestep"], manifest["horizon_step"]) != (iteration, 0, 10):
+        raise ValueError("Unexpected sampling iteration, planning step, or horizon step")
+    return path, {**manifest, "sha256": sha256(path)}
 
 
 def draw_paths(ax, methods, goals):
@@ -175,69 +186,23 @@ def draw_paths(ax, methods, goals):
     )
 
 
-def build_figure(methods, goals, snapshots):
-    """Large system overview, two contact details, and the task evidence."""
+def build_figure(methods, goals, snapshots, sampling):
+    """Whole system, recorded paths, and three sampling iterations."""
     plt.style.use(PAPER_STYLE_PATH)
-    plt.rcParams.update(
-        {
-            "text.usetex": False,
-            "font.size": 8,
-            "axes.labelsize": 8,
-            "xtick.labelsize": 7,
-            "ytick.labelsize": 7,
-            "legend.fontsize": 7,
-            "svg.fonttype": "none",
-            "pdf.fonttype": 42,
-            "savefig.bbox": None,
-        }
-    )
-    fig = plt.figure(figsize=(18 / 2.54, 12.6 / 2.54), facecolor="white")
-    heading(fig, 0.01, 0.962, "A", "Franka + soft tentacle")
-    image_panel(fig, [0.01, 0.312, 0.60, 0.643], snapshots[0][0])
-    heading(fig, 0.01, 0.284, "B", "Changing push direction")
-    for rect, (path, metadata) in zip(
-        ([0.01, 0.018, 0.295, 0.2634], [0.315, 0.018, 0.295, 0.2634]),
-        snapshots[1:],
-        strict=True,
-    ):
-        image_panel(fig, rect, path)
-        fig.text(
-            rect[0] + rect[2] / 2,
-            0.007,
-            f"t = {metadata['time_s']:.2f} s",
-            ha="center",
-            fontsize=6.5,
-        )
-    heading(fig, 0.66, 0.962, "C", "Object paths")
-    ax = fig.add_axes([0.70, 0.502, 0.285, 0.407])
+    plt.rcParams.update({
+        "text.usetex": False, "font.size": 8, "axes.labelsize": 8,
+        "xtick.labelsize": 7, "ytick.labelsize": 7, "legend.fontsize": 7,
+        "svg.fonttype": "none", "pdf.fonttype": 42, "savefig.bbox": None,
+    })
+    fig = plt.figure(figsize=(18 / 2.54, 13.5 / 2.54), facecolor="white")
+    panel_letter(fig, 0.01, 0.960, "A")
+    image_panel(fig, [0.01, 0.360, 0.60, 0.60], snapshots[0][0])
+    panel_letter(fig, 0.66, 0.960, "B")
+    ax = fig.add_axes([0.685, 0.450, 0.30, 0.40])
     draw_paths(ax, methods, goals)
-    fig.text(0.68, 0.402, "Three seeds per method", fontsize=7, color="0.3")
-    fig.text(
-        0.68,
-        0.389,
-        "Start: circle; finish: cross\nGoals: numbered squares",
-        va="top",
-        fontsize=7,
-        color="0.3",
-    )
-    fig.text(0.68, 0.292, "Completed square", fontsize=8, fontweight="bold")
-    for i, (name, method) in enumerate(methods.items()):
-        fig.text(
-            0.68,
-            0.253 - i * 0.035,
-            f"{name}: {method['success']}/{method['count']} runs",
-            color=method["color"],
-            fontsize=8,
-        )
-    fig.text(0.68, 0.150, "Planning time / step", fontsize=8, fontweight="bold")
-    for i, (name, method) in enumerate(methods.items()):
-        fig.text(
-            0.68,
-            0.111 - i * 0.035,
-            f"{name}: {method['planning_mean_s']:.1f} $\\pm$ {method['planning_std_s']:.1f} s",
-            color=method["color"],
-            fontsize=8,
-        )
+    panel_letter(fig, 0.01, 0.331, "C")
+    for i, (path, _) in enumerate(sampling):
+        image_panel(fig, [0.01 + i * 0.33, 0.006, 0.32, 0.32], path)
     return fig
 
 
@@ -251,7 +216,6 @@ def main(argv=None):
         "--output-dir", type=Path, default=PAPER_RESULTS_DIR / "final_outputs"
     )
     parser.add_argument("--overview-step", type=int, default=19)
-    parser.add_argument("--detail-steps", type=int, nargs=2, default=(12, 19))
     parser.add_argument("--force", action="store_true")
     args = parser.parse_args(argv)
     stem = args.output_dir / "sampling_based_mpc"
@@ -263,10 +227,8 @@ def main(argv=None):
     snapshots = [
         load_snapshot(args.snapshot_dir, "overview", args.overview_step, source)
     ]
-    snapshots += [
-        load_snapshot(args.snapshot_dir, "detail", i, source) for i in args.detail_steps
-    ]
-    fig = build_figure(methods, goals, snapshots)
+    sampling = [load_sampling(args.snapshot_dir, i, source) for i in range(3)]
+    fig = build_figure(methods, goals, snapshots, sampling)
     args.output_dir.mkdir(parents=True, exist_ok=True)
     for path in outputs[:3]:
         fig.savefig(path, dpi=300)
@@ -276,6 +238,7 @@ def main(argv=None):
     provenance = {
         "studio": PAPER_STUDIO.manifest(),
         "snapshots": [metadata for _, metadata in snapshots],
+        "sampling": [metadata for _, metadata in sampling],
         "runs": [
             {"file": p.name, "sha256": sha256(p)}
             for m in methods.values()

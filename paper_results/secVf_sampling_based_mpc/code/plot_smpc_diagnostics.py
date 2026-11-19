@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Appendix figure: iCEM sample refinement and the full planner cost/time sweep."""
+"""Appendix figure: contact details and the full planner cost/time sweep."""
 
 from __future__ import annotations
 
@@ -27,9 +27,9 @@ from paper_style import PAPER_COLORS as COLORS
 from paper_style import PAPER_STYLE_PATH as PAPER_STYLE
 from four_tendon_soft_arm import FourTendonSoftArm
 from smpc import SMPCParams, push_cost
+from plot_smpc_summary import image_panel, load_snapshot, panel_letter
 
 RESULTS_DIR = CASE_DIR / "data"
-FRAMES_DIR = CASE_DIR / "outputs" / "frames"
 OUTPUT_DIR = CASE_DIR / "outputs"
 OUTPUT_FILENAME = "sampling_based_mpc_diagnostics"
 FINAL_OUTPUT_DIR = CASE_DIR.parent / "final_outputs"
@@ -39,12 +39,6 @@ TRADEOFF_RESULTS_DIRS = [RESULTS_DIR / "cmp_seeds" / f"seed{i}" for i in range(3
 OBJECT_FOOTPRINT = 0.05
 TABLE_TOP_Z = 0.0
 CONTACT_SEGMENT_INDEX = 2
-
-ITERATION_IMAGES = [FRAMES_DIR / f"square_icem_seed0_t0_iter{i}.png" for i in range(3)]
-ITERATION_LABELS = ["Iteration 0", "Iteration 1", "Iteration 2"]
-SCENE_ZOOM = 0.9
-SATURATION_THRESHOLD = 0.15
-
 
 @dataclasses.dataclass(frozen=True)
 class RunSpec:
@@ -240,93 +234,6 @@ def plot_planner_tradeoff(
     ax.legend(loc="best", frameon=True)
 
 
-def scene_bbox(image: np.ndarray) -> tuple[int, int, int, int] | None:
-    """Pixel bounding box (x0, x1, y0, y1) of the saturated scene content in an RTX render.
-
-    The rod, object, goal patch and sample cloud are the only saturated colours on a grey
-    table, sky and robot arm.
-    """
-    rgb = image[..., :3]
-    ys, xs = np.nonzero(rgb.max(axis=-1) - rgb.min(axis=-1) > SATURATION_THRESHOLD)
-    if xs.size == 0:
-        return None
-    return int(xs.min()), int(xs.max()), int(ys.min()), int(ys.max())
-
-
-def crop_to_scene(image: np.ndarray, target_aspect: float, zoom: float) -> np.ndarray:
-    """Crop an (H, W, C) render to `target_aspect`, keeping `zoom` x its height, anchored on the scene content."""
-    height, width = image.shape[:2]
-    crop_height = min(height, max(1, round(zoom * height)))
-    crop_width = min(width, max(1, round(crop_height * target_aspect)))
-    crop_height = min(height, max(1, round(crop_width / target_aspect)))
-
-    bbox = scene_bbox(image)
-    if bbox is None:
-        x_center, y_bottom = 0.5 * width, 0.5 * (height + crop_height)
-    else:
-        x0, x1, _, y1 = bbox
-        x_center = 0.5 * (x0 + x1)
-        y_bottom = y1 + 0.04 * crop_height
-
-    x_start = min(max(int(round(x_center - 0.5 * crop_width)), 0), width - crop_width)
-    y_start = min(max(int(round(y_bottom - crop_height)), 0), height - crop_height)
-    return image[y_start : y_start + crop_height, x_start : x_start + crop_width]
-
-
-def draw_image(fig: plt.Figure, ax: plt.Axes, image_path: Path, zoom: float) -> None:
-    """Draw one borderless image, cropped to the axes' aspect ratio so it fills the cell."""
-    fig_width_in, fig_height_in = fig.get_size_inches()
-    bbox = ax.get_position()
-    axes_aspect = (bbox.width * fig_width_in) / (bbox.height * fig_height_in)
-    ax.imshow(crop_to_scene(plt.imread(image_path), axes_aspect, zoom), aspect="auto")
-    ax.set_xticks([])
-    ax.set_yticks([])
-    for spine in ax.spines.values():
-        spine.set_visible(False)
-
-
-def add_image_grid(
-    fig: plt.Figure,
-    cell,
-    image_paths: list[Path],
-    titles: list[str] | None = None,
-    zoom: float = 1.0,
-    ncols: int | None = None,
-) -> None:
-    """Draw a borderless grid of images filling a nested subgridspec cell."""
-    ncols = ncols or len(image_paths)
-    nrows = -(-len(image_paths) // ncols)
-    sub_gs = cell.subgridspec(nrows, ncols, wspace=0.05, hspace=0.3)
-    for i, image_path in enumerate(image_paths):
-        ax = fig.add_subplot(sub_gs[i // ncols, i % ncols])
-        draw_image(fig, ax, image_path, zoom)
-        if titles is not None:
-            ax.set_xlabel(titles[i], fontsize=7)
-
-
-def add_panel_label(
-    fig: plt.Figure, cell, label: str, ax: plt.Axes | None = None
-) -> None:
-    """Draw a bold panel letter at the top-left corner of a gridspec cell.
-
-    Pass `ax` when its fixed aspect shrinks it inside the cell, to put the letter at its drawn top.
-    """
-    bbox = cell.get_position(fig)
-    top = bbox.y1
-    if ax is not None:
-        ax.apply_aspect()
-        top = ax.get_position().y1
-    fig.text(
-        bbox.x0 - 0.015,
-        top + 0.002,
-        label,
-        fontsize=11,
-        fontweight="bold",
-        va="bottom",
-        ha="left",
-    )
-
-
 def save_figure(fig: plt.Figure, output_dir: Path, filename: str) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     fig.savefig(output_dir / f"{filename}.pdf", dpi=300, pad_inches=0.05)
@@ -334,17 +241,18 @@ def save_figure(fig: plt.Figure, output_dir: Path, filename: str) -> None:
 
 
 def main() -> int:
-    """Keep the sampling explanation and full planner sweep in the appendix."""
+    """Keep contact details and the full planner sweep in the appendix."""
     configure_matplotlib()
     robot = FourTendonSoftArm().model
     points = load_seed_mean_points(TRADEOFF_RESULTS_DIRS, build_params(robot))
-    fig = plt.figure(figsize=(18 / 2.54, 8 / 2.54))
-    fig.subplots_adjust(left=0.035, right=0.97, bottom=0.18, top=0.9)
-    grid = fig.add_gridspec(1, 2, width_ratios=(1, 1.15), wspace=0.32)
-    add_image_grid(fig, grid[0, 0], ITERATION_IMAGES, ITERATION_LABELS, zoom=SCENE_ZOOM)
-    add_panel_label(fig, grid[0, 0], "A")
-    plot_planner_tradeoff(points, fig.add_subplot(grid[0, 1]))
-    add_panel_label(fig, grid[0, 1], "B")
+    fig = plt.figure(figsize=(18 / 2.54, 8.6 / 2.54))
+    panel_letter(fig, 0.01, 0.966, "A")
+    for step, y in ((12, 0.490), (19, 0.012)):
+        path, _ = load_snapshot(CASE_DIR / "outputs" / "paper_snapshots", "detail", step,
+                                RESULTS_DIR / "square_icem_seed0.npz")
+        image_panel(fig, [0.01, y, 0.36, 0.471], path)
+    panel_letter(fig, 0.44, 0.966, "B")
+    plot_planner_tradeoff(points, fig.add_axes([0.47, 0.13, 0.51, 0.78]))
     save_figure(fig, FINAL_OUTPUT_DIR, OUTPUT_FILENAME)
     return 0
 

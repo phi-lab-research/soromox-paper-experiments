@@ -79,3 +79,29 @@ def test_linear_material_colors():
     assert rgb("#000000", linear=True) == (0.0, 0.0, 0.0)
     assert rgb("#808080", linear=True) == pytest.approx((0.2158605,) * 3)
     assert rgb("#808080") == pytest.approx((128 / 255,) * 3)
+
+
+def test_sampling_frames_require_matching_iteration_and_source(tmp_path):
+    source = tmp_path / "run.npz"
+    source.write_bytes(b"saved samples")
+    root = tmp_path / "sampling"
+    root.mkdir()
+    path = root / "iteration_0.png"
+    path.write_bytes(b"rendered frame")
+    metadata = {
+        "source_sha256": figure.sha256(source),
+        "studio": figure.PAPER_STUDIO.manifest(),
+        "timestep": 0, "iteration": 0, "horizon_step": 10,
+    }
+    sidecar = path.with_suffix(".json")
+    sidecar.write_text(json.dumps(metadata))
+    assert figure.load_sampling(tmp_path, 0, source)[0] == path
+    metadata["iteration"] = 1
+    sidecar.write_text(json.dumps(metadata))
+    with pytest.raises(ValueError, match="Unexpected sampling iteration"):
+        figure.load_sampling(tmp_path, 0, source)
+    metadata["iteration"] = 0
+    metadata["source_sha256"] = "different run"
+    sidecar.write_text(json.dumps(metadata))
+    with pytest.raises(ValueError, match="trajectory differs"):
+        figure.load_sampling(tmp_path, 0, source)
