@@ -111,6 +111,8 @@ def main():
                             timestep=index, time_s=float(ts[index]), selection='last recorded state in both rollouts',
                             force_n=float(data['force'][index]), goal_distance_m=float(distance), force_limit_n=force_limit,
                             display_transform=transform.tolist(), mount_style=geom.base_plate_style,
+                            end_effector_world=poses[-1, :3, 3].tolist(),
+                            target_world=(data['target_center'] @ display_rotation.T+display_translation).tolist(),
                             current_state_only=True, tip_geometry='contact-model hemisphere',
                             contact_radius_m=float(data['robot_radius']),
                             maximum_penetration_m=float(max(0., -clearance.min())))

@@ -112,8 +112,10 @@ and rigid-arm transforms in the snapshot manifest.
 Use two matched views of the final recorded state, with the nominal HOCLF
 controller first and HOCLF + HOCBF second. Both robots are coral with the same
 dark mount. Show the complete system and all three purple obstacles. A small
-green ring marks the exact projected target position, including when occluded
-by the robot; it is a graphical target marker, not displaced scene geometry.
+green ring marks the exact projected target position. A white dot with a dark
+border marks the terminal backbone point, and a thin dashed segment joins
+the two positions. Both remain visible through the robot. Use a compact marker
+legend; these are graphical overlays at the true camera projections.
 The paired scenes dominate the figure. Separate force and goal-distance plots
 below them share their time range and method encoding. Keep each legend clear
 of data. The force quantity is maximum pairwise normal contact force, with

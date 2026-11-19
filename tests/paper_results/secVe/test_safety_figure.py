@@ -86,3 +86,14 @@ def test_rendered_tip_matches_saved_contact_penetration():
                 signed_distance = -distance[0] if inside_tip else distance[0]
                 visual_penetration = geometry['obs_radii'][1]-signed_distance
                 assert visual_penetration == pytest.approx(saved['force'][-1]/1000, abs=1e-4)
+
+
+def test_position_markers_use_camera_projection():
+    results, _ = figure.load_data(CASE/'data')
+    snapshots = figure.load_snapshots(CASE/'outputs/paper_snapshots', results, CASE/'data/system_parameters.npz')
+    for _, meta in snapshots:
+        np.testing.assert_allclose(figure.project_point(meta['camera_target'], meta),
+                                   [meta['width']/2, meta['height']/2])
+    nominal, constrained = [meta for _, meta in snapshots]
+    assert np.linalg.norm(np.asarray(nominal['end_effector_pixel_xy'])-nominal['target_pixel_xy']) < 1
+    assert np.linalg.norm(np.asarray(constrained['end_effector_pixel_xy'])-constrained['target_pixel_xy']) > 50

@@ -10,6 +10,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.patheffects as pe
+from matplotlib.lines import Line2D
 import numpy as np
 
 CASE = Path(__file__).resolve().parents[1]
@@ -47,6 +48,23 @@ def load_data(data_dir):
     return results, limit
 
 
+def project_point(point, metadata):
+    """Project a world-space point using the recorded renderer camera."""
+    eye = np.asarray(metadata['camera_eye'], dtype=float)
+    forward = np.asarray(metadata['camera_target'])-eye
+    forward /= np.linalg.norm(forward)
+    right = np.cross(forward, [0, 0, 1.])
+    right /= np.linalg.norm(right)
+    up = np.cross(right, forward)
+    relative = np.asarray(point)-eye
+    depth = relative @ forward
+    if depth <= 0:
+        raise ValueError('Marker is behind the camera')
+    scale = metadata['height']/(2*depth*np.tan(np.deg2rad(metadata['vertical_fov_degrees'])/2))
+    return np.array([metadata['width']/2+scale*(relative @ right),
+                     metadata['height']/2-scale*(relative @ up)])
+
+
 def load_snapshots(root, results, parameters_path):
     snapshots = []
     for key in METHODS:
@@ -67,6 +85,11 @@ def load_snapshots(root, results, parameters_path):
     for field in ('camera_eye', 'camera_target', 'display_transform', 'time_s', 'width', 'height'):
         if snapshots[0][1][field] != snapshots[1][1][field]:
             raise ValueError(f'Snapshot comparison differs in {field}')
+    for (key, (_, meta)) in zip(METHODS, snapshots, strict=True):
+        np.testing.assert_allclose(np.linalg.norm(np.asarray(meta['end_effector_world'])-meta['target_world']),
+                                   results[key]['distance'][-1], atol=1e-8)
+        np.testing.assert_allclose(project_point(meta['target_world'], meta), meta['target_pixel_xy'])
+        meta['end_effector_pixel_xy'] = project_point(meta['end_effector_world'], meta).tolist()
     return snapshots
 
 
@@ -86,12 +109,24 @@ def build_figure(results, limit, snapshots):
         x = 2+i*90
         ax = fig.add_axes(rect(x, 43, 86, 75.25))
         ax.imshow(plt.imread(path))
-        # A screen-space marker at the exact 3D target projection remains readable
-        # when the current robot reaches and occludes the target.
-        ax.scatter(*meta['target_pixel_xy'], s=48, facecolors='none', edgecolors=PAPER_STUDIO.target,
-                   linewidths=1.2, path_effects=[pe.Stroke(linewidth=2, foreground='white'), pe.Normal()])
+        current, target = np.asarray(meta['end_effector_pixel_xy']), np.asarray(meta['target_pixel_xy'])
+        ax.plot(*np.stack((current, target)).T, color='#33363B', linewidth=1.0,
+                linestyle=(0, (2, 2)), zorder=3,
+                path_effects=[pe.Stroke(linewidth=2.1, foreground='white'), pe.Normal()])
+        ax.scatter(*target, s=48, facecolors='none', edgecolors=PAPER_STUDIO.target,
+                   linewidths=1.2, zorder=4,
+                   path_effects=[pe.Stroke(linewidth=2, foreground='white'), pe.Normal()])
+        ax.scatter(*current, s=12, facecolors='white', edgecolors='#33363B',
+                   linewidths=.9, zorder=5)
         ax.set_axis_off()
         fig.text((x+43)/width, 121/height, METHODS[key][0], color=METHODS[key][1], ha='center', fontsize=8)
+    fig.legend(handles=[
+        Line2D([], [], marker='o', linestyle='none', markerfacecolor='white',
+               markeredgecolor='#33363B', markersize=4, label='End effector'),
+        Line2D([], [], marker='o', linestyle='none', markerfacecolor='none',
+               markeredgecolor=PAPER_STUDIO.target, markersize=6, label='Target'),
+    ], loc='upper center', bbox_to_anchor=(.5, .995), ncol=2, frameon=False,
+       fontsize=7, handlelength=1, handletextpad=.5, columnspacing=1.5)
     axes = [fig.add_axes(rect(x, 10, 72, 24)) for x in (16, 106)]
     for ax, metric, scale, ylabel in zip(axes, ('force', 'distance'), (1, 1000),
                                        ('Maximum pairwise\nnormal force [N]', 'Goal distance [mm]'), strict=True):
