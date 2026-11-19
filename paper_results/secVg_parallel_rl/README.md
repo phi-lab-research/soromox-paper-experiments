@@ -207,9 +207,11 @@ robot/target pairs; environment indices and base offsets are recorded. Distant
 meshes use fewer cross-sections and sides, while foreground robots retain the
 full mesh resolution. The shared studio floor extends to a backdrop bend at
 24 m for this large scene; all lighting and materials match MPC and safety.
-The final panoramic crop is [0, 185, 1800, 720], retaining the distant rows
-and a small margin above them. Panel A is taller to preserve the foreground
-scale, with the same low camera angle. The population reaches the horizon
+The final panoramic crop is [0, 160, 1800, 700], retaining the distant rows
+and a gray margin above them for the inset A label, while trimming empty
+floor below the foreground mounts. The separate white title
+band is removed; the complete figure is 180 by 119 mm. The foreground scale
+and low camera angle are preserved. The population reaches the horizon
 and continues beyond the lateral frame boundaries.
 
 The tracking detail uses the existing RL model for forward kinematics and

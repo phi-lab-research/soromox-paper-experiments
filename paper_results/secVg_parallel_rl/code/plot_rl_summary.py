@@ -58,15 +58,17 @@ def build_figure(snapshots, groups):
                          'ytick.labelsize': 8, 'legend.fontsize': 7, 'text.usetex': False,
                          'pdf.fonttype': 42, 'svg.fonttype': 'none', 'savefig.bbox': None,
                          'svg.hashsalt': 'soromox-parallel-rl'})
-    width, height = 180, 125
+    width, height = 180, 119
     fig = plt.figure(figsize=(width/25.4, height/25.4), facecolor='white')
     def rect(x, y, w, h):
         return [x/width, y/height, w/width, h/height]
-    for label, x, y in [('A', 2, 120), ('B', 2, 59), ('C', 43, 59)]:
+    for label, x, y in [('B', 2, 59), ('C', 43, 59)]:
         fig.text(x/width, y/height, label, va='bottom', fontsize=11, fontweight='bold')
-    ax_grid = fig.add_axes(rect(2, 64, 176, 176*535/1800))
-    ax_grid.imshow(plt.imread(snapshots[0][0])[185:720])
+    ax_grid = fig.add_axes(rect(2, 64, 176, 176*540/1800))
+    ax_grid.imshow(plt.imread(snapshots[0][0])[160:700])
     ax_grid.set_axis_off()
+    ax_grid.text(.008, .978, 'A', transform=ax_grid.transAxes, va='top',
+                 fontsize=11, fontweight='bold')
     ax_tracking = fig.add_axes(rect(2, 2, 640*54.17/1000, 54.17))
     ax_tracking.imshow(plt.imread(snapshots[1][0])[:, 240:880])
     ax_tracking.set_axis_off()
@@ -112,7 +114,7 @@ def main(argv=None):
     sources = {label: [dict(file=str(p.relative_to(args.csv_dir)), sha256=sha256(p)) for p in paths]
                for label, paths in groups.items()}
     outputs[3].write_text(json.dumps(dict(studio=PAPER_STUDIO.manifest(), snapshots=[m for _, m in snapshots],
-        grid_crop_xyxy=[0, 185, 1800, 720], tracking_crop_xyxy=[240, 0, 880, 1000], reward_sources=sources, reward_processing=dict(interpolation_points=500, aggregation='mean and sample standard deviation',
+        grid_crop_xyxy=[0, 160, 1800, 700], tracking_crop_xyxy=[240, 0, 880, 1000], reward_sources=sources, reward_processing=dict(interpolation_points=500, aggregation='mean and sample standard deviation',
             common_time_window=True, random_sample_points=plot_rl.WANDB_SAMPLE_POINTS,
             random_seed=plot_rl.WANDB_SAMPLE_SEED, gaussian_smoothing_records=plot_rl.WANDB_SMOOTHING)), indent=2)+'\n')
     print(outputs[0])
