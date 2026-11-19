@@ -306,8 +306,8 @@
     {
       "source_file": "square_icem_seed0.npz",
       "source_sha256": "44c5173c2612592f5aae2cc16bab85713b5ba65a7ea52049ead34038b8d9a94c",
-      "renderer_sha256": "a1351c22197ebf4e9cae3cc03358ffd7cb58cb5b970a9283e9860404682094e3",
-      "studio_renderer_sha256": "529dfee5ec796032e526218ce46f457b5978c5076a343287d4475104194d58b6",
+      "renderer_sha256": "757cb16d2073bbbc79388477ecbf1e31fec4349aa59af1dd151bc24ee572ed6b",
+      "studio_renderer_sha256": "d55cf690eaa9a2eb74457df1110c28377a5ebc13f15a0643dc62a1098492e150",
       "studio": {
         "version": "paper-studio-v1",
         "robot": "#F1552E",
@@ -347,9 +347,9 @@
         "rtx_backdrop_emission": 0.08
       },
       "camera_eye": [
-        0.55,
-        -0.45,
-        0.55
+        0.4656,
+        -0.6048000000000001,
+        0.44120000000000004
       ],
       "camera_target": [
         0.04,
@@ -361,23 +361,28 @@
       "horizon_step": 10,
       "sample_count": 200,
       "drawn_cloud_samples": 199,
-      "drawn_object_samples": 199,
-      "sample_opacity": 0.5,
-      "object_opacity": 0.5,
+      "drawn_object_samples": 0,
+      "sample_opacity": 0.12,
+      "object_opacity": 0.12,
       "object_sink": 0.001,
       "object_shape": "box",
       "best_sample_index": 169,
       "width": 1200,
       "height": 900,
+      "solid_configuration": "lowest_cost_prediction",
+      "solid_geometry": "shared_scene_capsules_and_object",
+      "shadow_policy": "solid_configuration_only",
+      "backbone_points": 35,
+      "ring_sides": 12,
       "samples_per_pixel": 128,
       "file": "iteration_0.png",
-      "sha256": "9d702c10f5c55b4697686c187516841ee1eaed288803be8a86e02d3dc84837ea"
+      "sha256": "e7cb30d74df8e3abb75aa0fe1ce91cf28f18cdeafae19aa85a1ac6e1a749f491"
     },
     {
       "source_file": "square_icem_seed0.npz",
       "source_sha256": "44c5173c2612592f5aae2cc16bab85713b5ba65a7ea52049ead34038b8d9a94c",
-      "renderer_sha256": "a1351c22197ebf4e9cae3cc03358ffd7cb58cb5b970a9283e9860404682094e3",
-      "studio_renderer_sha256": "529dfee5ec796032e526218ce46f457b5978c5076a343287d4475104194d58b6",
+      "renderer_sha256": "757cb16d2073bbbc79388477ecbf1e31fec4349aa59af1dd151bc24ee572ed6b",
+      "studio_renderer_sha256": "d55cf690eaa9a2eb74457df1110c28377a5ebc13f15a0643dc62a1098492e150",
       "studio": {
         "version": "paper-studio-v1",
         "robot": "#F1552E",
@@ -417,9 +422,9 @@
         "rtx_backdrop_emission": 0.08
       },
       "camera_eye": [
-        0.55,
-        -0.45,
-        0.55
+        0.4656,
+        -0.6048000000000001,
+        0.44120000000000004
       ],
       "camera_target": [
         0.04,
@@ -431,23 +436,28 @@
       "horizon_step": 10,
       "sample_count": 100,
       "drawn_cloud_samples": 99,
-      "drawn_object_samples": 99,
-      "sample_opacity": 0.5,
-      "object_opacity": 0.5,
+      "drawn_object_samples": 0,
+      "sample_opacity": 0.12,
+      "object_opacity": 0.12,
       "object_sink": 0.001,
       "object_shape": "box",
       "best_sample_index": 26,
       "width": 1200,
       "height": 900,
+      "solid_configuration": "lowest_cost_prediction",
+      "solid_geometry": "shared_scene_capsules_and_object",
+      "shadow_policy": "solid_configuration_only",
+      "backbone_points": 35,
+      "ring_sides": 12,
       "samples_per_pixel": 128,
       "file": "iteration_1.png",
-      "sha256": "4971991967d0fc7ac764448c01c715e95fed25d1a9d171f4ee1e9d8481e7e461"
+      "sha256": "bb56a1620ecacd7f4dd9f89aa151a9d7c90b5447316983c1e034456b617f95c3"
     },
     {
       "source_file": "square_icem_seed0.npz",
       "source_sha256": "44c5173c2612592f5aae2cc16bab85713b5ba65a7ea52049ead34038b8d9a94c",
-      "renderer_sha256": "a1351c22197ebf4e9cae3cc03358ffd7cb58cb5b970a9283e9860404682094e3",
-      "studio_renderer_sha256": "529dfee5ec796032e526218ce46f457b5978c5076a343287d4475104194d58b6",
+      "renderer_sha256": "757cb16d2073bbbc79388477ecbf1e31fec4349aa59af1dd151bc24ee572ed6b",
+      "studio_renderer_sha256": "d55cf690eaa9a2eb74457df1110c28377a5ebc13f15a0643dc62a1098492e150",
       "studio": {
         "version": "paper-studio-v1",
         "robot": "#F1552E",
@@ -487,9 +497,9 @@
         "rtx_backdrop_emission": 0.08
       },
       "camera_eye": [
-        0.55,
-        -0.45,
-        0.55
+        0.4656,
+        -0.6048000000000001,
+        0.44120000000000004
       ],
       "camera_target": [
         0.04,
@@ -501,17 +511,22 @@
       "horizon_step": 10,
       "sample_count": 50,
       "drawn_cloud_samples": 49,
-      "drawn_object_samples": 49,
-      "sample_opacity": 0.5,
-      "object_opacity": 0.5,
+      "drawn_object_samples": 0,
+      "sample_opacity": 0.12,
+      "object_opacity": 0.12,
       "object_sink": 0.001,
       "object_shape": "box",
       "best_sample_index": 0,
       "width": 1200,
       "height": 900,
+      "solid_configuration": "lowest_cost_prediction",
+      "solid_geometry": "shared_scene_capsules_and_object",
+      "shadow_policy": "solid_configuration_only",
+      "backbone_points": 35,
+      "ring_sides": 12,
       "samples_per_pixel": 128,
       "file": "iteration_2.png",
-      "sha256": "0b1710508a236fa44eda819d3411e9fe85107b0c33a97645101c90e217158e3e"
+      "sha256": "c1f377410c0ee50036913f75c498e53145aa99089886b00567c87801d5437dbf"
     }
   ],
   "sampling_crop_xyxy_normalized": [

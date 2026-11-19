@@ -2,7 +2,8 @@
 
 For a saved run's --timestep and CEM --iteration, draws every sample's predicted rod shape at
 --horizon-step, each translucent by cost rank, the lowest-cost sample solid, the best
---max-object-samples predicted object poses, the real executed rod/object, and the goal marker.
+--max-object-samples predicted object poses, and the goal marker. The selected
+prediction uses the same solid scene geometry and materials as the overview.
 Run once per iteration to show the elite population narrowing.
 
 Runs in this section's environment (../pyproject.toml) and needs an RTX GPU. Needs ovrtx 0.4.x:
@@ -31,8 +32,8 @@ import warp as wp  # noqa: E402
 
 import run_experiment  # noqa: E402
 from rendering import (  # noqa: E402
-    CAMERA_EYE,
     CAMERA_TARGET,
+    PAPER_CAMERAS,
     ROD_COLLISION_BODIES,
     ROD_COLOR,
     OBJECT_COLOR,
@@ -49,7 +50,10 @@ from newton_cosserat.gvs import gvs_state_views  # noqa: E402
 
 
 SAMPLE_COLOR = paper_rgb("pre_opt_1")  # translucent candidate predictions
-BEST_PREDICTION_COLOR = ROD_COLOR
+# Keep the overview's viewing direction, moving closer to the tentacle.
+CAMERA_EYE = tuple(np.asarray(CAMERA_TARGET) + 0.56 * (
+    np.asarray(PAPER_CAMERAS["overview"][0]) - np.asarray(PAPER_CAMERAS["overview"][1])
+))
 CAP_LATITUDE_RINGS = 4
 WORST_SAMPLE_OPACITY_FACTOR = 0.1  # worst-ranked sample's opacity relative to --sample-opacity
 OBJECT_MASS = 0.05  # render-only scene, never stepped, so the mass is irrelevant
@@ -339,10 +343,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--height", type=int, default=900)
     parser.add_argument("--samples-per-pixel", type=int, default=128)
     parser.add_argument("--force", action="store_true")
-    parser.add_argument("--backbone-points", type=int, default=25, help="Arc-length samples along each drawn tentacle shape.")
-    parser.add_argument("--ring-sides", type=int, default=8, help="Cross-section polygon resolution (>=3) for the drawn tubes.")
+    parser.add_argument("--backbone-points", type=int, default=35, help="Arc-length samples along each drawn tentacle shape.")
+    parser.add_argument("--ring-sides", type=int, default=12, help="Cross-section polygon resolution (>=3) for the drawn tubes.")
     parser.add_argument(
-        "--sample-opacity", type=float, default=0.5,
+        "--sample-opacity", type=float, default=0.12,
         help="Display opacity in [0, 1] of the best non-best cloud sample; the others scale down by "
              "cost rank to --sample-opacity * 0.1 at the worst.",
     )
@@ -352,9 +356,9 @@ def parse_args() -> argparse.Namespace:
              "--sample-opacity. Defaults to --sample-opacity.",
     )
     parser.add_argument(
-        "--max-object-samples", type=int, default=None,
+        "--max-object-samples", type=int, default=0,
         help="Draw predicted-object boxes for only this many of the best drawn samples (rods unaffected; "
-             "default: all). The boxes' top faces are coplanar, so a ray crosses one per box, and "
+             "default: 0, keeping the selected solid object unobscured). The boxes' top faces are coplanar, so a ray crosses one per box, and "
              "ViewerRTX's bounded transmission-bounce budget turns deep stacks black. Lowering the "
              "opacity makes this worse; capping the box count fixes it.",
     )
@@ -496,13 +500,14 @@ def main() -> None:
                 SAMPLE_COLOR, object_opacity * factor,
             )
 
-    _log_solid_mesh(viewer, "best_sample", rod_mesh(best_idx), BEST_PREDICTION_COLOR)
-    _log_solid_mesh(viewer, "best_sample_object", object_mesh(best_idx, object_half_extent), OBJECT_COLOR)
-    # Prediction overlays must not cast artificial shadows on the physical scene.
-    viewer.shadow_excluded_mesh_names = (*sample_mesh_names, "best_sample", "best_sample_object")
+    # Only the selected configuration casts shadows. Faint candidates remain
+    # shadow-free, like the future-state overlays in the overview.
+    viewer.shadow_excluded_mesh_names = tuple(sample_mesh_names)
 
-    # Real executed rod/object at --timestep, drawn underneath the cloud for context.
-    row = X_final[args.timestep]
+    # Use the overview's native capsules and box for the selected prediction,
+    # with identical materials and soft contact shadows. A second solid current
+    # state would overlap this pose and obscure its surface and cube edges.
+    row = step_X[best_idx, args.horizon_step]
     q_internal = row[:ndof]
     qd_internal = row[ndof : 2 * ndof]
     cube_x, cube_vx, cube_y, cube_vy = row[2 * ndof : 2 * ndof + 4]
@@ -525,7 +530,9 @@ def main() -> None:
     body_qd = state.body_qd.numpy()
     body_q[box_body, 0] = cube_x
     body_q[box_body, 1] = cube_y
-    body_q[box_body, 2:7] = object_pose[args.timestep, 2:7]
+    body_q[box_body, 2:7] = (
+        object_half_extent, 0.0, 0.0, np.sin(row[2 * ndof + 4] / 2), np.cos(row[2 * ndof + 4] / 2)
+    )
     body_qd[box_body, 0] = cube_vx
     body_qd[box_body, 1] = cube_vy
     state.body_q.assign(body_q)
@@ -552,6 +559,10 @@ def main() -> None:
         "sample_opacity": args.sample_opacity, "object_opacity": object_opacity,
         "object_sink": args.object_sink, "object_shape": args.object_shape,
         "best_sample_index": best_idx, "width": args.width, "height": args.height,
+        "solid_configuration": "lowest_cost_prediction",
+        "solid_geometry": "shared_scene_capsules_and_object",
+        "shadow_policy": "solid_configuration_only",
+        "backbone_points": args.backbone_points, "ring_sides": args.ring_sides,
         "samples_per_pixel": args.samples_per_pixel,
         "file": args.output.name,
     }, indent=2) + "\n")

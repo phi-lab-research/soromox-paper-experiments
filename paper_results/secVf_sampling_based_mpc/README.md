@@ -190,9 +190,13 @@ with `--save-samples`). The shared camera is fixed across the three frames:
 OUT_DIR=outputs/paper_snapshots/sampling code/render_sample_cloud.sh data/square_icem_seed0.npz 10 --force
 ```
 
-Each PNG has a JSON sidecar with source and style provenance. The physical robot
-and lowest-cost prediction use coral/gold; translucent blue denotes candidate
-predictions. All candidates are included by default.
+Each PNG has a JSON sidecar with source and style provenance. The lowest-cost
+prediction uses the overview's native tentacle and object geometry, coral/gold
+materials, and soft shadows. Its viewing direction matches the overview.
+Translucent blue tentacles show all other candidates, with opacity decreasing
+from 0.12 to 0.012 by cost rank; these overlays cast no shadows. Only the selected
+object is drawn by default (`--max-object-samples 0`), so overlapping translucent
+boxes do not darken its faces. The selected prediction is the sole solid state.
 
 Export the planner sweep scores once with the section environment (the scored
 JSON is also committed, so composing the main figure needs no JAX):

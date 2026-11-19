@@ -59,10 +59,14 @@ Franka is a display model following the prescribed base pose, not a simulated
 dynamic component of the experiment.
 
 The renderer's `overview` and `detail` camera presets are fixed across saved
-states. `legacy` retains the previous camera for existing uses such as sample
-cloud views. Sampling predictions use translucent blue as an overlay; the
-physical robot and lowest-cost prediction stay coral, and their objects stay
-gold. Candidate overlays share the studio, camera, and roughness across iterations. `--camera-eye` and `--camera-target` can override a preset.
+states. `legacy` retains the previous camera for existing uses. Sampling views
+use the overview's viewing direction with a closer camera, fixed across iterations.
+The lowest-cost prediction is the sole solid configuration, using the same native
+tentacle capsules, gold object, materials, and soft shadows as the overview.
+All other predicted tentacles appear in translucent blue, with opacity decreasing
+from 0.12 to 0.012 by cost rank and shadows disabled. Only the selected predicted
+cube is shown: stacks of translucent candidate cubes obscure its gold material.
+`--camera-eye` and `--camera-target` can override a snapshot preset.
 The overview uses an explicit fixed crop, keeping normalized x in [0.25, 0.84]
 and y in [0.10, 0.90]. It removes empty background while preserving the entire
 robot, base, object, and target with margins. The three sampling views share a
