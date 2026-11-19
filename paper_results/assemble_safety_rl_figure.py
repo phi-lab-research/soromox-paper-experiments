@@ -95,14 +95,14 @@ def shared_crop(frames: list[np.ndarray]) -> tuple[int, int, int, int]:
     )
 
 
-def add_snapshots(fig, videos, times, row_bottoms, titles):
+def add_snapshots(fig, videos, times, row_bottoms, titles, *, height=0.16):
     """Draw two equally scaled rows of four snapshots and explicit timestamps."""
     rows = [[extract_frame(video, time) for time in times] for video in videos]
     left, top, right, bottom = shared_crop([frame for row in rows for frame in row])
     for row, y, title in zip(rows, row_bottoms, titles, strict=True):
-        fig.text(0.2415, y + 0.176, title, ha="center", fontsize=8)
+        fig.text(0.2415, y + height + 0.016, title, ha="center", fontsize=8)
         for index, (frame, time) in enumerate(zip(row, times, strict=True)):
-            ax = fig.add_axes([0.02 + index * 0.112, y, 0.107, 0.16])
+            ax = fig.add_axes([0.02 + index * 0.112, y, 0.107, height])
             ax.imshow(frame[top:bottom, left:right])
             ax.set_anchor("N")
             ax.set_axis_off()
@@ -175,11 +175,30 @@ def build_figure(safety_dir: Path, rl_dir: Path, safety_times, rl_times):
     return fig, safety_videos + rl_videos
 
 
+def build_rl_figure(rl_dir: Path, times):
+    """Separate the existing RL evidence while its full redesign is pending."""
+    fig = plt.figure(figsize=(18 / 2.54, 8.7 / 2.54))
+    videos = [rl_dir / 'outputs' / f'rl_rollout_{name}_1_env.mp4' for name in ('initialized', 'trained')]
+    add_snapshots(fig, videos, times, (0.57, 0.12), ('Random policy', 'Trained policy'), height=0.29)
+    groups = rl_plot.discover_csv_groups(rl_dir / 'data' / 'reward_logs')
+    ax = fig.add_axes([0.55, 0.12, 0.43, 0.78])
+    rl_plot.build_figure(groups, argparse.Namespace(points=500, smooth_scale=0.5), ax=ax)
+    for line in ax.lines:
+        line.set_linewidth(1.1)
+    ax.grid(color='.9', linewidth=.5)
+    for text in ax.get_legend().get_texts():
+        text.set_fontsize(6.5)
+    for label, x in (('A', .015), ('B', .505)):
+        fig.text(x, .97, label, fontsize=11, fontweight='bold', va='top')
+    return fig, videos
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--safety-dir", type=Path, default=SAFETY)
     parser.add_argument("--rl-dir", type=Path, default=RL)
-    parser.add_argument("--output-base", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument("--output-base", type=Path, default=None)
+    parser.add_argument("--rl-only", action="store_true", help="Separate the existing RL panels from safety.")
     parser.add_argument(
         "--safety-times", type=float, nargs=4, default=(0.0, 0.75, 2.0, 7.9)
     )
@@ -188,6 +207,8 @@ def main(argv=None):
     )
     parser.add_argument("--force", action="store_true")
     args = parser.parse_args(argv)
+    if args.output_base is None:
+        args.output_base = ROOT / 'final_outputs' / 'parallel_reinforcement_learning' if args.rl_only else DEFAULT_OUTPUT
     outputs = [
         args.output_base.with_suffix(ext) for ext in (".pdf", ".svg", ".png", ".json")
     ]
@@ -216,9 +237,12 @@ def main(argv=None):
             }
         ),
     ):
-        fig, videos = build_figure(
-            args.safety_dir, args.rl_dir, args.safety_times, args.rl_times
-        )
+        if args.rl_only:
+            fig, videos = build_rl_figure(args.rl_dir, args.rl_times)
+        else:
+            fig, videos = build_figure(
+                args.safety_dir, args.rl_dir, args.safety_times, args.rl_times
+            )
         try:
             for output in outputs[:3]:
                 fig.savefig(output, dpi=300, transparent=True, bbox_inches=None)
@@ -226,8 +250,8 @@ def main(argv=None):
             plt.close(fig)
     sources = (
         videos
-        + sorted((args.safety_dir / "data").glob("rollout_*.npz"))
-        + sorted((args.rl_dir / "data" / "reward_logs").glob("*.csv"))
+        + ([] if args.rl_only else sorted((args.safety_dir / "data").glob("rollout_*.npz")))
+        + sorted((args.rl_dir / "data" / "reward_logs").rglob("*.csv"))
     )
     svg = outputs[1]
     svg.write_text(
@@ -236,7 +260,8 @@ def main(argv=None):
     outputs[3].write_text(
         json.dumps(
             {
-                "safety_times_s": args.safety_times,
+                "safety_times_s": None if args.rl_only else args.safety_times,
+                "rl_only": args.rl_only,
                 "rl_times_s": args.rl_times,
                 "reward_interpolation_points": 500,
                 "reward_smoothing_scale": 0.5,

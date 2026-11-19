@@ -1,0 +1,70 @@
+{
+  "safety_times_s": null,
+  "rl_only": true,
+  "rl_times_s": [
+    0.0,
+    5.0,
+    10.0,
+    15.0
+  ],
+  "reward_interpolation_points": 500,
+  "reward_smoothing_scale": 0.5,
+  "sources": [
+    {
+      "path": "/Users/maximilianstoelzle/Documents/phd/soromox-paper-experiments/paper_results/secVg_parallel_rl/outputs/rl_rollout_initialized_1_env.mp4",
+      "sha256": "15faf4dc9b749608e6ac5b4e84ec1c162df20ef9ee92e843c4798680d6e8b2fd"
+    },
+    {
+      "path": "/Users/maximilianstoelzle/Documents/phd/soromox-paper-experiments/paper_results/secVg_parallel_rl/outputs/rl_rollout_trained_1_env.mp4",
+      "sha256": "b74525d5dfd4c0fdd03465b2aef10bf7b8567d842c6e403c868feed36ebe458f"
+    },
+    {
+      "path": "/Users/maximilianstoelzle/Documents/phd/soromox-paper-experiments/paper_results/secVg_parallel_rl/data/reward_logs/PyElastica-CPU/PyElastica_ec96iq1y.csv",
+      "sha256": "c82b9929008ffa65d6ab05ef301bfc909e486ee886dfdbd96d196b4b9757efdd"
+    },
+    {
+      "path": "/Users/maximilianstoelzle/Documents/phd/soromox-paper-experiments/paper_results/secVg_parallel_rl/data/reward_logs/PyElastica-CPU/PyElastica_iuvnqh06.csv",
+      "sha256": "97fb3cea389c0623654fd9be72209b88d0b0bc1c2c79f4bb833445b1a9652c08"
+    },
+    {
+      "path": "/Users/maximilianstoelzle/Documents/phd/soromox-paper-experiments/paper_results/secVg_parallel_rl/data/reward_logs/SoRoMoX-CPU/SoRoMoX_f13ektvc.csv",
+      "sha256": "44df1246e643ef5b1173aae52df720b4a58d2ff62b615260cb36d507aa1fa18b"
+    },
+    {
+      "path": "/Users/maximilianstoelzle/Documents/phd/soromox-paper-experiments/paper_results/secVg_parallel_rl/data/reward_logs/SoRoMoX-CPU/SoRoMoX_v22nucia.csv",
+      "sha256": "b545d8b08b4d94d3c5b10a4c5e0f99d15007336046a3a7a6bfcb700b01709c17"
+    },
+    {
+      "path": "/Users/maximilianstoelzle/Documents/phd/soromox-paper-experiments/paper_results/secVg_parallel_rl/data/reward_logs/SoRoMoX-GPU-RTX4070/SoRoMoX_128_envs_5bb7vjvt.csv",
+      "sha256": "2f069df2190bfc55d7ed7041031612c0d79b07110fe16da474d2211281825f5e"
+    },
+    {
+      "path": "/Users/maximilianstoelzle/Documents/phd/soromox-paper-experiments/paper_results/secVg_parallel_rl/data/reward_logs/SoRoMoX-GPU-RTX4070/SoRoMoX_128_envs_kx8yi9rv.csv",
+      "sha256": "c236b9999e841dae728a348700aefdf2fc495c6823170fc0b4872fb5dd0874e8"
+    },
+    {
+      "path": "/Users/maximilianstoelzle/Documents/phd/soromox-paper-experiments/paper_results/secVg_parallel_rl/data/reward_logs/SoRoMoX-GPU-RTX4070/SoRoMoX_256_envs_9gf64ofi.csv",
+      "sha256": "8aa7b83bed199dc3676682addbab837145d034925da17525bdb71798db076c9c"
+    },
+    {
+      "path": "/Users/maximilianstoelzle/Documents/phd/soromox-paper-experiments/paper_results/secVg_parallel_rl/data/reward_logs/SoRoMoX-GPU-RTX4070/SoRoMoX_256_envs_yg9ke9ul.csv",
+      "sha256": "3792a39a953753addb3431d9104e3ae2b468a976ecd22587f018188fd27a8143"
+    },
+    {
+      "path": "/Users/maximilianstoelzle/Documents/phd/soromox-paper-experiments/paper_results/secVg_parallel_rl/data/reward_logs/SoRoMoX-GPU-RTX4070/SoRoMoX_512_envs_stx2zi17.csv",
+      "sha256": "5ee1c8eed0e46020d297ab35034cc0fa9011ebda0961e97e9b2005436adec901"
+    },
+    {
+      "path": "/Users/maximilianstoelzle/Documents/phd/soromox-paper-experiments/paper_results/secVg_parallel_rl/data/reward_logs/SoRoMoX-GPU-RTX4070/SoRoMoX_512_envs_z1k87ew8.csv",
+      "sha256": "0fbbd1319362f29871ef297c8a702562ce0766c458ee3f0bba0b8797b3d81f48"
+    },
+    {
+      "path": "/Users/maximilianstoelzle/Documents/phd/soromox-paper-experiments/paper_results/secVg_parallel_rl/data/reward_logs/SoRoMoX-GPU-RTX4070/SoRoMoX_64_envs_2sfsl5op.csv",
+      "sha256": "5197410526b5fce547463f1867895219064624af8fc09c7f824d2c0a43358e26"
+    },
+    {
+      "path": "/Users/maximilianstoelzle/Documents/phd/soromox-paper-experiments/paper_results/secVg_parallel_rl/data/reward_logs/SoRoMoX-GPU-RTX4070/SoRoMoX_64_envs_p60wruuo.csv",
+      "sha256": "ec9fa637779b543ccbe57197cdcbdaae87665e9ff83471d0f10ac4ed61273638"
+    }
+  ]
+}

@@ -1,9 +1,9 @@
 # Shared paper rendering style
 
 `paper_render_style.py` defines `PAPER_STUDIO`, the shared material palette and
-studio-lighting conventions. The manipulation renderer is the first consumer.
-Other application renderers can adopt these settings as their figures are
-revised; their existing outputs have not been restyled in this change.
+studio-lighting conventions. Manipulation and safety share the same
+`paper_rtx_studio.py` lighting and material implementation. Other application
+renderers can adopt these settings as their figures are revised.
 
 | Role | sRGB color |
 | --- | --- |
@@ -106,3 +106,22 @@ Identify the faint states as later recorded motion in the caption, distinct from
 the sampled MPC predictions in panel C. Fixed robot links need no duplicate
 geometry. Exclude ghost geometry from shadows and record times, target, distances,
 and rigid-arm transforms in the snapshot manifest.
+
+## Safety reference
+
+Use two matched views of the final recorded state, with the nominal HOCLF
+controller first and HOCLF + HOCBF second. Both robots are coral with the same
+dark mount. Show the complete system and all three purple obstacles. A small
+green ring marks the exact projected target position, including when occluded
+by the robot; it is a graphical target marker, not displaced scene geometry.
+The paired scenes dominate the figure. Separate force and goal-distance plots
+below them share their time range and method encoding. Keep each legend clear
+of data. The force quantity is maximum pairwise normal contact force, with
+the prescribed 5 N reference retained in the main plot.
+
+Read all plotted values from the saved rollouts. Before rendering, verify
+forward-kinematic goal distance and discretized contact force against the
+stored metrics. Apply one rigid display transform to robot, obstacles, and
+target together. Frame provenance includes the full transform, data hashes,
+camera, common timestamp, and studio. No supplementary diagnostic figure is
+required for this comparison.
