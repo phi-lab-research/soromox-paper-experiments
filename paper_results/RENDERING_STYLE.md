@@ -41,9 +41,11 @@ must not be copied numerically into renderers with different lighting units.
   provides information that the visual and caption cannot convey clearly.
 - Leave about 3 mm between panel letters and the top of the rendered content
   at final print size. Reserve additional room for plot legends and axis labels.
+- Keep identical physical units at equal axis scaling in spatial plots.
+  Change the panel dimensions or surrounding layout to fit them.
 - Keep legends outside the robot and contact regions.
 - Use the shared `paper.mplstyle` for plots and check the composed PDF at its
-  intended print size. The manipulation figure is 180 by 140 mm.
+  intended print size. The manipulation figure is 180 by 145 mm.
 
 ## Manipulation reference
 
@@ -59,10 +61,12 @@ states. `legacy` retains the previous camera for existing uses such as sample
 cloud views. Sampling predictions use translucent blue as an overlay; the
 physical robot and lowest-cost prediction stay coral, and their objects stay
 gold. Candidate overlays share the studio, camera, and roughness across iterations. `--camera-eye` and `--camera-target` can override a preset.
-The whole-system overview is shown in full. The three sampling views share an
-explicit fixed crop, keeping normalized x in [0.05, 0.95] and y in [0.04, 0.88].
-These bounds retain the entire candidate cloud and target and are recorded in
-the figure manifest. The original renders are retained unchanged.
+The overview uses an explicit fixed crop, keeping normalized x in [0.25, 0.84]
+and y in [0.10, 0.90]. It removes empty background while preserving the entire
+robot, base, object, and target with margins. The three sampling views share a
+fixed crop with normalized x in [0.05, 0.95] and y in [0.04, 0.88], retaining
+the entire candidate cloud and target. Both crops are recorded in the figure
+manifest; original renders are retained unchanged.
 
 Snapshot batches use independent static render sessions for each state because
 the pinned RTX backend can lose sample accumulation after runtime pose updates.

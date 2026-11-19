@@ -60,6 +60,12 @@
       "sha256": "fc5a767406d1a1ad446e1faed43df9286a78d7dea145778b1c415d489ac6613d"
     }
   ],
+  "overview_crop_xyxy_normalized": [
+    0.25,
+    0.1,
+    0.84,
+    0.9
+  ],
   "sampling": [
     {
       "source_file": "square_icem_seed0.npz",

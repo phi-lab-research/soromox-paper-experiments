@@ -204,8 +204,10 @@ uv run --project . python code/plot_smpc_summary.py --force
 This writes `../final_outputs/sampling_based_mpc.{pdf,svg,png,json}`. The generator
 needs only NumPy and Matplotlib and can also run on a CPU/macOS environment with
 those packages, without installing the RTX dependencies. It verifies snapshot
-trajectory and studio settings before composing images, retains the entire
-overview frame without stretching or automatic cropping. The sampling views
+trajectory and studio settings before composing images. A fixed overview crop
+(normalized x: 0.25–0.84, y: 0.10–0.90) removes empty background around the
+complete robot without stretching it. The trajectory plot uses equal axis
+scaling; both plots are stacked closely in the upper right. The sampling views
 use one fixed crop (normalized x: 0.05–0.95, y: 0.04–0.88), recorded in the figure
 manifest; the original PNGs remain intact. The generator verifies the scored
 sweep source hashes and computes caption statistics directly from the runs using the same reach test as

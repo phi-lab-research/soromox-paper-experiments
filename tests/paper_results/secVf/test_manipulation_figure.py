@@ -128,3 +128,19 @@ def test_tradeoff_preserves_every_scored_point_and_checks_sources(tmp_path):
     source.write_bytes(b"changed sweep")
     with pytest.raises(ValueError, match="sweep data changed"):
         figure.load_tradeoff(path, tmp_path)
+
+
+def test_composed_trajectory_plot_preserves_equal_distance_scales(tmp_path):
+    image = tmp_path / "render.png"
+    figure.plt.imsave(image, np.ones((20, 20, 3)))
+    goals = np.array([[0.05, -0.1], [0.15, -0.1], [0.15, 0.0], [0.05, 0.0]])
+    methods = {name: {"color": color, "trajectories": [goals] * 3}
+               for name, (_, color) in figure.METHODS.items()}
+    fig = figure.build_figure(methods, goals, [(image, {})], [(image, {})] * 3,
+                              {"points": []})
+    fig.canvas.draw()
+    ax = next(ax for ax in fig.axes if ax.get_xlabel() == "$x$ [mm]")
+    origin, x_step, y_step = ax.transData.transform([[50, -100], [150, -100], [50, 0]])
+    assert np.linalg.norm(x_step - origin) == pytest.approx(np.linalg.norm(y_step - origin))
+    assert ax.get_aspect() == 1.0
+    figure.plt.close(fig)

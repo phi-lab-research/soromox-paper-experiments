@@ -192,6 +192,7 @@ def draw_paths(ax, methods, goals):
 
 
 SAMPLING_CROP = (0.05, 0.95, 0.04, 0.88)
+OVERVIEW_CROP = (0.25, 0.84, 0.10, 0.90)
 
 
 def load_tradeoff(path, data_dir):
@@ -230,27 +231,28 @@ def build_figure(methods, goals, snapshots, sampling, tradeoff):
         "xtick.labelsize": 7, "ytick.labelsize": 7, "legend.fontsize": 7,
         "svg.fonttype": "none", "pdf.fonttype": 42, "savefig.bbox": None,
     })
-    width, height = 180, 140
+    width, height = 180, 145
     fig = plt.figure(figsize=(width / 25.4, height / 25.4), facecolor="white")
     def rect(x, y, w, h):
         return [x / width, y / height, w / width, h / height]
     def letter(x, y, label):
         panel_letter(fig, x / width, y / height, label)
-    letter(2, 135.5, "A")
-    image_panel(fig, rect(2, 57.5, 100, 75), snapshots[0][0])
-    letter(111, 135.5, "B")
-    ax = fig.add_axes(rect(119, 102, 58, 28))
+    letter(2, 138.5, "A")
+    image_panel(fig, rect(2, 52, 82, 83.39), snapshots[0][0], OVERVIEW_CROP)
+    letter(94, 138.5, "B")
+    ax = fig.add_axes(rect(117, 87, 49, 49))
     draw_paths(ax, methods, goals)
-    ax.set_aspect("auto")
+    ax.set(xlim=(32, 168), ylim=(-118, 18), aspect="equal")
+    ax.get_legend().set_bbox_to_anchor((0.5, 1.0))
     ax.set_xticks((50, 100, 150))
     ax.set_yticks((-100, -50, 0))
     for label, offset in zip(ax.texts, ((-7, -6), (5, -6), (5, 2), (-7, 2)), strict=True):
         label.set_position(offset)
-    letter(2, 50, "C")
+    letter(2, 45, "C")
     for i, (path, _) in enumerate(sampling):
-        image_panel(fig, rect(2 + i * 59, 7, 57, 39.9), path, SAMPLING_CROP)
-    letter(111, 88, "D")
-    tradeoff_ax = fig.add_axes(rect(119, 65, 58, 20))
+        image_panel(fig, rect(2 + i * 59, 2, 57, 39.9), path, SAMPLING_CROP)
+    letter(94, 79, "D")
+    tradeoff_ax = fig.add_axes(rect(108, 55, 69, 21))
     draw_tradeoff(tradeoff_ax, tradeoff)
     tradeoff_ax.set_yticks((-1600, -1300, -1000))
     tradeoff_ax.set_ylabel("Mean $-$push cost\nper step", fontsize=7)
@@ -291,6 +293,7 @@ def main(argv=None):
     provenance = {
         "studio": PAPER_STUDIO.manifest(),
         "snapshots": [metadata for _, metadata in snapshots],
+        "overview_crop_xyxy_normalized": [OVERVIEW_CROP[0], OVERVIEW_CROP[2], OVERVIEW_CROP[1], OVERVIEW_CROP[3]],
         "sampling": [metadata for _, metadata in sampling],
         "sampling_crop_xyxy_normalized": [SAMPLING_CROP[0], SAMPLING_CROP[2], SAMPLING_CROP[1], SAMPLING_CROP[3]],
         "planner_tradeoff": tradeoff,
