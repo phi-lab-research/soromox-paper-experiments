@@ -1,0 +1,74 @@
+{
+  "source_file": "square_icem_seed0.npz",
+  "source_sha256": "44c5173c2612592f5aae2cc16bab85713b5ba65a7ea52049ead34038b8d9a94c",
+  "renderer_sha256": "529dfee5ec796032e526218ce46f457b5978c5076a343287d4475104194d58b6",
+  "view": "overview",
+  "camera_eye": [
+    0.98,
+    -0.92,
+    0.84
+  ],
+  "camera_target": [
+    0.22,
+    0.16,
+    0.32
+  ],
+  "franka_base_xy": [
+    0.45,
+    0.45
+  ],
+  "object_shape": "box",
+  "width": 2400,
+  "height": 1800,
+  "samples_per_pixel": 128,
+  "control_dt": 0.05,
+  "studio": {
+    "version": "paper-studio-v1",
+    "robot": "#F1552E",
+    "mount": "#33363B",
+    "target": "#0EAD69",
+    "obstacle": "#7B2CBF",
+    "manipulated_object": "#E7AC42",
+    "surface": "#DEE1E5",
+    "backdrop": "#C9CDD2",
+    "robot_roughness": 0.72,
+    "backdrop_start": 3.0,
+    "backdrop_radius": [
+      2.0,
+      2.0
+    ],
+    "key_rotation_degrees": [
+      29.0,
+      14.0,
+      0.0
+    ],
+    "key_angle_degrees": 28.0,
+    "fill_rotation_degrees": [
+      -30.0,
+      -25.0,
+      0.0
+    ],
+    "rim_rotation_degrees": [
+      40.0,
+      15.0,
+      180.0
+    ],
+    "fill_angle_degrees": 50.0,
+    "rtx_ambient": 60.0,
+    "rtx_key": 1000.0,
+    "rtx_fill": 160.0,
+    "rtx_rim": 160.0,
+    "rtx_backdrop_emission": 0.08
+  },
+  "snapshots": [
+    {
+      "step": 19,
+      "time_s": 0.9500000000000001,
+      "active_goal_xy": [
+        0.15,
+        -0.1
+      ],
+      "file": "frames/step_0019.png"
+    }
+  ]
+}

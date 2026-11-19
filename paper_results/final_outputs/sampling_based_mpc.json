@@ -1,0 +1,146 @@
+{
+  "studio": {
+    "version": "paper-studio-v1",
+    "robot": "#F1552E",
+    "mount": "#33363B",
+    "target": "#0EAD69",
+    "obstacle": "#7B2CBF",
+    "manipulated_object": "#E7AC42",
+    "surface": "#DEE1E5",
+    "backdrop": "#C9CDD2",
+    "robot_roughness": 0.72,
+    "backdrop_start": 3.0,
+    "backdrop_radius": [
+      2.0,
+      2.0
+    ],
+    "key_rotation_degrees": [
+      29.0,
+      14.0,
+      0.0
+    ],
+    "key_angle_degrees": 28.0,
+    "fill_rotation_degrees": [
+      -30.0,
+      -25.0,
+      0.0
+    ],
+    "rim_rotation_degrees": [
+      40.0,
+      15.0,
+      180.0
+    ],
+    "fill_angle_degrees": 50.0,
+    "rtx_ambient": 60.0,
+    "rtx_key": 1000.0,
+    "rtx_fill": 160.0,
+    "rtx_rim": 160.0,
+    "rtx_backdrop_emission": 0.08
+  },
+  "snapshots": [
+    {
+      "step": 19,
+      "time_s": 0.9500000000000001,
+      "active_goal_xy": [
+        0.15,
+        -0.1
+      ],
+      "file": "frames/step_0019.png",
+      "view": "overview",
+      "camera_eye": [
+        0.98,
+        -0.92,
+        0.84
+      ],
+      "camera_target": [
+        0.22,
+        0.16,
+        0.32
+      ],
+      "sha256": "fc5a767406d1a1ad446e1faed43df9286a78d7dea145778b1c415d489ac6613d"
+    },
+    {
+      "step": 12,
+      "time_s": 0.6000000000000001,
+      "active_goal_xy": [
+        0.15,
+        -0.1
+      ],
+      "file": "frames/step_0012.png",
+      "view": "detail",
+      "camera_eye": [
+        0.4,
+        -0.45,
+        0.32
+      ],
+      "camera_target": [
+        0.075,
+        -0.045,
+        0.09
+      ],
+      "sha256": "d312b8e09b660593483c007eb7470683f5ccc556bbdc764019d9ece05b0ac359"
+    },
+    {
+      "step": 19,
+      "time_s": 0.9500000000000001,
+      "active_goal_xy": [
+        0.15,
+        -0.1
+      ],
+      "file": "frames/step_0019.png",
+      "view": "detail",
+      "camera_eye": [
+        0.4,
+        -0.45,
+        0.32
+      ],
+      "camera_target": [
+        0.075,
+        -0.045,
+        0.09
+      ],
+      "sha256": "8ce6d4c4edb6599803ad6b6d95f493cb37478d95a21f2be1f947498df1e5a2eb"
+    }
+  ],
+  "runs": [
+    {
+      "file": "square_icem_seed0.npz",
+      "sha256": "44c5173c2612592f5aae2cc16bab85713b5ba65a7ea52049ead34038b8d9a94c"
+    },
+    {
+      "file": "square_icem_seed1.npz",
+      "sha256": "fbd2d6dadf60545ce757281f749ecf4cba6c57a154176dd0854f28e74a74b005"
+    },
+    {
+      "file": "square_icem_seed2.npz",
+      "sha256": "e26206adf9e29c44fffef0bd8b4620caf50f4c115915d8a2cdd04634806164d1"
+    },
+    {
+      "file": "square_mppi_k800_white_seed0.npz",
+      "sha256": "c749f6f0bbc43a084995cb03377fcc2b1db5323dbde4df0d0c81f746b5bb0adb"
+    },
+    {
+      "file": "square_mppi_k800_white_seed1.npz",
+      "sha256": "2423d62ed02f5c5dbd3afd4c905fc316bdc1eaba4a9f07093963bb44633243e3"
+    },
+    {
+      "file": "square_mppi_k800_white_seed2.npz",
+      "sha256": "800d99e57ca6329e40a179983d68c7239bc8afb1bdadeabe97616dc767db0946"
+    }
+  ],
+  "metrics": {
+    "iCEM": {
+      "success": 3,
+      "count": 3,
+      "planning_mean_s": 26.54310205732816,
+      "planning_std_s": 0.2003080693909273
+    },
+    "MPPI": {
+      "success": 1,
+      "count": 3,
+      "planning_mean_s": 8.503319256046153,
+      "planning_std_s": 0.8362204089446598
+    }
+  },
+  "planning_time": "Mean and population standard deviation across seed means, excluding the first MPC step in each run."
+}

@@ -82,6 +82,12 @@ figure code. This centralizes typography, colors, grids, legends, spines, and
 line defaults without forcing differently sized paper panels to use one font
 scale.
 
+The shared [rendering style](RENDERING_STYLE.md) defines robot, target, obstacle,
+and object materials, studio lighting, and framing conventions through
+`paper_render_style.py`. The manipulation figure is its first consumer and
+includes a complete-system overview, two contact details, and a separate
+appendix figure for sampling diagnostics.
+
 Artifact paths remain case-local. Entry points derive their case directory from
 the script location and default to that case's `data/` and `outputs/`
 directories, so commands work from any current working directory. Shared schemas

@@ -138,44 +138,93 @@ Planner comparison (20 steps toward the single goal):
 
 ## Paper artifacts
 
-Recreate the summary figure from the committed data and renders:
+The main figure gives the complete robot the largest view: **A**, a full
+Franka–tentacle scene; **B**, two matched contact details; **C**, object paths
+for all three seeds of each planner, with success and planning-time summaries.
+The sample clouds and full planner sweep are in a separate appendix figure.
+See [the shared rendering style](../RENDERING_STYLE.md) and
+[`figure_caption.tex`](figure_caption.tex) for the proposed captions.
+
+### Main figure
+
+Render only the required saved states on an RTX host, without rerunning the
+experiment or encoding a video. Run from this section directory with the pinned
+figure environment installed. Both JAX and Newton must use the GPU; do not set
+`JAX_PLATFORMS=cpu` for rendering.
 
 ```bash
-uv run --project . python code/plot_smpc_summary.py
+uv run --project . python code/rendering.py \
+  --run-path data/square_icem_seed0.npz --view overview --snapshot-steps 19 \
+  --width 2400 --height 1800 --samples-per-pixel 128
+
+uv run --project . python code/rendering.py \
+  --run-path data/square_icem_seed0.npz --view detail --snapshot-steps 12 19 \
+  --width 1600 --height 1000 --samples-per-pixel 128
 ```
 
-This writes `../final_outputs/sampling_based_mpc.pdf`. Panel A shows RTX renders of the sample
-cloud across iCEM iterations, B the MPPI-versus-iCEM planning-time and
-performance trade-off, C RTX renders of the Franka-mounted arm pushing along the
-trajectory, and D the top-down square-push trajectories of iCEM and MPPI
-K = 800 over three seeds each. Panel B averages the seeds under
-`data/cmp_seeds/`. LaTeX is used for text when it is installed.
+Images and provenance are written under `outputs/paper_snapshots/{overview,detail}/`.
+Pass `--force` to replace existing snapshots. Steps are saved trajectory row
+indices, including the initial row; physical time is `step * --control-dt`.
+Step 12 is the first transition to the second corner goal, and step 19 is partway
+along that push. The overview uses step 19. These times are fixed across the
+figure and are recorded in the manifests. Batches use a fresh render process
+for each snapshot to preserve path-tracing accumulation in the pinned RTX
+backend; the batch manifest is published after all selected states render.
 
-Render the panel A frames, one per iCEM iteration of MPC step 0, from a run
-saved with `--save-samples`:
+Compose the figure from these snapshots and the six saved square-push runs:
+
+```bash
+uv run --project . python code/plot_smpc_summary.py --force
+```
+
+This writes `../final_outputs/sampling_based_mpc.{pdf,svg,png,json}`. The generator
+needs only NumPy and Matplotlib and can also run on a CPU/macOS environment with
+those packages, without installing the RTX dependencies. It verifies snapshot
+trajectory and studio settings before composing images, retains the entire
+frame without stretching or automatic cropping, and computes success and timing
+annotations directly from the runs using the same reach test as
+`code/summarize_runs.py`. Timing excludes the first MPC step and reports mean
+and population standard deviation across the three seed means. `--data-dir`,
+`--snapshot-dir`, and `--output-dir` allow staged builds. Existing figure outputs
+require `--force` before replacement.
+
+### Appendix diagnostics
+
+```bash
+uv run --project . python code/plot_smpc_diagnostics.py
+```
+
+This writes `../final_outputs/sampling_based_mpc_diagnostics.pdf`, containing the
+three sample-cloud frames and the complete single-goal planner cost/time sweep.
+The sweep requires the SoRoMoX/JAX dependencies for rescoring the saved runs;
+it does not rerun planning. On a CPU-only host, set `JAX_PLATFORMS=cpu`.
+
+Regenerate its sample-cloud frames, if required, from the run saved with
+`--save-samples`:
 
 ```bash
 code/render_sample_cloud.sh data/square_icem_seed0.npz
 ```
 
 An optional second argument selects the drawn horizon step (default 10);
-further arguments pass through to `code/render_sample_cloud.py`. The frames are
-written to `outputs/frames/square_icem_seed0_t0_iter{0,1,2}.png`; set `OUT_DIR`
-to override the directory.
+further arguments pass through to `code/render_sample_cloud.py`. Frames go to
+`outputs/frames/square_icem_seed0_t0_iter{0,1,2}.png`; set `OUT_DIR` to override.
 
-Render a saved run as an RTX path-traced video:
+### Videos and camera overrides
 
 ```bash
 uv run --project . python code/rendering.py --run-path data/square_icem_cylinder.npz \
-  --object-shape cylinder --output outputs/square_icem_cylinder.mp4 --gif
+  --object-shape cylinder --view overview --output outputs/square_icem_cylinder.mp4 --gif
 ```
 
-The renderer reads the saved trajectory without re-simulating and adds a
-decorative Franka FR3 whose end effector follows the arm base; `--franka-base`
-moves it. The numbered PNG frames are kept under `outputs/<stem>_frames/frames/`.
-The committed videos, `outputs/square_icem_{seed0,box100g,cylinder}.{mp4,gif}`,
-are stored in Git LFS.
-Panel C reads frames 75, 189, 318 and 453 directly from
-`outputs/square_icem_seed0_frames/frames/`, so render `data/square_icem_seed0.npz`
-with `--output outputs/square_icem_seed0.mp4` first. Encoding the MP4 and GIF
-requires ffmpeg.
+The renderer reads saved trajectories and adds a decorative Franka FR3 whose
+end effector follows the tentacle base. `--franka-base` changes its placement.
+The default `overview` camera includes the complete system; `detail` focuses on
+the contact region, and `legacy` retains the previous camera. Explicit
+`--camera-eye X Y Z` and `--camera-target X Y Z` override either preset.
+All views use the shared studio materials and lighting.
+
+Numbered video frames are kept under `outputs/<stem>_frames/frames/`. The
+committed legacy videos remain available and are stored with Git LFS. Encoding
+MP4/GIF requires ffmpeg; snapshot-only rendering does not. Sample-cloud scenes
+retain their blue/coral prediction encoding to explain sampling.

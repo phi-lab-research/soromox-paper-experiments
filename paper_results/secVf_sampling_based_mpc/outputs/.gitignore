@@ -7,6 +7,8 @@
 !*.png
 !*.mp4
 !*.gif
+!*.json
+!*.svg
 
 # Of the seed 0 video frames, keep only the four panel C reads.
 square_icem_seed0_frames/frames/*.png
