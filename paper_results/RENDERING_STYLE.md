@@ -121,7 +121,11 @@ the prescribed 5 N reference retained in the main plot.
 
 Read all plotted values from the saved rollouts. Before rendering, verify
 forward-kinematic goal distance and discretized contact force against the
-stored metrics. Apply one rigid display transform to robot, obstacles, and
+stored metrics. The visible tip must include the terminal contact sphere's
+forward hemisphere: a flat face omits the geometry responsible for contact
+in this case. Check rendered mesh penetration against the saved force and
+penalty stiffness, and identify this contact geometry in the caption.
+Apply one rigid display transform to robot, obstacles, and
 target together. Frame provenance includes the full transform, data hashes,
 camera, common timestamp, and studio. No supplementary diagnostic figure is
 required for this comparison.

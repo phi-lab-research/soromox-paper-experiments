@@ -3,7 +3,7 @@
   "source_file": "rollout_with_cbf.npz",
   "source_sha256": "11593ea79fc7bd64860296525fec2226bf1d27d2ab6c9b3836bad96ebe6731fe",
   "parameters_sha256": "c1377c2a88bd7131c7e36672a003776b721a4cf5e0ad014e37e025be4c8e69f6",
-  "exporter_sha256": "e09033f938d4f24db7019908498acfb28e71084ed482b8d9536b7082591f0db6",
+  "exporter_sha256": "4327fd4ad87b0f714c16237d2424b6b773b817992900467bb410aecd93e9d95d",
   "timestep": 7999,
   "time_s": 7.9990000000000006,
   "selection": "last recorded state in both rollouts",
@@ -38,6 +38,9 @@
   ],
   "mount_style": "flared_collar",
   "current_state_only": true,
+  "tip_geometry": "contact-model hemisphere",
+  "contact_radius_m": 0.036,
+  "maximum_penetration_m": 0.004986682047354116,
   "target_pixel_xy": [
     990.1798769649905,
     1193.1363113556529
@@ -96,6 +99,6 @@
   "samples_per_pixel": 128,
   "renderer_sha256": "dfeb8b0326da889530d6df456d12ef09af9ecc4af7f04a32665a6ce74a4d2ab0",
   "studio_renderer_sha256": "9106744ab59835ba033904ec3a4d79d3a91564c6504ba508b7f6cf709a1eeaa5",
-  "geometry_sha256": "0619e909bc72d072db34a0fecd4213ad7816bf998041c2c976de84f0ff2d9508",
+  "geometry_sha256": "2a6b4e0bea31ed8cf858a4c25f884f7295b0d69f5359464c68755bb103b3ccb8",
   "file": "with_cbf.png"
 }

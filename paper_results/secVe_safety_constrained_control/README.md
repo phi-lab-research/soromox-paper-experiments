@@ -25,8 +25,13 @@ JAX_PLATFORMS=cpu python code/export_safety_scene.py
 The saved physics frame has positive-z gravity. One rigid transform rotates
 the whole scene into the studio's z-up frame and translates the base to
 0.45 m. The robot, obstacles, and target receive the same transform. The
-mount is SoRoMoX's existing default mounting geometry. No predicted states,
-decorative obstacles, or additional hardware are introduced.
+mount is SoRoMoX's existing default mounting geometry. The distal end is rounded with the 36 mm-radius hemisphere used by the
+contact model at the final backbone sample. A flat terminal face would hide
+the force-producing contact: both active contacts lie beyond that face.
+The corresponding penetrations are 33.6121 mm (HOCLF) and 4.98668 mm
+(HOCLF + HOCBF), using the saved 1000 N/m penalty stiffness. The geometry
+regression check compares these values with distances to the rendered mesh.
+No predicted states, decorative obstacles, or additional hardware are introduced.
 
 Render each geometry file in a fresh process in the pinned RTX environment
 documented in `../secVf_sampling_based_mpc/README.md`:

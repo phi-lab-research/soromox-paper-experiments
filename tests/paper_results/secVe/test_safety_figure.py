@@ -58,3 +58,31 @@ def test_output_requires_explicit_replacement(tmp_path):
     with pytest.raises(FileExistsError, match='--force'):
         figure.main(['--output-dir', str(tmp_path)])
     assert path.read_bytes() == b'existing'
+
+
+def test_rendered_tip_matches_saved_contact_penetration():
+    """The visible surface must reproduce the force-producing tip contact."""
+    import sys
+    import trimesh
+
+    sys.path.insert(0, str(CASE/'code'))
+    from pcs_cf_cbf_clf_common import build_simulation_setup
+    robot = build_simulation_setup().robot
+    for key in figure.METHODS:
+        with np.load(CASE/f'data/rollout_{key}.npz') as saved:
+            tip_pose = np.asarray(robot.forward_kinematics_abscissa_batched(saved['q_ts'][-1], saved['s_ps']))[-1]
+            with np.load(CASE/f'outputs/paper_snapshots/{key}_geometry.npz') as geometry:
+                meta = json.loads(str(geometry['metadata']))
+                transform = np.asarray(meta['display_transform'])
+                tip = (transform @ tip_pose)[:3, 3]
+                axis = (transform @ tip_pose)[:3, 0]
+                mesh = trimesh.Trimesh(geometry['robot_points'], geometry['robot_indices'], process=True)
+                assert mesh.is_watertight
+                center = geometry['obs_centers'][1]
+                # Both active contacts lie ahead of the terminal cross-section.
+                assert (center-tip) @ axis > 0
+                _, distance, _ = trimesh.proximity.closest_point_naive(mesh, center[None])
+                inside_tip = np.linalg.norm(center-tip) < saved['robot_radius']
+                signed_distance = -distance[0] if inside_tip else distance[0]
+                visual_penetration = geometry['obs_radii'][1]-signed_distance
+                assert visual_penetration == pytest.approx(saved['force'][-1]/1000, abs=1e-4)

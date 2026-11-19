@@ -26,7 +26,7 @@ def sha256(path):
 
 
 def tube_mesh(poses, radius, sides=48):
-    """Sweep the circular PCS cross-section through its saved material frames."""
+    """Sweep the PCS body and close its tip with the contact-model hemisphere."""
     angles = np.arange(sides) * 2 * np.pi / sides
     radial = np.stack((np.zeros(sides), np.cos(angles), np.sin(angles)), axis=1)
     normals = np.einsum('nij,kj->nki', poses[:, :3, :3], radial)
@@ -37,14 +37,31 @@ def tube_mesh(poses, radius, sides=48):
         for j in range(sides):
             a, b = i*sides+j, i*sides+(j+1) % sides
             faces.extend(((a, b, b+sides), (a, b+sides, a+sides)))
-    # Separate cap vertices preserve a crisp, flat PCS end face.
-    for end, sign in ((0, -1), (-1, 1)):
+    # The contact model surrounds the terminal backbone sample with a sphere.
+    # Continue the tube with its forward hemisphere, not a flat terminal face.
+    tip, axis = poses[-1, :3, 3], poses[-1, :3, 0]
+    last_ring = (len(poses)-1)*sides
+    for latitude in np.linspace(0, np.pi/2, 25)[1:-1]:
+        cap_normals = np.cos(latitude)*normals[(len(poses)-1)*sides:len(poses)*sides] + np.sin(latitude)*axis
         start = len(points)
-        points = np.vstack((points, rings[end], poses[end, :3, 3]))
-        normals = np.vstack((normals, np.tile(sign*poses[end, :3, 0], (sides+1, 1))))
+        points = np.vstack((points, tip+radius*cap_normals))
+        normals = np.vstack((normals, cap_normals))
         for j in range(sides):
-            tri = (start+sides, start+j, start+(j+1) % sides)
-            faces.append(tri if sign == 1 else tri[::-1])
+            a, b = last_ring+j, last_ring+(j+1) % sides
+            c, d = start+j, start+(j+1) % sides
+            faces.extend(((a, b, d), (a, d, c)))
+        last_ring = start
+    pole = len(points)
+    points = np.vstack((points, tip+radius*axis))
+    normals = np.vstack((normals, axis))
+    for j in range(sides):
+        faces.append((last_ring+j, last_ring+(j+1) % sides, pole))
+    # The mounting plate hides the flat proximal closure.
+    start = len(points)
+    points = np.vstack((points, rings[0], poses[0, :3, 3]))
+    normals = np.vstack((normals, np.tile(-poses[0, :3, 0], (sides+1, 1))))
+    for j in range(sides):
+        faces.append((start+(j+1) % sides, start+j, start+sides))
     return points, np.asarray(faces), normals
 
 
@@ -94,7 +111,9 @@ def main():
                             timestep=index, time_s=float(ts[index]), selection='last recorded state in both rollouts',
                             force_n=float(data['force'][index]), goal_distance_m=float(distance), force_limit_n=force_limit,
                             display_transform=transform.tolist(), mount_style=geom.base_plate_style,
-                            current_state_only=True)
+                            current_state_only=True, tip_geometry='contact-model hemisphere',
+                            contact_radius_m=float(data['robot_radius']),
+                            maximum_penetration_m=float(max(0., -clearance.min())))
             np.savez_compressed(args.output_dir/f'{method}_geometry.npz',
                                 robot_points=points.astype(np.float32), robot_indices=faces.astype(np.int32), robot_normals=normals.astype(np.float32),
                                 mount_points=mount_v.astype(np.float32), mount_indices=mount_f.astype(np.int32), mount_normals=mount_n.astype(np.float32),

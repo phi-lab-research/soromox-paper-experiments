@@ -56,6 +56,8 @@ def load_snapshots(root, results, parameters_path):
             raise ValueError('Snapshot data differ from plotted data')
         if meta['studio'] != json.loads(json.dumps(PAPER_STUDIO.manifest())):
             raise ValueError('Snapshot studio is stale')
+        if meta.get('tip_geometry') != 'contact-model hemisphere':
+            raise ValueError('Snapshot tip does not represent the contact-model hemisphere')
         if not meta['current_state_only'] or meta['timestep'] != len(results[key]['ts'])-1:
             raise ValueError('Expected the final recorded current state')
         np.testing.assert_allclose(meta['time_s'], results[key]['ts'][-1])
