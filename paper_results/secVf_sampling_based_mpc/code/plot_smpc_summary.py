@@ -250,13 +250,14 @@ def build_figure(methods, goals, snapshots, sampling, tradeoff):
     letter(2, 135.5, "A")
     image_panel(fig, rect(2, 49, 82, 83.39), snapshots[0][0], OVERVIEW_CROP)
     letter(94, 135.5, "B")
-    ax = fig.add_axes(rect(103, 83, 49, 49))
+    ax = fig.add_axes(rect(115.5, 83, 49, 49))
     draw_paths(ax, methods, goals)
     ax.set(xlim=(32, 168), ylim=(-118, 18), aspect="equal")
     handles = [Line2D([], [], color=m["color"], lw=1.5, label=name)
                for name, m in methods.items()]
-    ax.legend(handles=handles, loc="center left", bbox_to_anchor=(1.01, 0.5),
-              frameon=False, handlelength=1.3, handletextpad=0.5, borderaxespad=0)
+    ax.legend(handles=handles, loc="lower center", bbox_to_anchor=(0.5, 1.0),
+              ncol=2, frameon=False, handlelength=1.3, handletextpad=0.5,
+              columnspacing=1, borderaxespad=0.4)
     ax.set_xticks((50, 100, 150))
     ax.set_yticks((-100, -50, 0))
     for label, offset in zip(ax.texts, ((-7, -6), (5, -6), (5, 2), (-7, 2)), strict=True):

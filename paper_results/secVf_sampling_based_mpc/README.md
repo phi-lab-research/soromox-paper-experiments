@@ -141,8 +141,8 @@ Planner comparison (20 steps toward the single goal):
 The main figure gives the complete robot the largest view: **A**, a full
 Franka–tentacle scene; **B**, object paths for all three seeds of each planner;
 **C**, three iCEM sampling iterations across the full bottom row; **D**, the
-planner tradeoff stacked beneath the trajectory plot with aligned left edges
-in the upper right. The trajectory legend sits beside its plot; the tradeoff
+planner tradeoff stacked beneath the centered trajectory plot in the upper
+right. The trajectory legend sits above its plot; the tradeoff
 legend identifies all three marker families inside unused plot space. The two matched contact details and the
 fully annotated planner sweep are in the appendix. Panel letters,
 axis labels, and legends remain in the figures; explanations, seed counts,

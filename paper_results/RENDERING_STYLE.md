@@ -52,8 +52,7 @@ must not be copied numerically into renderers with different lighting units.
 ## Manipulation reference
 
 The main manipulation figure uses one complete Franka–tentacle view, object
-paths and the planner tradeoff stacked with aligned left edges in the upper
-right, and three matched
+paths centered above the wider planner tradeoff in the upper right, and three matched
 iCEM sampling views across the full bottom row. Two matched
 contact details and the fully annotated planner sweep appear in the appendix. Robot poses come from the saved iCEM seed-0 trajectory; the
 Franka is a display model following the prescribed base pose, not a simulated
@@ -87,6 +86,10 @@ camera, and studio settings. Re-render snapshots after changing studio settings.
 Reproduction commands and the panel captions are in
 [`secVf_sampling_based_mpc/README.md`](secVf_sampling_based_mpc/README.md).
 
-The trajectory legend sits beside the square plot; the tradeoff legend identifies
+The trajectory legend sits above the centered square plot; the tradeoff legend identifies
 all three marker families in unused plot space. Sampling views carry iteration
 identifiers, with candidate counts and quantitative differences in the caption.
+
+Keep the main overview at a single recorded state. Overlaying later states
+with goals that have already advanced can confuse the contact sequence. Use
+separate, time-identified views when that sequence needs to be explained.
