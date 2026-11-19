@@ -191,4 +191,3 @@ class PaperViewerRTX(newton.viewer.ViewerRTX):
             excludes = UsdLux.LightAPI(self.stage.GetPrimAtPath(light_path)).GetShadowLinkCollectionAPI().CreateExcludesRel()
             for mesh_path in mesh_paths:
                 excludes.AddTarget(Sdf.Path(mesh_path))
-
