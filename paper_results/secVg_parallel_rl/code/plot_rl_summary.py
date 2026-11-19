@@ -1,4 +1,4 @@
-"""Compose two complete parallel-rollout grids and the existing training evidence."""
+"""Compose a close parallel grid, trained-policy tracking, and learning curves."""
 
 import argparse
 import hashlib
@@ -9,6 +9,7 @@ import sys
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
 import numpy as np
 
 CASE = Path(__file__).resolve().parents[1]
@@ -28,56 +29,27 @@ def load_snapshots(snapshot_dir, source):
     with np.load(source) as data:
         ts = data['ts']
         num_envs = data['q_ts'].shape[1]
-    for i in (1, 2):
-        path = snapshot_dir/f'grid_{i}.png'
+    for name, ids in [('grid_close', list(range(num_envs))), ('tracking', [0])]:
+        path = snapshot_dir/f'{name}.png'
+        geometry = snapshot_dir/f'{name}_geometry.npz'
         metadata = json.loads(path.with_suffix('.json').read_text())
         if metadata['source_sha256'] != sha256(source):
-            raise ValueError('Grid snapshot source differs from the saved rollout')
+            raise ValueError('Snapshot source differs from the saved rollout')
         if (metadata['policy'] != 'trained' or not metadata['current_state_only']
-                or metadata['num_envs'] != num_envs or metadata['environment_indices'] != list(range(num_envs))):
-            raise ValueError('Expected every saved environment from the trained-policy rollout')
+                or (name == 'tracking' and metadata['environment_indices'] != ids)
+                or (name == 'grid_close' and set(metadata['environment_indices']) != set(ids))):
+            raise ValueError('Unexpected policy or selected environments')
         np.testing.assert_allclose(metadata['time_s'], ts[metadata['timestep']])
         if metadata['studio'] != json.loads(json.dumps(PAPER_STUDIO.manifest())):
-            raise ValueError('Grid snapshot studio is stale')
+            raise ValueError('Snapshot studio is stale')
+        if sha256(geometry) != metadata['geometry_sha256']:
+            raise ValueError('Geometry differs from the rendered snapshot')
         snapshots.append((path, dict(metadata, image_sha256=sha256(path))))
-    for key in ('camera_eye', 'camera_target', 'width', 'height', 'vertical_fov_degrees', 'base_offsets', 'grid_shape'):
-        if snapshots[0][1][key] != snapshots[1][1][key]:
-            raise ValueError(f'Grid comparison differs in {key}')
-    if snapshots[0][1]['time_s'] >= snapshots[1][1]['time_s']:
-        raise ValueError('Snapshots must show increasing rollout times')
+    with np.load(snapshot_dir/'tracking_geometry.npz') as data:
+        np.testing.assert_array_equal(data['path_times'], ts)
+        if len(data['actual_path']) != len(ts) or len(data['target_path']) != len(ts):
+            raise ValueError('Tracking paths must cover the complete saved rollout')
     return snapshots
-
-
-def shared_grid_crop(snapshots):
-    """Crop unused background using all geometry in both matched snapshots."""
-    bounds = []
-    for path, meta in snapshots:
-        geometry = path.with_name(path.stem+'_geometry.npz')
-        if sha256(geometry) != meta['geometry_sha256']:
-            raise ValueError('Grid geometry differs from the rendered snapshot')
-        with np.load(geometry) as data:
-            corners = np.array([[x, y, z] for x in (-1, 1) for y in (-1, 1) for z in (-1, 1)])
-            points = np.vstack((data['robot_points'], data['mount_points'],
-                (data['targets'][:, None]+meta['target_radius_m']*corners).reshape(-1, 3)))
-        eye = np.asarray(meta['camera_eye'])
-        forward = np.asarray(meta['camera_target'])-eye
-        forward /= np.linalg.norm(forward)
-        right = np.cross(forward, [0., 0., 1.])
-        right /= np.linalg.norm(right)
-        up = np.cross(right, forward)
-        xyz = (points-eye) @ np.stack((right, up, forward), axis=1)
-        scale = meta['height']/(2*xyz[:, 2]*np.tan(np.deg2rad(meta['vertical_fov_degrees'])/2))
-        pixels = np.column_stack((meta['width']/2+scale*xyz[:, 0], meta['height']/2-scale*xyz[:, 1]))
-        bounds.extend((pixels.min(axis=0), pixels.max(axis=0)))
-    bounds = np.asarray(bounds)
-    low, high = bounds.min(axis=0)-32, bounds.max(axis=0)+32
-    center = (low+high)/2
-    width = max(high[0]-low[0], (high[1]-low[1])*4/3)
-    size = np.array([width, width*3/4])
-    low, high = center-size/2, center+size/2
-    if np.any(low < 0) or high[0] > meta['width'] or high[1] > meta['height']:
-        raise ValueError('Crop would clip the matched scene; refit the camera')
-    return [int(np.floor(low[0])), int(np.floor(low[1])), int(np.ceil(high[0])), int(np.ceil(high[1]))]
 
 
 def build_figure(snapshots, groups):
@@ -86,21 +58,24 @@ def build_figure(snapshots, groups):
                          'ytick.labelsize': 7, 'legend.fontsize': 7, 'text.usetex': False,
                          'pdf.fonttype': 42, 'svg.fonttype': 'none', 'savefig.bbox': None,
                          'svg.hashsalt': 'soromox-parallel-rl'})
-    width, height = 180, 134
+    width, height = 180, 122
     fig = plt.figure(figsize=(width/25.4, height/25.4), facecolor='white')
     def rect(x, y, w, h):
         return [x/width, y/height, w/width, h/height]
-    fig.text(2/width, 129/height, 'A', va='bottom', fontsize=11, fontweight='bold')
-    fig.text(.5, 129/height, '64 parallel environments', va='bottom', ha='center', fontsize=8)
-    left, top, right, bottom = shared_grid_crop(snapshots)
-    for i, (path, metadata) in enumerate(snapshots):
-        x = 2+i*90
-        ax = fig.add_axes(rect(x, 58, 86, 64.5))
-        ax.imshow(plt.imread(path)[top:bottom, left:right])
-        ax.set_axis_off()
-        fig.text((x+43)/width, 124/height, f"$t={metadata['time_s']:g}$ s", ha='center', fontsize=8)
-    fig.text(2/width, 51/height, 'B', va='bottom', fontsize=11, fontweight='bold')
-    ax = fig.add_axes(rect(15, 10, 162, 39))
+    for label, x, y in [('A', 2, 117), ('B', 2, 60), ('C', 73, 60)]:
+        fig.text(x/width, y/height, label, va='bottom', fontsize=11, fontweight='bold')
+    ax_grid = fig.add_axes(rect(2, 66, 176, 176*485/1800))
+    ax_grid.imshow(plt.imread(snapshots[0][0])[235:720])
+    ax_grid.set_axis_off()
+    ax_tracking = fig.add_axes(rect(2, 3, 65, 54.17))
+    ax_tracking.imshow(plt.imread(snapshots[1][0]))
+    ax_tracking.set_axis_off()
+    fig.legend(handles=[
+        Line2D([], [], color=PAPER_STUDIO.target, ls='--', label='Target'),
+        Line2D([], [], color=plot_rl.COLORS['pre_opt_1'], label='End effector'),
+    ], loc='center', bbox_to_anchor=(38/width, 62/height), ncol=2,
+       frameon=False, fontsize=6.5, handlelength=1.5, columnspacing=1.)
+    ax = fig.add_axes(rect(83, 11, 94, 45))
     plot_rl.build_figure(groups, argparse.Namespace(points=500, episodes_per_point=0), ax=ax)
     for line in ax.lines:
         line.set_linewidth(1.25)
@@ -109,7 +84,7 @@ def build_figure(snapshots, groups):
     ax.set(ylabel='Mean episode return', ylim=(-60, 130), yticks=(-50, 0, 50, 100))
     ax.grid(color='.9', linewidth=.5)
     ax.set_axisbelow(True)
-    ax.legend(loc='lower right', ncol=2, frameon=False, handlelength=1.8, columnspacing=1.5, labelspacing=.35)
+    ax.legend(loc='lower right', frameon=False, fontsize=6, handlelength=1.7, labelspacing=.3)
     return fig
 
 
@@ -137,7 +112,7 @@ def main(argv=None):
     sources = {label: [dict(file=str(p.relative_to(args.csv_dir)), sha256=sha256(p)) for p in paths]
                for label, paths in groups.items()}
     outputs[3].write_text(json.dumps(dict(studio=PAPER_STUDIO.manifest(), snapshots=[m for _, m in snapshots],
-        shared_crop_xyxy=shared_grid_crop(snapshots), reward_sources=sources, reward_processing=dict(interpolation_points=500, aggregation='mean and sample standard deviation',
+        grid_crop_xyxy=[0, 235, 1800, 720], reward_sources=sources, reward_processing=dict(interpolation_points=500, aggregation='mean and sample standard deviation',
             common_time_window=True, random_sample_points=plot_rl.WANDB_SAMPLE_POINTS,
             random_seed=plot_rl.WANDB_SAMPLE_SEED, gaussian_smoothing_records=plot_rl.WANDB_SMOOTHING)), indent=2)+'\n')
     print(outputs[0])

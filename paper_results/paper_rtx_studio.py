@@ -36,7 +36,7 @@ class PaperViewerRTX(newton.viewer.ViewerRTX):
 
     shadow_excluded_mesh_names: tuple[str, ...] = ()
 
-    def __init__(self, *args, samples_per_pixel: int, **kwargs):
+    def __init__(self, *args, samples_per_pixel: int, backdrop_start: float | None = None, **kwargs):
         """Configure the path-tracer sample budget.
 
         Args:
@@ -44,6 +44,9 @@ class PaperViewerRTX(newton.viewer.ViewerRTX):
         """
         if samples_per_pixel < 1:
             raise ValueError("samples_per_pixel must be positive")
+        self.backdrop_start = STUDIO_BACKDROP_START if backdrop_start is None else float(backdrop_start)
+        if not np.isfinite(self.backdrop_start) or self.backdrop_start <= 0:
+            raise ValueError("backdrop_start must be positive and finite")
         self.samples_per_pixel = samples_per_pixel
         super().__init__(*args, environment="none", async_rendering=False, **kwargs)
         self.show_ui = False
@@ -119,7 +122,7 @@ class PaperViewerRTX(newton.viewer.ViewerRTX):
         shader.CreateInput("emissiveColor", Sdf.ValueTypeNames.Color3f).Set(Gf.Vec3f(STUDIO_BACKDROP_EMISSION))
         material.CreateSurfaceOutput().ConnectToSource(shader.ConnectableAPI(), "surface")
 
-        bend = STUDIO_BACKDROP_START
+        bend = self.backdrop_start
         radius_y, radius_z = STUDIO_BACKDROP_RADIUS
         span = max(20.0, 4.0 * (bend + radius_y))
         profile = [(-span, 0.0), (bend, 0.0)]

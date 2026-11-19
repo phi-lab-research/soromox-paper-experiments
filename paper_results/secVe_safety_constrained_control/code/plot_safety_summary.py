@@ -21,7 +21,7 @@ from paper_style import PAPER_COLORS, PAPER_STYLE_PATH
 
 METHODS = {
     'without_cbf': ('HOCLF', PAPER_COLORS['pre_opt_1'], '-'),
-    'with_cbf': ('HOCLF + HOCBF', PAPER_COLORS['post_opt_1'], '--'),
+    'with_cbf': ('HOCLF + HOCBF', PAPER_COLORS['post_opt_1'], '-'),
 }
 
 

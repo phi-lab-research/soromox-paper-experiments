@@ -1,7 +1,6 @@
-"""Verify the full saved grid, matched views, and retained training evidence."""
+"""Verify recorded tracking evidence and explicitly tiled display geometry."""
 
 import importlib.util
-import json
 from pathlib import Path
 import sys
 
@@ -18,31 +17,46 @@ SOURCE = CASE/'data/traj/rl_rollout_trained_64_envs.npz'
 SNAPSHOTS = CASE/'outputs/paper_snapshots'
 
 
-def test_complete_grid_preserves_saved_targets_and_time():
+def test_grid_repetition_is_declared_and_preserves_targets():
     snapshots = summary.load_snapshots(SNAPSHOTS, SOURCE)
-    with np.load(SOURCE) as saved:
-        for path, meta in snapshots:
-            assert meta['num_envs'] == 64
-            with np.load(path.with_name(path.stem+'_geometry.npz')) as scene:
-                np.testing.assert_allclose(scene['targets']-meta['base_offsets'], saved['ball_ts'][meta['timestep']], atol=1e-12)
-                assert len(scene['targets']) == 64
-                assert meta['time_s'] in (5., 15.)
-                assert np.isfinite(scene['robot_points']).all()
-    left, top, right, bottom = summary.shared_grid_crop(snapshots)
-    assert 0 <= left < right <= 1600 and 0 <= top < bottom <= 1200
-    # The production crop includes every projected mesh/target bound plus margin.
-    assert (right-left)/(bottom-top) == pytest.approx(4/3, abs=.003)
+    _, meta = snapshots[0]
+    assert meta['num_envs'] == 64 and meta['display_tiling']
+    assert meta['display_instance_count'] > 64
+    assert set(meta['environment_indices']) == set(range(64))
+    with np.load(SOURCE) as saved, np.load(SNAPSHOTS/'grid_close_geometry.npz') as scene:
+        np.testing.assert_allclose(scene['targets']-meta['base_offsets'],
+                                   saved['ball_ts'][meta['timestep'], meta['environment_indices']], atol=1e-12)
+    direction = np.asarray(meta['camera_target'])-meta['camera_eye']
+    assert abs(np.rad2deg(np.arctan2(direction[2], np.linalg.norm(direction[:2])))) < 15
+    offsets = np.asarray(meta['base_offsets'])
+    assert np.ptp(offsets[:, 0]) > 20 and np.ptp(offsets[:, 1]) > 10
 
 
-def test_reject_mismatched_grid_camera(tmp_path):
-    for i in (1, 2):
-        p = SNAPSHOTS/f'grid_{i}.json'
-        meta = json.loads(p.read_text())
-        if i == 2:
-            meta['camera_eye'][0] += .1
-        (tmp_path/p.name).write_text(json.dumps(meta))
-        (tmp_path/f'grid_{i}.png').write_bytes(b'image')
-    with pytest.raises(ValueError, match='camera_eye'):
+def test_tracking_paths_use_complete_recorded_rollout():
+    import jax
+    from render_rl_video import build_rl_robot
+
+    snapshots = summary.load_snapshots(SNAPSHOTS, SOURCE)
+    _, meta = snapshots[1]
+    assert meta['environment_indices'] == [0] and not meta['display_tiling']
+    with np.load(SOURCE) as saved, np.load(SNAPSHOTS/'tracking_geometry.npz') as scene:
+        robot = build_rl_robot(float(saved['arm_length']), float(saved['arm_radius']))
+        fk = jax.jit(jax.vmap(robot.forward_kinematics_abscissa_batched, in_axes=(0, None)))
+        actual = np.asarray(fk(saved['q_ts'][:, 0], np.array([float(saved['arm_length'])])))[:, 0, :3, 3]
+        offset = np.asarray(meta['base_offsets'])[0]
+        np.testing.assert_allclose(scene['actual_path']-offset, actual, atol=1e-10)
+        np.testing.assert_allclose(scene['target_path']-offset, saved['ball_ts'][:, 0], atol=1e-12)
+        np.testing.assert_array_equal(scene['path_times'], saved['ts'])
+        assert meta['path_interval_s'] == [0., 20.]
+
+
+def test_reject_modified_geometry(tmp_path):
+    import shutil
+    for name in ('grid_close', 'tracking'):
+        for suffix in ('.json', '.png', '_geometry.npz'):
+            shutil.copy2(SNAPSHOTS/(name+suffix), tmp_path/(name+suffix))
+    (tmp_path/'tracking_geometry.npz').write_bytes(b'unrelated geometry')
+    with pytest.raises(ValueError, match='Geometry differs'):
         summary.load_snapshots(tmp_path, SOURCE)
 
 
@@ -53,7 +67,6 @@ def test_training_comparisons_and_uncertainty_fit_in_plot():
     fig = summary.build_figure(snapshots, groups)
     try:
         ax = fig.axes[-1]
-        assert len(ax.lines) == 6
         assert [line.get_label() for line in ax.lines] == list(summary.plot_rl.COLORS_RL)
         for band in ax.collections:
             for path in band.get_paths():

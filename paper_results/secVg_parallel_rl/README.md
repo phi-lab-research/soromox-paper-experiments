@@ -172,52 +172,55 @@ provenance.
 
 ## Redesigned main paper figure
 
-`code/plot_rl_summary.py` creates the main PDF, PNG, SVG, and provenance JSON
-under `../final_outputs/parallel_reinforcement_learning.*`. Panel A shows every
-environment in the saved trained-policy rollout, arranged as an 8x8 display
-grid at 5 s and 15 s. These are two times during execution of one fixed policy.
-Panel B retains both CPU baselines and all four GPU batch sizes, using the
-same data and processing as the preceding main figure. The displayed 64-env
-grid and the training-curve batch sizes have separate meanings.
+`code/plot_rl_summary.py` writes the main PDF, PNG, SVG, and provenance JSON
+under `../final_outputs/parallel_reinforcement_learning.*`:
 
-Reproduce the figure from the committed snapshots (from this directory):
+- A is one low, close view into a dense population of robots. Recorded states
+  from the 64-environment trained-policy rollout at 5 s are repeated as display
+  instances beyond the image boundaries. This is explicitly an illustration;
+  the extra instances do not represent additional independent simulations.
+- B shows environment 0 at 10 s, with its complete recorded 0--20 s target
+  (green dashed) and end-effector (blue solid) paths. The mean position error
+  over all 301 saved instants is 6.548 mm, including the initial approach.
+- C retains both CPU baselines and all four GPU batch sizes with the existing
+  learning-curve processing. These are the measured training comparisons.
+
+Reproduce from committed snapshots, from this directory:
 
 ```bash
 python code/plot_rl_summary.py --force
 ```
 
-To rebuild the snapshot geometry, use the experiments environment:
+Export geometry with the experiments environment, then render in the RTX
+runtime pinned by `../secVf_sampling_based_mpc/`:
 
 ```bash
 JAX_PLATFORMS=cpu python code/export_rl_grid_scene.py --force
-```
-
-The exporter reconstructs the existing RL robot and evaluates forward
-kinematics from the saved states. It applies the same grid offset to each
-robot, mount, and target. Grid spacing is 0.28 m; the mount rests on the shared
-studio floor. Both cameras are fitted together, and the composer computes
-one crop from all robot surfaces, mounts, and target bounds in both scenes.
-All 64 environments remain in view. Mean end-effector errors in these two
-snapshots are 5.204 and 4.511 mm, respectively; these are snapshot statistics
-for the 64 shown environments, distinct from the 128-env evaluation reported
-in the main text.
-
-Render in the RTX environment pinned by `../secVf_sampling_based_mpc/`:
-
-```bash
-python code/render_rl_grid_scene.py --geometry outputs/paper_snapshots/grid_1_geometry.npz --output outputs/paper_snapshots/grid_1.png --force
-python code/render_rl_grid_scene.py --geometry outputs/paper_snapshots/grid_2_geometry.npz --output outputs/paper_snapshots/grid_2.png --force
+python code/render_rl_grid_scene.py --geometry outputs/paper_snapshots/grid_close_geometry.npz --output outputs/paper_snapshots/grid_close.png --force
+python code/render_rl_grid_scene.py --geometry outputs/paper_snapshots/tracking_geometry.npz --output outputs/paper_snapshots/tracking.png --force
 python code/plot_rl_summary.py --force
 ```
 
-The renderer imports `../paper_rtx_studio.py` directly, matching the MPC and
-safety materials, backdrop, lighting, and shadows. Geometry, snapshots, and
-figure manifests record source hashes, actual environment indices, time,
-camera, crop, and the saved data used for each curve. The composer rejects
-mismatched sources, incomplete grids, camera changes, and stale studio values.
-The suggested caption is `figure_caption.tex`.
+The grid has 0.24 m spacing and includes 3,760 display instances after
+conservative view-frustum culling. Every instance uses one of the 64 saved
+robot/target pairs; environment indices and base offsets are recorded. Distant
+meshes use fewer cross-sections and sides, while foreground robots retain the
+full mesh resolution. The shared studio floor extends to a backdrop bend at
+24 m for this large scene; all lighting and materials match MPC and safety.
+The final panoramic crop is [0, 235, 1800, 720], removing unused sky above the
+population. Scene boundaries lie outside this view.
 
-The existing random/trained single-arm videos remain available as supporting
-media. No additional appendix figure is introduced. The legacy assembler's
-`--rl-only` mode now writes `parallel_reinforcement_learning_legacy.*` so it
-cannot overwrite the redesigned canonical figure by default.
+The tracking detail uses the existing RL model for forward kinematics and
+preserves every saved time sample for both paths. Only the display base offset
+is applied. Its 6.548 mm whole-trajectory error for environment 0 is distinct
+from the 128-env final-step evaluation in the main text. Path meshes exclude
+shadows, and the complete robot and mounting remain visible.
+
+Snapshot and figure manifests contain source/geometry hashes, display-instance
+counts, original environment indices, cameras, crop, and trajectory time range.
+The renderer uses `../paper_rtx_studio.py` directly. The suggested caption is
+`figure_caption.tex`. Existing random/trained rollout videos remain available;
+this revision introduces no appendix figure.
+
+The legacy assembler's `--rl-only` mode writes
+`parallel_reinforcement_learning_legacy.*` to avoid replacing the current figure.

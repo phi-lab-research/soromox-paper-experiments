@@ -1,0 +1,93 @@
+{
+  "source_file": "rl_rollout_trained_64_envs.npz",
+  "source_sha256": "10ac868dd2d0dde4c207e9cb6a7575d84af106dc646d93631a6353ceac2d15f4",
+  "exporter_sha256": "4fb0688ebd91dcbc443cc06eff175376b2cd23866ed2f6320e9c55535a6b7226",
+  "policy": "trained",
+  "num_envs": 1,
+  "display_instance_count": 1,
+  "display_tiling": false,
+  "backdrop_start_m": 3.0,
+  "scene_kind": "tracking",
+  "environment_indices": [
+    0
+  ],
+  "grid_spacing_m": null,
+  "base_offsets": [
+    [
+      0.0,
+      0.0,
+      0.009999999999999995
+    ]
+  ],
+  "arm_length_m": 0.25,
+  "arm_radius_m": 0.025,
+  "target_radius_m": 0.015,
+  "timestep": 150,
+  "time_s": 10.0,
+  "current_state_only": true,
+  "camera_eye": [
+    0.23,
+    -0.37,
+    0.29
+  ],
+  "camera_target": [
+    -0.01,
+    0.0,
+    0.105
+  ],
+  "width": 1200,
+  "height": 1000,
+  "vertical_fov_degrees": 45.0,
+  "mean_tracking_error_mm": 4.217728983033158,
+  "mount_style": "flared_collar",
+  "framing": "complete robot",
+  "path_interval_s": [
+    0.0,
+    20.0
+  ],
+  "path_samples": 301,
+  "environment_selection": "environment 0, fixed index",
+  "mean_path_error_mm": 6.548386093828615,
+  "studio": {
+    "version": "paper-studio-v1",
+    "robot": "#F1552E",
+    "mount": "#33363B",
+    "target": "#0EAD69",
+    "obstacle": "#7B2CBF",
+    "manipulated_object": "#E7AC42",
+    "surface": "#DEE1E5",
+    "backdrop": "#C9CDD2",
+    "robot_roughness": 0.72,
+    "backdrop_start": 3.0,
+    "backdrop_radius": [
+      2.0,
+      2.0
+    ],
+    "key_rotation_degrees": [
+      29.0,
+      14.0,
+      0.0
+    ],
+    "key_angle_degrees": 28.0,
+    "fill_rotation_degrees": [
+      -30.0,
+      -25.0,
+      0.0
+    ],
+    "rim_rotation_degrees": [
+      40.0,
+      15.0,
+      180.0
+    ],
+    "fill_angle_degrees": 50.0,
+    "rtx_ambient": 60.0,
+    "rtx_key": 1000.0,
+    "rtx_fill": 160.0,
+    "rtx_rim": 160.0,
+    "rtx_backdrop_emission": 0.08
+  },
+  "samples_per_pixel": 128,
+  "renderer_sha256": "78cb2251617722858bf77c7f5f0915f917638a1b36d7279db1752a8aefabaf5e",
+  "studio_renderer_sha256": "c1ba185b56467776357df5ebe129050a1506ef2dfd82e3c41731cbadde23baa3",
+  "geometry_sha256": "43aae51fca12a441b4e638fa43554b11afc4aae58d9621d89e8d1486f55263c9"
+}

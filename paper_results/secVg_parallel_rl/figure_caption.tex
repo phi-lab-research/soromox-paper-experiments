@@ -1,15 +1,19 @@
 \caption{\textbf{Parallel reinforcement learning for target tracking.}
-(\textbf{A}) All 64 independent environments from a saved rollout of the same
-trained policy, shown at $t=5$\,s and $t=15$\,s with a matched camera and scale.
-Each coral robot is a single-segment, tendon-actuated PCS arm; its green sphere
-is the moving end-effector target. Spatial offsets arrange the environments
-in an $8\times8$ grid for display. Mean tracking errors across the 64 shown
-environments are $5.20$\,mm and $4.51$\,mm at the two instants, respectively.
-(\textbf{B}) Mean episode return versus logged training wall-clock time for
+(\textbf{A}) A close view of parallel soft-robot environments. Repeated display
+instances of the 64 saved environments extend the scene beyond the image
+boundaries; all states are from the trained-policy rollout at $t=5$\,s.
+Coral robots are single-segment, tendon-actuated PCS arms; green spheres are
+moving end-effector targets.
+(\textbf{B}) Tracking in environment 0 of the same rollout. The robot and
+current target are shown at $t=10$\,s. The green dashed path is the target
+trajectory and the solid blue path is the recorded end-effector trajectory
+over the full 20\,s rollout, including the initial approach. The mean tracking
+error over this trajectory is $6.55$\,mm.
+(\textbf{C}) Mean episode return versus logged training wall-clock time for
 PyElastica and SoRoMoX on two CPU cores, and SoRoMoX on an RTX 4070 with
 64--512 parallel environments. Lines show the mean of two runs per setting;
 shaded bands show one sample standard deviation. Curves use up to 1,500
 records per run, Gaussian smoothing with a scale of 10 records, and
 interpolation onto a shared time grid within each setting. Dashed lines
-denote CPU runs and solid lines GPU runs. The comparisons include differences
+denote CPU runs and solid lines GPU runs. Comparisons include differences
 in model formulation, execution backend, hardware, and parallelization.}

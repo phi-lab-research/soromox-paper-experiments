@@ -119,7 +119,9 @@ legend; these are graphical overlays at the true camera projections.
 The paired scenes dominate the figure. Separate force and goal-distance plots
 below them share their time range and method encoding. Keep each legend clear
 of data. The force quantity is maximum pairwise normal contact force, with
-the prescribed 5 N reference retained in the main plot.
+the prescribed 5 N reference retained in the main plot. HOCLF uses blue
+(`pre_opt_1`) and HOCLF + HOCBF coral (`post_opt_1`). Both recorded controller
+traces are solid; the force-limit reference is dotted.
 
 Read all plotted values from the saved rollouts. Before rendering, verify
 forward-kinematic goal distance and discretized contact force against the
@@ -134,17 +136,21 @@ required for this comparison.
 
 ## Parallel RL reference
 
-Use the shared RTX studio, coral robot surfaces, dark flared mounts, and green
-targets for all 64 saved environments. Show the full 8x8 grid at 5 s and 15 s
-of the same trained-policy rollout, with one camera and one geometry-derived
-crop. Preserve all robot and target coordinates relative to their own base;
-apply the display-grid offset equally to both. No target trails or ghost states
-are needed in this dense view. Identify rollout timestamps and displayed count
-separately from the training batch sizes in the plot.
+Use one low, close perspective view whose grid extends beyond the image
+boundaries. The distant scene uses repeated display instances of the 64 saved
+environments; record this explicitly in metadata and the caption. Extend the
+studio floor beyond the visible population while retaining the shared lighting
+and materials. Spatial offsets move each robot and its target together. Reduce
+mesh tessellation only for distant display instances.
 
-Keep the learning plot full width, with both CPU baselines before the GPU
-batch sizes in ascending order. CPU lines are dashed, GPU lines solid; reuse
-the established series colors. Keep the existing learning-curve processing
-and record it in the manifest. Explain policy evaluation, run counts, bands,
-and tracking statistics in the caption. The two grid snapshots show execution
-of a fixed trained policy. The learning curves show training progress.
+Pair the population view with a complete single-robot tracking example. Show
+the target path in green dashes and the recorded end-effector path in solid
+blue, using the full saved rollout, including the initial approach. The solid
+robot and green sphere show one actual instant. Path graphics cast no shadows.
+Explain the temporal extent and the selected environment in the caption.
+
+Keep the learning-curve data and processing unchanged. CPU baselines precede
+GPU batch sizes in ascending order; CPU lines are dashed and GPU lines solid.
+The grid and tracking detail depict execution of the trained policy, while the
+learning curves show training progress. Display repetition is not an additional
+training run or a measured environment count.

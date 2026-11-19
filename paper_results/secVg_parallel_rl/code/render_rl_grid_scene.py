@@ -1,4 +1,4 @@
-"""Render a complete saved RL environment grid in the shared paper RTX studio."""
+"""Render saved RL grid and tracking scenes in the shared paper RTX studio."""
 
 import argparse
 import hashlib
@@ -15,6 +15,7 @@ import warp as wp
 PAPER = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(PAPER))
 from paper_render_style import PAPER_STUDIO, rgb
+from paper_style import PAPER_COLORS
 from paper_rtx_studio import PaperViewerRTX, look_at
 
 
@@ -36,11 +37,15 @@ def main(argv=None):
                                      label=f'target_{i}')
         model = builder.finalize(device='cuda')
         viewer = PaperViewerRTX(width=meta['width'], height=meta['height'], headless=True, fps=30,
-                                samples_per_pixel=args.samples_per_pixel)
+                                samples_per_pixel=args.samples_per_pixel, backdrop_start=meta.get('backdrop_start_m'))
         viewer.set_model(model)
         np.testing.assert_allclose(viewer.camera.fov, meta['vertical_fov_degrees'])
         look_at(viewer, meta['camera_eye'], meta['camera_target'])
-        for name, color in [('robot', PAPER_STUDIO.robot), ('mount', PAPER_STUDIO.mount)]:
+        meshes = [('robot', PAPER_STUDIO.robot), ('mount', PAPER_STUDIO.mount)]
+        if meta['scene_kind'] == 'tracking':
+            meshes += [('actual_trace', PAPER_COLORS['pre_opt_1']), ('target_trace', PAPER_STUDIO.target)]
+            viewer.shadow_excluded_mesh_names = ('actual_trace', 'target_trace')
+        for name, color in meshes:
             viewer.log_mesh(name, wp.array(data[f'{name}_points'], dtype=wp.vec3),
                             wp.array(data[f'{name}_indices'].flatten(), dtype=wp.int32),
                             normals=wp.array(data[f'{name}_normals'], dtype=wp.vec3),

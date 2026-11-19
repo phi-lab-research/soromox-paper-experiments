@@ -55,7 +55,8 @@ These commands compose the committed matched studio snapshots and saved
 numerical evidence into `final_outputs/safety_constrained_control.*` and
 `final_outputs/parallel_reinforcement_learning.*`, including source manifests.
 See the case READMEs for geometry export and RTX snapshot regeneration.
-The RL figure shows the complete 64-environment grid at two rollout times.
+The RL figure combines a close grid view, a recorded single-robot tracking
+trajectory, and the training comparison.
 
 `assemble_safety_rl_figure.py` remains available for reproducing the legacy
 combined safety/RL figure. Its `--rl-only` mode writes a separate
