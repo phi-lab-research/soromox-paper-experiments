@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Appendix figure: contact details and the full planner cost/time sweep."""
+"""Internal diagnostics and scored data for the main planner cost/time plot."""
 
 from __future__ import annotations
 
@@ -34,7 +34,6 @@ from plot_smpc_summary import image_panel, load_snapshot, panel_letter
 RESULTS_DIR = CASE_DIR / "data"
 OUTPUT_DIR = CASE_DIR / "outputs"
 OUTPUT_FILENAME = "sampling_based_mpc_diagnostics"
-FINAL_OUTPUT_DIR = CASE_DIR.parent / "final_outputs"
 TRADEOFF_RESULTS_DIRS = [RESULTS_DIR / "cmp_seeds" / f"seed{i}" for i in range(3)]
 
 # Copies of run_experiment.py's values: importing it would pull in newton_cosserat just to plot.
@@ -244,7 +243,7 @@ def save_figure(fig: plt.Figure, output_dir: Path, filename: str) -> None:
 
 
 def main() -> int:
-    """Keep contact details and the full planner sweep in the appendix."""
+    """Export planner scores and an internal diagnostic figure, outside paper outputs."""
     configure_matplotlib()
     robot = FourTendonSoftArm().model
     points = load_seed_mean_points(TRADEOFF_RESULTS_DIRS, build_params(robot))
@@ -267,7 +266,7 @@ def main() -> int:
         image_panel(fig, [0.01, y, 0.36, 0.450], path)
     panel_letter(fig, 0.44, 0.950, "B")
     plot_planner_tradeoff(points, fig.add_axes([0.47, 0.13, 0.51, 0.78]))
-    save_figure(fig, FINAL_OUTPUT_DIR, OUTPUT_FILENAME)
+    save_figure(fig, OUTPUT_DIR, OUTPUT_FILENAME)
     return 0
 
 

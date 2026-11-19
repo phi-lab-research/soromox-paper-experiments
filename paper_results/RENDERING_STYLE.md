@@ -54,8 +54,9 @@ must not be copied numerically into renderers with different lighting units.
 
 The main manipulation figure uses one complete Franka–tentacle view, object
 paths centered above the wider planner tradeoff in the upper right, and three matched
-iCEM sampling views across the full bottom row. Two matched
-contact details and the fully annotated planner sweep appear in the appendix. Robot poses come from the saved iCEM seed-0 trajectory; the
+iCEM sampling views across the full bottom row. The separate contact-detail and
+annotated-sweep diagnostic figure is excluded from the paper, with no additional
+appendix material planned. Robot poses come from the saved iCEM seed-0 trajectory; the
 Franka is a display model following the prescribed base pose, not a simulated
 dynamic component of the experiment.
 

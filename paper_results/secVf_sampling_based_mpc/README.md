@@ -143,12 +143,13 @@ Franka–tentacle scene; **B**, object paths for all three seeds of each planner
 **C**, three iCEM sampling iterations across the full bottom row; **D**, the
 planner tradeoff stacked beneath the centered trajectory plot in the upper
 right. The trajectory legend sits above its plot; the tradeoff
-legend identifies all three marker families inside unused plot space. The two matched contact details and the
-fully annotated planner sweep are in the appendix. Panel letters,
+legend identifies all three marker families inside unused plot space. The
+diagnostic figure is excluded from the paper; no additional appendix material
+is planned for this figure. Panel letters,
 axis labels, and legends remain in the figures; explanations, seed counts,
 marker meanings, success rates, and timing statistics belong in the captions.
 See [the shared rendering style](../RENDERING_STYLE.md) and
-[`figure_caption.tex`](figure_caption.tex) for the proposed captions.
+[`figure_caption.tex`](figure_caption.tex) for the proposed main-figure caption.
 
 ### Main figure
 
@@ -231,14 +232,15 @@ and population standard deviation across the three seed means. `--data-dir`,
 `--snapshot-dir`, `--tradeoff-data`, and `--output-dir` allow staged builds. Existing figure outputs
 require `--force` before replacement.
 
-### Appendix diagnostics
+### Internal diagnostics
 
 ```bash
 uv run --project . python code/plot_smpc_diagnostics.py
 ```
 
-This writes `../final_outputs/sampling_based_mpc_diagnostics.pdf`, containing the
+This writes `outputs/sampling_based_mpc_diagnostics.pdf`, containing the
 two contact-detail frames and the complete single-goal planner cost/time sweep.
+It is an internal analysis artifact, excluded from the paper and its appendix.
 The sweep requires the SoRoMoX/JAX dependencies for rescoring the saved runs;
 it does not rerun planning. On a CPU-only host, set `JAX_PLATFORMS=cpu`.
 
