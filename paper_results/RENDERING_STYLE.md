@@ -36,7 +36,7 @@ must not be copied numerically into renderers with different lighting units.
 - Do not stretch images to fill slots. Preserve their native aspect ratio.
 - Keep legends and callouts outside the robot and contact regions.
 - Use the shared `paper.mplstyle` for plots and check the composed PDF at its
-  intended print size. The manipulation figure is 180 by 140 mm.
+  intended print size. The manipulation figure is 180 by 126 mm.
 
 ## Manipulation reference
 

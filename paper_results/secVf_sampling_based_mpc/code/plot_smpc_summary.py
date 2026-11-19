@@ -191,56 +191,49 @@ def build_figure(methods, goals, snapshots):
             "savefig.bbox": None,
         }
     )
-    fig = plt.figure(figsize=(18 / 2.54, 14 / 2.54), facecolor="white")
-    heading(fig, 0.015, 0.955, "A", "Franka + soft tentacle")
-    image_panel(fig, [0.015, 0.365, 0.62, 0.58], snapshots[0][0])
-    fig.text(
-        0.025,
-        0.350,
-        f"Franka-mounted tentacle  |  t = {snapshots[0][1]['time_s']:.2f} s",
-        fontsize=7,
-        color="0.3",
-    )
-    heading(fig, 0.015, 0.310, "B", "Changing push direction")
+    fig = plt.figure(figsize=(18 / 2.54, 12.6 / 2.54), facecolor="white")
+    heading(fig, 0.01, 0.962, "A", "Franka + soft tentacle")
+    image_panel(fig, [0.01, 0.312, 0.60, 0.643], snapshots[0][0])
+    heading(fig, 0.01, 0.284, "B", "Changing push direction")
     for rect, (path, metadata) in zip(
-        ([0.015, 0.045, 0.30, 0.25], [0.335, 0.045, 0.30, 0.25]),
+        ([0.01, 0.018, 0.295, 0.2634], [0.315, 0.018, 0.295, 0.2634]),
         snapshots[1:],
         strict=True,
     ):
         image_panel(fig, rect, path)
         fig.text(
             rect[0] + rect[2] / 2,
-            0.025,
+            0.007,
             f"t = {metadata['time_s']:.2f} s",
             ha="center",
-            fontsize=7,
+            fontsize=6.5,
         )
-    heading(fig, 0.69, 0.955, "C", "Object paths")
-    ax = fig.add_axes([0.73, 0.47, 0.255, 0.43])
+    heading(fig, 0.66, 0.962, "C", "Object paths")
+    ax = fig.add_axes([0.70, 0.502, 0.285, 0.407])
     draw_paths(ax, methods, goals)
-    fig.text(0.705, 0.415, "Three seeds per method", fontsize=7, color="0.3")
+    fig.text(0.68, 0.402, "Three seeds per method", fontsize=7, color="0.3")
     fig.text(
-        0.705,
-        0.390,
+        0.68,
+        0.389,
         "Start: circle; finish: cross\nGoals: numbered squares",
         va="top",
         fontsize=7,
         color="0.3",
     )
-    fig.text(0.705, 0.275, "Completed square", fontsize=8, fontweight="bold")
+    fig.text(0.68, 0.292, "Completed square", fontsize=8, fontweight="bold")
     for i, (name, method) in enumerate(methods.items()):
         fig.text(
-            0.705,
-            0.240 - i * 0.035,
+            0.68,
+            0.253 - i * 0.035,
             f"{name}: {method['success']}/{method['count']} runs",
             color=method["color"],
             fontsize=8,
         )
-    fig.text(0.705, 0.145, "Planning time / step", fontsize=8, fontweight="bold")
+    fig.text(0.68, 0.150, "Planning time / step", fontsize=8, fontweight="bold")
     for i, (name, method) in enumerate(methods.items()):
         fig.text(
-            0.705,
-            0.110 - i * 0.035,
+            0.68,
+            0.111 - i * 0.035,
             f"{name}: {method['planning_mean_s']:.1f} $\\pm$ {method['planning_std_s']:.1f} s",
             color=method["color"],
             fontsize=8,
