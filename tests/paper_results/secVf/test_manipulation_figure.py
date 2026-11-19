@@ -92,10 +92,16 @@ def test_sampling_frames_require_matching_iteration_and_source(tmp_path):
         "source_sha256": figure.sha256(source),
         "studio": figure.PAPER_STUDIO.manifest(),
         "timestep": 0, "iteration": 0, "horizon_step": 10,
+        "solid_configuration": "current_recorded_state",
     }
     sidecar = path.with_suffix(".json")
     sidecar.write_text(json.dumps(metadata))
     assert figure.load_sampling(tmp_path, 0, source)[0] == path
+    metadata["solid_configuration"] = "lowest_cost_prediction"
+    sidecar.write_text(json.dumps(metadata))
+    with pytest.raises(ValueError, match="must show the current state"):
+        figure.load_sampling(tmp_path, 0, source)
+    metadata["solid_configuration"] = "current_recorded_state"
     metadata["iteration"] = 1
     sidecar.write_text(json.dumps(metadata))
     with pytest.raises(ValueError, match="Unexpected sampling iteration"):

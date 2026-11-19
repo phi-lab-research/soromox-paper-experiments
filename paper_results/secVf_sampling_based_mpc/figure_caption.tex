@@ -22,14 +22,14 @@ Planning is slower than real time.
 (\textbf{C}) Left to right: three successive iCEM sampling iterations at the
 first planning step, with 200, 100, and 50 candidates respectively, showing
 candidate configurations at horizon step 10.
-Translucent blue tentacles show sampled predictions; opacity decreases
-with cost rank. The lowest-cost prediction uses solid coral for the tentacle
-and gold for its predicted object pose. All renderings use
+Solid coral and gold show the current tentacle and object, respectively,
+with the same recorded poses in all three views. Translucent blue tentacles
+show sampled predictions; opacity decreases with cost rank, and the lowest-cost
+predicted tentacle is highlighted in faint coral. Predicted object poses are
+omitted. All renderings use
 the saved iCEM seed-0 trajectory and the same studio lighting and materials.
-The same fixed crop is applied to each sampling view. Iterations 2 and 3
-have similar displayed configurations: the selected object positions differ
-by only $1.2$\,mm at this prediction step, while the best whole-rollout cost
-decreases by $4.6\%$ in the final iteration.
+The same fixed crop is applied to each sampling view. The best whole-rollout
+cost decreases by $4.6\%$ in the final iteration.
 (\textbf{D}) Mean planning wall-clock time and mean negative push cost per
 MPC step for the single-goal planner sweep, averaged over three seeds.
 Higher negative cost is better. Triangles denote MPPI with varying sample

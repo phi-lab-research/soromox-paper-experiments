@@ -132,6 +132,8 @@ def load_sampling(root: Path, iteration: int, source: Path) -> tuple[Path, dict]
         raise ValueError("Sampling style is stale; regenerate the cloud frames")
     if (manifest["iteration"], manifest["timestep"], manifest["horizon_step"]) != (iteration, 0, 10):
         raise ValueError("Unexpected sampling iteration, planning step, or horizon step")
+    if manifest.get("solid_configuration") != "current_recorded_state":
+        raise ValueError("Solid sampling geometry must show the current state; regenerate the cloud frames")
     return path, {**manifest, "sha256": sha256(path)}
 
 

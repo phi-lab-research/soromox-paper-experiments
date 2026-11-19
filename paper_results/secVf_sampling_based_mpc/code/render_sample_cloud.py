@@ -1,9 +1,10 @@
 """Render one iCEM sampling iteration in the shared paper studio.
 
 For a saved run's --timestep and CEM --iteration, draws every sample's predicted rod shape at
---horizon-step, each translucent by cost rank, the lowest-cost sample solid, the best
---max-object-samples predicted object poses, and the goal marker. The selected
-prediction uses the same solid scene geometry and materials as the overview.
+--horizon-step, each translucent by cost rank, the lowest-cost sample in faint
+coral, optional --max-object-samples predicted object poses, and the goal marker.
+The current recorded rod and object use the same solid scene geometry and
+materials as the overview, unchanged across optimization iterations.
 Run once per iteration to show the elite population narrowing.
 
 Runs in this section's environment (../pyproject.toml) and needs an RTX GPU. Needs ovrtx 0.4.x:
@@ -358,13 +359,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--max-object-samples", type=int, default=0,
         help="Draw predicted-object boxes for only this many of the best drawn samples (rods unaffected; "
-             "default: 0, keeping the selected solid object unobscured). The boxes' top faces are coplanar, so a ray crosses one per box, and "
+             "default: 0, keeping the current solid object unobscured). The boxes' top faces are coplanar, so a ray crosses one per box, and "
              "ViewerRTX's bounded transmission-bounce budget turns deep stacks black. Lowering the "
              "opacity makes this worse; capping the box count fixes it.",
     )
     parser.add_argument(
         "--object-sink", type=float, default=0.001,
-        help="Sink the translucent cloud boxes this far below the table top [m] so the solid best-sample "
+        help="Sink the translucent cloud boxes this far below the table top [m] so the solid current "
              "box is no longer coplanar with them and reads unveiled. 0 disables it. Does not stop the "
              "cloud boxes blackening each other; --max-object-samples controls that.",
     )
@@ -500,17 +501,17 @@ def main() -> None:
                 SAMPLE_COLOR, object_opacity * factor,
             )
 
-    # Only the selected configuration casts shadows. Faint candidates remain
+    _log_solid_mesh(viewer, "best_prediction", rod_mesh(best_idx), ROD_COLOR, 0.3)
+    # Only the current configuration casts shadows. Faint candidates remain
     # shadow-free, like the future-state overlays in the overview.
-    viewer.shadow_excluded_mesh_names = tuple(sample_mesh_names)
+    viewer.shadow_excluded_mesh_names = (*sample_mesh_names, "best_prediction")
 
-    # Use the overview's native capsules and box for the selected prediction,
-    # with identical materials and soft contact shadows. A second solid current
-    # state would overlap this pose and obscure its surface and cube edges.
-    row = step_X[best_idx, args.horizon_step]
+    # Solid means current state, as in the overview. Optimization changes the
+    # predicted overlays, never this recorded rod or the object's full pose.
+    row = X_final[args.timestep]
     q_internal = row[:ndof]
     qd_internal = row[ndof : 2 * ndof]
-    cube_x, cube_vx, cube_y, cube_vy = row[2 * ndof : 2 * ndof + 4]
+    cube_vx, cube_vy = row[2 * ndof + 1], row[2 * ndof + 3]
     # row[2 * ndof + 4] is object_yaw; the base pose starts one column later.
     base_pose = row[2 * ndof + 5 : 2 * ndof + 5 + num_base_coordinates]
 
@@ -528,11 +529,7 @@ def main() -> None:
 
     body_q = state.body_q.numpy()
     body_qd = state.body_qd.numpy()
-    body_q[box_body, 0] = cube_x
-    body_q[box_body, 1] = cube_y
-    body_q[box_body, 2:7] = (
-        object_half_extent, 0.0, 0.0, np.sin(row[2 * ndof + 4] / 2), np.cos(row[2 * ndof + 4] / 2)
-    )
+    body_q[box_body] = object_pose[args.timestep]
     body_qd[box_body, 0] = cube_vx
     body_qd[box_body, 1] = cube_vy
     state.body_q.assign(body_q)
@@ -559,7 +556,9 @@ def main() -> None:
         "sample_opacity": args.sample_opacity, "object_opacity": object_opacity,
         "object_sink": args.object_sink, "object_shape": args.object_shape,
         "best_sample_index": best_idx, "width": args.width, "height": args.height,
-        "solid_configuration": "lowest_cost_prediction",
+        "solid_configuration": "current_recorded_state",
+        "solid_object_pose_xyz_xyzw": object_pose[args.timestep].tolist(),
+        "best_prediction_opacity": 0.3,
         "solid_geometry": "shared_scene_capsules_and_object",
         "shadow_policy": "solid_configuration_only",
         "backbone_points": args.backbone_points, "ring_sides": args.ring_sides,

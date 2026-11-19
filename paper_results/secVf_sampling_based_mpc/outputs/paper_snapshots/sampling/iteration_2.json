@@ -1,7 +1,7 @@
 {
   "source_file": "square_icem_seed0.npz",
   "source_sha256": "44c5173c2612592f5aae2cc16bab85713b5ba65a7ea52049ead34038b8d9a94c",
-  "renderer_sha256": "757cb16d2073bbbc79388477ecbf1e31fec4349aa59af1dd151bc24ee572ed6b",
+  "renderer_sha256": "ceeeb5a0eba455bfb683d973c564bdac949f0a6bbf370d61d6841d573ad10499",
   "studio_renderer_sha256": "d55cf690eaa9a2eb74457df1110c28377a5ebc13f15a0643dc62a1098492e150",
   "studio": {
     "version": "paper-studio-v1",
@@ -64,7 +64,17 @@
   "best_sample_index": 0,
   "width": 1200,
   "height": 900,
-  "solid_configuration": "lowest_cost_prediction",
+  "solid_configuration": "current_recorded_state",
+  "solid_object_pose_xyz_xyzw": [
+    0.05000000074505806,
+    0.0,
+    0.02500000037252903,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+  ],
+  "best_prediction_opacity": 0.3,
   "solid_geometry": "shared_scene_capsules_and_object",
   "shadow_policy": "solid_configuration_only",
   "backbone_points": 35,

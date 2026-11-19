@@ -190,13 +190,15 @@ with `--save-samples`). The shared camera is fixed across the three frames:
 OUT_DIR=outputs/paper_snapshots/sampling code/render_sample_cloud.sh data/square_icem_seed0.npz 10 --force
 ```
 
-Each PNG has a JSON sidecar with source and style provenance. The lowest-cost
-prediction uses the overview's native tentacle and object geometry, coral/gold
-materials, and soft shadows. Its viewing direction matches the overview.
-Translucent blue tentacles show all other candidates, with opacity decreasing
-from 0.12 to 0.012 by cost rank; these overlays cast no shadows. Only the selected
-object is drawn by default (`--max-object-samples 0`), so overlapping translucent
-boxes do not darken its faces. The selected prediction is the sole solid state.
+Each PNG has a JSON sidecar with source and style provenance. The current
+recorded tentacle and cube use the overview's native geometry, coral/gold
+materials, and soft shadows. Their poses are identical across iterations,
+including the cube's full recorded position and quaternion. The viewing
+direction matches the overview. The lowest-cost predicted tentacle is faint
+coral (opacity 0.3). Translucent blue tentacles show all other candidates, with
+opacity decreasing from 0.12 to 0.012 by cost rank. Prediction overlays cast no
+shadows. Predicted objects are omitted by default (`--max-object-samples 0`),
+so only the current recorded cube is visible.
 
 Export the planner sweep scores once with the section environment (the scored
 JSON is also committed, so composing the main figure needs no JAX):
@@ -270,10 +272,12 @@ prediction step 10. They are distinct renders of different candidate sets:
 | 2 | 100 | 1867.62 | 49.91, −0.11 |
 | 3 | 50 | 1781.56 | 49.23, −1.12 |
 
-The last two views look similar because their selected predicted object
-positions differ by only 1.22 mm at this step. Their candidate sets and selected
-tentacle configurations differ, and the best cost across the complete rollout
-improves by 4.61%. That cost change is not an error metric for the single frame.
+The solid current tentacle and cube are intentionally identical in all three
+views. The candidate sets and faint selected tentacle predictions differ, and
+the best cost across the complete rollout improves by 4.61% in the last
+iteration. That cost change is not an error metric for the single frame.
+The predicted object positions in the table are diagnostics, omitted from the
+renderings; the last two differ by 1.22 mm at this prediction step.
 The source is `diagnostics_iter_X_samples[0]` and `diagnostics_iter_cost[0]` in
 `data/square_icem_seed0.npz`; the renderer selects each iteration's minimum-cost
 candidate. The iteration identifiers in the figure distinguish the views, while
