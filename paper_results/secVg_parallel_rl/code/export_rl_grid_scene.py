@@ -65,7 +65,7 @@ def path_mesh(points, radius, dashed=False):
 def extended_grid(eye, target, base_z):
     """Tile recorded environments beyond the visible frustum, not new simulations."""
     rows, cols = np.meshgrid(np.arange(80), np.arange(-128, 128), indexing='ij')
-    offsets = np.column_stack(((cols.ravel()+.5)*.24, -.84+rows.ravel()*.24,
+    offsets = np.column_stack(((cols.ravel()+.5)*.28, -.84+rows.ravel()*.28,
                                np.full(rows.size, base_z)))
     # Conservative bounds cover all saved shapes, targets, and mounts.
     corners = np.array([[x, y, z] for x in (-.16, .16) for y in (-.16, .16) for z in (-.06, .32)])
@@ -77,7 +77,8 @@ def extended_grid(eye, target, base_z):
     xyz = (offsets[:, None]+corners-eye) @ np.stack((right, up, forward), axis=1)
     scale = 720/(2*xyz[:, :, 2]*np.tan(np.deg2rad(45)/2))
     x, y = 900+scale*xyz[:, :, 0], 360-scale*xyz[:, :, 1]
-    visible = ((x.max(1) >= 0) & (x.min(1) <= 1800) & (y.max(1) >= 235) & (y.min(1) <= 720))
+    # Keep the full camera view so later layout crops can reveal distant rows.
+    visible = ((x.max(1) >= 0) & (x.min(1) <= 1800) & (y.max(1) >= 0) & (y.min(1) <= 720))
     ids = ((rows.ravel()*13+cols.ravel()*7) % 64)[visible]
     return offsets[visible], ids.tolist()
 
@@ -145,7 +146,7 @@ def main(argv=None):
                         exporter_sha256=sha256(Path(__file__)), policy='trained', num_envs=64 if kind == 'grid' else 1,
                         display_instance_count=len(ids), display_tiling=kind == 'grid',
                         backdrop_start_m=24. if kind == 'grid' else 3.,
-                        scene_kind=kind, environment_indices=ids, grid_spacing_m=.24 if kind == 'grid' else None,
+                        scene_kind=kind, environment_indices=ids, grid_spacing_m=.28 if kind == 'grid' else None,
                         base_offsets=offsets.tolist(), arm_length_m=rollout.arm_length,
                         arm_radius_m=rollout.arm_radius, target_radius_m=TARGET_SPHERE_RADIUS,
                         timestep=index, time_s=float(rollout.ts[index]), current_state_only=True,

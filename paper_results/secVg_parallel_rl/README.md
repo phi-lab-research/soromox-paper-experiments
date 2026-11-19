@@ -201,20 +201,26 @@ python code/render_rl_grid_scene.py --geometry outputs/paper_snapshots/tracking_
 python code/plot_rl_summary.py --force
 ```
 
-The grid has 0.24 m spacing and includes 3,760 display instances after
-conservative view-frustum culling. Every instance uses one of the 64 saved
+The grid has 0.28 m spacing and includes 7,050 display instances after
+conservative culling against the full camera view. Every instance uses one of the 64 saved
 robot/target pairs; environment indices and base offsets are recorded. Distant
 meshes use fewer cross-sections and sides, while foreground robots retain the
 full mesh resolution. The shared studio floor extends to a backdrop bend at
 24 m for this large scene; all lighting and materials match MPC and safety.
-The final panoramic crop is [0, 235, 1800, 720], removing unused sky above the
-population. Scene boundaries lie outside this view.
+The final panoramic crop is [0, 185, 1800, 720], retaining the distant rows
+and a small margin above them. Panel A is taller to preserve the foreground
+scale, with the same low camera angle. The population reaches the horizon
+and continues beyond the lateral frame boundaries.
 
 The tracking detail uses the existing RL model for forward kinematics and
 preserves every saved time sample for both paths. Only the display base offset
 is applied. Its 6.548 mm whole-trajectory error for environment 0 is distinct
 from the 128-env final-step evaluation in the main text. Path meshes exclude
-shadows, and the complete robot and mounting remain visible.
+shadows, and the complete robot and mounting remain visible. Its display crop
+is [240, 0, 880, 1000], removing empty side margins while retaining both
+complete paths. The narrower panel gives the learning plot 124 mm of width;
+its legend is 8 pt, tick labels 8 pt, and axis labels 9 pt. The row gap is
+reduced while retaining space for panel letters and the tracking legend.
 
 Snapshot and figure manifests contain source/geometry hashes, display-instance
 counts, original environment indices, cameras, crop, and trajectory time range.

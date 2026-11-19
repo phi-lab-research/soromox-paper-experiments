@@ -54,28 +54,28 @@ def load_snapshots(snapshot_dir, source):
 
 def build_figure(snapshots, groups):
     plt.style.use(PAPER_STYLE_PATH)
-    plt.rcParams.update({'font.size': 8, 'axes.labelsize': 8, 'xtick.labelsize': 7,
-                         'ytick.labelsize': 7, 'legend.fontsize': 7, 'text.usetex': False,
+    plt.rcParams.update({'font.size': 8, 'axes.labelsize': 9, 'xtick.labelsize': 8,
+                         'ytick.labelsize': 8, 'legend.fontsize': 7, 'text.usetex': False,
                          'pdf.fonttype': 42, 'svg.fonttype': 'none', 'savefig.bbox': None,
                          'svg.hashsalt': 'soromox-parallel-rl'})
-    width, height = 180, 122
+    width, height = 180, 125
     fig = plt.figure(figsize=(width/25.4, height/25.4), facecolor='white')
     def rect(x, y, w, h):
         return [x/width, y/height, w/width, h/height]
-    for label, x, y in [('A', 2, 117), ('B', 2, 60), ('C', 73, 60)]:
+    for label, x, y in [('A', 2, 120), ('B', 2, 59), ('C', 43, 59)]:
         fig.text(x/width, y/height, label, va='bottom', fontsize=11, fontweight='bold')
-    ax_grid = fig.add_axes(rect(2, 66, 176, 176*485/1800))
-    ax_grid.imshow(plt.imread(snapshots[0][0])[235:720])
+    ax_grid = fig.add_axes(rect(2, 64, 176, 176*535/1800))
+    ax_grid.imshow(plt.imread(snapshots[0][0])[185:720])
     ax_grid.set_axis_off()
-    ax_tracking = fig.add_axes(rect(2, 3, 65, 54.17))
-    ax_tracking.imshow(plt.imread(snapshots[1][0]))
+    ax_tracking = fig.add_axes(rect(2, 2, 640*54.17/1000, 54.17))
+    ax_tracking.imshow(plt.imread(snapshots[1][0])[:, 240:880])
     ax_tracking.set_axis_off()
     fig.legend(handles=[
         Line2D([], [], color=PAPER_STUDIO.target, ls='--', label='Target'),
         Line2D([], [], color=plot_rl.COLORS['pre_opt_1'], label='End effector'),
-    ], loc='center', bbox_to_anchor=(38/width, 62/height), ncol=2,
-       frameon=False, fontsize=6.5, handlelength=1.5, columnspacing=1.)
-    ax = fig.add_axes(rect(83, 11, 94, 45))
+    ], loc='center', bbox_to_anchor=(23/width, 60.1/height), ncol=1,
+       frameon=False, fontsize=7.5, handlelength=1.5, labelspacing=.15)
+    ax = fig.add_axes(rect(53, 11, 124, 47.5))
     plot_rl.build_figure(groups, argparse.Namespace(points=500, episodes_per_point=0), ax=ax)
     for line in ax.lines:
         line.set_linewidth(1.25)
@@ -84,7 +84,7 @@ def build_figure(snapshots, groups):
     ax.set(ylabel='Mean episode return', ylim=(-60, 130), yticks=(-50, 0, 50, 100))
     ax.grid(color='.9', linewidth=.5)
     ax.set_axisbelow(True)
-    ax.legend(loc='lower right', frameon=False, fontsize=6, handlelength=1.7, labelspacing=.3)
+    ax.legend(loc='lower right', frameon=False, fontsize=8, handlelength=1.7, labelspacing=.3)
     return fig
 
 
@@ -112,7 +112,7 @@ def main(argv=None):
     sources = {label: [dict(file=str(p.relative_to(args.csv_dir)), sha256=sha256(p)) for p in paths]
                for label, paths in groups.items()}
     outputs[3].write_text(json.dumps(dict(studio=PAPER_STUDIO.manifest(), snapshots=[m for _, m in snapshots],
-        grid_crop_xyxy=[0, 235, 1800, 720], reward_sources=sources, reward_processing=dict(interpolation_points=500, aggregation='mean and sample standard deviation',
+        grid_crop_xyxy=[0, 185, 1800, 720], tracking_crop_xyxy=[240, 0, 880, 1000], reward_sources=sources, reward_processing=dict(interpolation_points=500, aggregation='mean and sample standard deviation',
             common_time_window=True, random_sample_points=plot_rl.WANDB_SAMPLE_POINTS,
             random_seed=plot_rl.WANDB_SAMPLE_SEED, gaussian_smoothing_records=plot_rl.WANDB_SMOOTHING)), indent=2)+'\n')
     print(outputs[0])
