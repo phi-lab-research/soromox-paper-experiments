@@ -16,12 +16,16 @@ deviation across the three per-seed averages, excluding each run's first MPC
 step: $26.5\pm0.2$\,s for iCEM and $8.5\pm0.8$\,s for MPPI.
 Planning is slower than real time.
 (\textbf{C}) Left to right: three successive iCEM sampling iterations at the
-first planning step, showing candidate configurations at horizon step 10.
+first planning step, with 200, 100, and 50 candidates respectively, showing
+candidate configurations at horizon step 10.
 Translucent blue configurations show sampled predictions; opacity decreases
 with cost rank. The lowest-cost prediction and current configuration use
 solid coral for the tentacle and gold for the object. All renderings use
 the saved iCEM seed-0 trajectory and the same studio lighting and materials.
-The same fixed crop is applied to each sampling view.
+The same fixed crop is applied to each sampling view. Iterations 2 and 3
+have similar displayed configurations: the selected object positions differ
+by only $1.2$\,mm at this prediction step, while the best whole-rollout cost
+decreases by $4.6\%$ in the final iteration.
 (\textbf{D}) Mean planning wall-clock time and mean negative push cost per
 MPC step for the single-goal planner sweep, averaged over three seeds.
 Higher negative cost is better. Triangles denote MPPI with varying sample

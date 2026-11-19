@@ -221,6 +221,16 @@ def draw_tradeoff(ax, tradeoff):
     ax.grid(color="0.9", lw=0.5)
     ax.xaxis.label.set_size(7)
     ax.yaxis.label.set_size(7)
+    handles = [
+        Line2D([], [], marker="^", color=METHODS["MPPI"][1], ls="none", markersize=4,
+               label="MPPI"),
+        Line2D([], [], marker="x", color=METHODS["iCEM"][1], ls="none", markersize=4,
+               label="iCEM (3 iterations)"),
+        Line2D([], [], marker="o", color=METHODS["iCEM"][1], markerfacecolor="none",
+               ls="none", markersize=4, label="iCEM ($K=200$)"),
+    ]
+    ax.legend(handles=handles, loc="lower right", fontsize=7, frameon=False,
+              handlelength=1, handletextpad=0.5, labelspacing=0.25, borderpad=0.3)
 
 
 def build_figure(methods, goals, snapshots, sampling, tradeoff):
@@ -231,28 +241,33 @@ def build_figure(methods, goals, snapshots, sampling, tradeoff):
         "xtick.labelsize": 7, "ytick.labelsize": 7, "legend.fontsize": 7,
         "svg.fonttype": "none", "pdf.fonttype": 42, "savefig.bbox": None,
     })
-    width, height = 180, 145
+    width, height = 180, 142
     fig = plt.figure(figsize=(width / 25.4, height / 25.4), facecolor="white")
     def rect(x, y, w, h):
         return [x / width, y / height, w / width, h / height]
     def letter(x, y, label):
         panel_letter(fig, x / width, y / height, label)
-    letter(2, 138.5, "A")
-    image_panel(fig, rect(2, 52, 82, 83.39), snapshots[0][0], OVERVIEW_CROP)
-    letter(94, 138.5, "B")
-    ax = fig.add_axes(rect(117, 87, 49, 49))
+    letter(2, 135.5, "A")
+    image_panel(fig, rect(2, 49, 82, 83.39), snapshots[0][0], OVERVIEW_CROP)
+    letter(94, 135.5, "B")
+    ax = fig.add_axes(rect(103, 83, 49, 49))
     draw_paths(ax, methods, goals)
     ax.set(xlim=(32, 168), ylim=(-118, 18), aspect="equal")
-    ax.get_legend().set_bbox_to_anchor((0.5, 1.0))
+    handles = [Line2D([], [], color=m["color"], lw=1.5, label=name)
+               for name, m in methods.items()]
+    ax.legend(handles=handles, loc="center left", bbox_to_anchor=(1.01, 0.5),
+              frameon=False, handlelength=1.3, handletextpad=0.5, borderaxespad=0)
     ax.set_xticks((50, 100, 150))
     ax.set_yticks((-100, -50, 0))
     for label, offset in zip(ax.texts, ((-7, -6), (5, -6), (5, 2), (-7, 2)), strict=True):
         label.set_position(offset)
-    letter(2, 45, "C")
+    letter(2, 43.7, "C")
     for i, (path, _) in enumerate(sampling):
         image_panel(fig, rect(2 + i * 59, 2, 57, 39.9), path, SAMPLING_CROP)
-    letter(94, 79, "D")
-    tradeoff_ax = fig.add_axes(rect(108, 55, 69, 21))
+        fig.text((4 + i * 59) / width, 39 / height, f"Iteration {i + 1}",
+                 fontsize=6.5, va="top", color="0.2")
+    letter(94, 76, "D")
+    tradeoff_ax = fig.add_axes(rect(103, 52, 74, 21))
     draw_tradeoff(tradeoff_ax, tradeoff)
     tradeoff_ax.set_yticks((-1600, -1300, -1000))
     tradeoff_ax.set_ylabel("Mean $-$push cost\nper step", fontsize=7)

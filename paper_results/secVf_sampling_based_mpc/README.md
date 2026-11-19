@@ -141,7 +141,9 @@ Planner comparison (20 steps toward the single goal):
 The main figure gives the complete robot the largest view: **A**, a full
 Franka–tentacle scene; **B**, object paths for all three seeds of each planner;
 **C**, three iCEM sampling iterations across the full bottom row; **D**, the
-planner tradeoff stacked beneath the trajectory plot in the upper right. The two matched contact details and the
+planner tradeoff stacked beneath the trajectory plot with aligned left edges
+in the upper right. The trajectory legend sits beside its plot; the tradeoff
+legend identifies all three marker families inside unused plot space. The two matched contact details and the
 fully annotated planner sweep are in the appendix. Panel letters,
 axis labels, and legends remain in the figures; explanations, seed counts,
 marker meanings, success rates, and timing statistics belong in the captions.
@@ -245,3 +247,23 @@ Numbered video frames are kept under `outputs/<stem>_frames/frames/`. The
 committed legacy videos remain available and are stored with Git LFS. Encoding
 MP4/GIF requires ffmpeg; snapshot-only rendering does not. Sample-cloud scenes
 use translucent blue candidate overlays with the shared coral/gold scene materials.
+
+### Interpreting the sampling views
+
+These are successive iterations of the first MPC planning step, evaluated at
+prediction step 10. They are distinct renders of different candidate sets:
+
+| Iteration | Candidates | Best whole-rollout cost | Selected object x, y at prediction step 10 [mm] |
+| --- | ---: | ---: | --- |
+| 1 | 200 | 1943.30 | 45.35, −5.98 |
+| 2 | 100 | 1867.62 | 49.91, −0.11 |
+| 3 | 50 | 1781.56 | 49.23, −1.12 |
+
+The last two views look similar because their selected predicted object
+positions differ by only 1.22 mm at this step. Their candidate sets and selected
+tentacle configurations differ, and the best cost across the complete rollout
+improves by 4.61%. That cost change is not an error metric for the single frame.
+The source is `diagnostics_iter_X_samples[0]` and `diagnostics_iter_cost[0]` in
+`data/square_icem_seed0.npz`; the renderer selects each iteration's minimum-cost
+candidate. The iteration identifiers in the figure distinguish the views, while
+the explanation and candidate counts remain in the caption.

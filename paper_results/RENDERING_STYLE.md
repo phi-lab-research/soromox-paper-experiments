@@ -43,14 +43,17 @@ must not be copied numerically into renderers with different lighting units.
   at final print size. Reserve additional room for plot legends and axis labels.
 - Keep identical physical units at equal axis scaling in spatial plots.
   Change the panel dimensions or surrounding layout to fit them.
-- Keep legends outside the robot and contact regions.
+- Give each plot a legend for its own encodings. A legend can occupy unused
+  plot space when it does not cover data; keep legends outside robot and
+  contact regions.
 - Use the shared `paper.mplstyle` for plots and check the composed PDF at its
-  intended print size. The manipulation figure is 180 by 145 mm.
+  intended print size. The manipulation figure is 180 by 142 mm.
 
 ## Manipulation reference
 
 The main manipulation figure uses one complete Franka–tentacle view, object
-paths and the planner tradeoff stacked in the upper right, and three matched
+paths and the planner tradeoff stacked with aligned left edges in the upper
+right, and three matched
 iCEM sampling views across the full bottom row. Two matched
 contact details and the fully annotated planner sweep appear in the appendix. Robot poses come from the saved iCEM seed-0 trajectory; the
 Franka is a display model following the prescribed base pose, not a simulated
@@ -83,3 +86,7 @@ camera, and studio settings. Re-render snapshots after changing studio settings.
 
 Reproduction commands and the panel captions are in
 [`secVf_sampling_based_mpc/README.md`](secVf_sampling_based_mpc/README.md).
+
+The trajectory legend sits beside the square plot; the tradeoff legend identifies
+all three marker families in unused plot space. Sampling views carry iteration
+identifiers, with candidate counts and quantitative differences in the caption.
