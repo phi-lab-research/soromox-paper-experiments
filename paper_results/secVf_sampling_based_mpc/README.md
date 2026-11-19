@@ -140,8 +140,8 @@ Planner comparison (20 steps toward the single goal):
 
 The main figure gives the complete robot the largest view: **A**, a full
 Franka–tentacle scene; **B**, object paths for all three seeds of each planner;
-**C**, three closely framed iCEM sampling iterations; **D**, the planner
-tradeoff below the trajectory plot. The two matched contact details and the
+**C**, three iCEM sampling iterations across the full bottom row; **D**, the
+planner tradeoff stacked beneath the trajectory plot in the upper right. The two matched contact details and the
 fully annotated planner sweep are in the appendix. Panel letters,
 axis labels, and legends remain in the figures; explanations, seed counts,
 marker meanings, success rates, and timing statistics belong in the captions.
@@ -206,7 +206,7 @@ needs only NumPy and Matplotlib and can also run on a CPU/macOS environment with
 those packages, without installing the RTX dependencies. It verifies snapshot
 trajectory and studio settings before composing images, retains the entire
 overview frame without stretching or automatic cropping. The sampling views
-use one fixed crop (normalized x: 0.25–0.75, y: 0.04–0.88), recorded in the figure
+use one fixed crop (normalized x: 0.05–0.95, y: 0.04–0.88), recorded in the figure
 manifest; the original PNGs remain intact. The generator verifies the scored
 sweep source hashes and computes caption statistics directly from the runs using the same reach test as
 `code/summarize_runs.py`. Timing excludes the first MPC step and reports mean

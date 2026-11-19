@@ -191,7 +191,7 @@ def draw_paths(ax, methods, goals):
     )
 
 
-SAMPLING_CROP = (0.25, 0.75, 0.04, 0.88)
+SAMPLING_CROP = (0.05, 0.95, 0.04, 0.88)
 
 
 def load_tradeoff(path, data_dir):
@@ -223,7 +223,7 @@ def draw_tradeoff(ax, tradeoff):
 
 
 def build_figure(methods, goals, snapshots, sampling, tradeoff):
-    """Whole system and sampling views beside paths and the planner tradeoff."""
+    """Whole system and two stacked plots above a full-width sampling row."""
     plt.style.use(PAPER_STYLE_PATH)
     plt.rcParams.update({
         "text.usetex": False, "font.size": 8, "axes.labelsize": 8,
@@ -239,13 +239,21 @@ def build_figure(methods, goals, snapshots, sampling, tradeoff):
     letter(2, 135.5, "A")
     image_panel(fig, rect(2, 57.5, 100, 75), snapshots[0][0])
     letter(111, 135.5, "B")
-    ax = fig.add_axes(rect(123, 76, 54, 54))
+    ax = fig.add_axes(rect(119, 102, 58, 28))
     draw_paths(ax, methods, goals)
-    letter(2, 52, "C")
+    ax.set_aspect("auto")
+    ax.set_xticks((50, 100, 150))
+    ax.set_yticks((-100, -50, 0))
+    for label, offset in zip(ax.texts, ((-7, -6), (5, -6), (5, 2), (-7, 2)), strict=True):
+        label.set_position(offset)
+    letter(2, 50, "C")
     for i, (path, _) in enumerate(sampling):
-        image_panel(fig, rect(2 + i * 34.5, 8.68, 32, 40.32), path, SAMPLING_CROP)
-    letter(111, 52, "D")
-    draw_tradeoff(fig.add_axes(rect(119, 10, 58, 39)), tradeoff)
+        image_panel(fig, rect(2 + i * 59, 7, 57, 39.9), path, SAMPLING_CROP)
+    letter(111, 88, "D")
+    tradeoff_ax = fig.add_axes(rect(119, 65, 58, 20))
+    draw_tradeoff(tradeoff_ax, tradeoff)
+    tradeoff_ax.set_yticks((-1600, -1300, -1000))
+    tradeoff_ax.set_ylabel("Mean $-$push cost\nper step", fontsize=7)
     return fig
 
 

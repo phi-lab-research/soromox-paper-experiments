@@ -48,7 +48,8 @@ must not be copied numerically into renderers with different lighting units.
 ## Manipulation reference
 
 The main manipulation figure uses one complete Franka–tentacle view, object
-paths, three matched iCEM sampling views, and the planner tradeoff. Two matched
+paths and the planner tradeoff stacked in the upper right, and three matched
+iCEM sampling views across the full bottom row. Two matched
 contact details and the fully annotated planner sweep appear in the appendix. Robot poses come from the saved iCEM seed-0 trajectory; the
 Franka is a display model following the prescribed base pose, not a simulated
 dynamic component of the experiment.
@@ -59,7 +60,7 @@ cloud views. Sampling predictions use translucent blue as an overlay; the
 physical robot and lowest-cost prediction stay coral, and their objects stay
 gold. Candidate overlays share the studio, camera, and roughness across iterations. `--camera-eye` and `--camera-target` can override a preset.
 The whole-system overview is shown in full. The three sampling views share an
-explicit fixed crop, keeping normalized x in [0.25, 0.75] and y in [0.04, 0.88].
+explicit fixed crop, keeping normalized x in [0.05, 0.95] and y in [0.04, 0.88].
 These bounds retain the entire candidate cloud and target and are recorded in
 the figure manifest. The original renders are retained unchanged.
 

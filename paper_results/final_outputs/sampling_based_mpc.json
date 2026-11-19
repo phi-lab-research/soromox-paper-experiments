@@ -273,9 +273,9 @@
     }
   ],
   "sampling_crop_xyxy_normalized": [
-    0.25,
+    0.05,
     0.04,
-    0.75,
+    0.95,
     0.88
   ],
   "planner_tradeoff": {
