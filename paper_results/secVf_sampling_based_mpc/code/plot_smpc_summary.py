@@ -26,8 +26,8 @@ from paper_render_style import PAPER_STUDIO
 from summarize_runs import summarize
 
 METHODS = {
-    "iCEM": ("square_icem_seed{seed}.npz", PAPER_COLORS["post_opt_1"]),
     "MPPI": ("square_mppi_k800_white_seed{seed}.npz", PAPER_COLORS["pre_opt_1"]),
+    "iCEM": ("square_icem_seed{seed}.npz", PAPER_COLORS["post_opt_1"]),
 }
 SEED_STYLES = ("-", "--", ":")
 

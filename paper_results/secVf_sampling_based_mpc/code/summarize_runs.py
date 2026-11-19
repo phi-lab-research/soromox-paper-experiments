@@ -53,8 +53,8 @@ HEADER = "| Configuration | Success | Final error [mm] | Time per MPC step [s] |
 
 if __name__ == "__main__":
     print("Square push:\n\n" + HEADER)
-    print(row("iCEM, box", [DATA_DIR / f"square_icem_seed{s}.npz" for s in SEEDS], 4))
     print(row("MPPI K = 800, box", [DATA_DIR / f"square_mppi_k800_white_seed{s}.npz" for s in SEEDS], 4))
+    print(row("iCEM, box", [DATA_DIR / f"square_icem_seed{s}.npz" for s in SEEDS], 4))
     print(row("iCEM, 100 g box", [DATA_DIR / "square_icem_box100g.npz"], 4))
     print(row("iCEM, cylinder", [DATA_DIR / "square_icem_cylinder.npz"], 4))
     print("\nPlanner comparison (20 steps, single goal):\n\n" + HEADER)

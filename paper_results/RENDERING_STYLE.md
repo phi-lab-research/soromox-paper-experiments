@@ -17,6 +17,7 @@ revised; their existing outputs have not been restyled in this change.
 
 Keep robot materials fixed across controller comparisons. Distinguish methods
 through labels and plot traces, using the existing `paper_style.py` palette.
+Always list MPPI before iCEM in legends, tables, and comparative caption text.
 Preserve platform geometry and mounting, including the Franka's original rigid
 materials. Robot identity should come from geometry rather than renderer style.
 

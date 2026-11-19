@@ -760,18 +760,6 @@
   },
   "runs": [
     {
-      "file": "square_icem_seed0.npz",
-      "sha256": "44c5173c2612592f5aae2cc16bab85713b5ba65a7ea52049ead34038b8d9a94c"
-    },
-    {
-      "file": "square_icem_seed1.npz",
-      "sha256": "fbd2d6dadf60545ce757281f749ecf4cba6c57a154176dd0854f28e74a74b005"
-    },
-    {
-      "file": "square_icem_seed2.npz",
-      "sha256": "e26206adf9e29c44fffef0bd8b4620caf50f4c115915d8a2cdd04634806164d1"
-    },
-    {
       "file": "square_mppi_k800_white_seed0.npz",
       "sha256": "c749f6f0bbc43a084995cb03377fcc2b1db5323dbde4df0d0c81f746b5bb0adb"
     },
@@ -782,20 +770,32 @@
     {
       "file": "square_mppi_k800_white_seed2.npz",
       "sha256": "800d99e57ca6329e40a179983d68c7239bc8afb1bdadeabe97616dc767db0946"
+    },
+    {
+      "file": "square_icem_seed0.npz",
+      "sha256": "44c5173c2612592f5aae2cc16bab85713b5ba65a7ea52049ead34038b8d9a94c"
+    },
+    {
+      "file": "square_icem_seed1.npz",
+      "sha256": "fbd2d6dadf60545ce757281f749ecf4cba6c57a154176dd0854f28e74a74b005"
+    },
+    {
+      "file": "square_icem_seed2.npz",
+      "sha256": "e26206adf9e29c44fffef0bd8b4620caf50f4c115915d8a2cdd04634806164d1"
     }
   ],
   "metrics": {
-    "iCEM": {
-      "success": 3,
-      "count": 3,
-      "planning_mean_s": 26.54310205732816,
-      "planning_std_s": 0.2003080693909273
-    },
     "MPPI": {
       "success": 1,
       "count": 3,
       "planning_mean_s": 8.503319256046153,
       "planning_std_s": 0.8362204089446598
+    },
+    "iCEM": {
+      "success": 3,
+      "count": 3,
+      "planning_mean_s": 26.54310205732816,
+      "planning_std_s": 0.2003080693909273
     }
   },
   "planning_time": "Mean and population standard deviation across seed means, excluding the first MPC step in each run."

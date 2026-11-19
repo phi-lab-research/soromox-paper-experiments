@@ -1,7 +1,7 @@
 # Section Vf: Sampling-Based MPC
 
-This case runs closed-loop sampling-based MPC, iCEM by default and MPPI with
-`--mppi`, in which a tapered four-tendon soft arm on a kinematically driven
+This case runs closed-loop sampling-based MPC, with MPPI via `--mppi` and
+iCEM by default, in which a tapered four-tendon soft arm on a kinematically driven
 floating base pushes a box or cylinder around a 10 cm square. The arm is
 defined in `code/four_tendon_soft_arm.py`, and the planner primitives and push
 cost live in `code/smpc.py`. Each replan samples rollouts against the full
@@ -78,8 +78,8 @@ The script runs three parts, each over seeds 0, 1 and 2:
   K = 200 to 1600, white noise), an iCEM iteration sweep at K = 200
   (`cmp_icem_k200_it*.npz`, 1 to 4 iterations), and an iCEM sample-count sweep
   at 3 iterations (`cmp_icem_it3_k*.npz`, K = 50 to 400);
-- full square pushes with iCEM (`data/square_icem_seed*.npz`) and MPPI with
-  K = 800 (`data/square_mppi_k800_white_seed*.npz`); the seed-0 iCEM run is
+- full square pushes with MPPI at K = 800 (`data/square_mppi_k800_white_seed*.npz`)
+  and iCEM (`data/square_icem_seed*.npz`); the seed-0 iCEM run is
   saved with `--save-samples`;
 - two seed-0 iCEM square-push variants, a 100 g box
   (`data/square_icem_box100g.npz`) and a cylinder
@@ -111,8 +111,8 @@ Square push:
 
 | Configuration | Success | Final error [mm] | Time per MPC step [s] | MPC steps |
 | --- | --- | --- | --- | --- |
-| iCEM, box | 3/3 | 8.0 ± 1.3 | 26.54 ± 0.20 | 51 |
 | MPPI K = 800, box | 1/3 | 15.9 ± 9.3 | 8.50 ± 0.84 | 85 |
+| iCEM, box | 3/3 | 8.0 ± 1.3 | 26.54 ± 0.20 | 51 |
 | iCEM, 100 g box | 0/1 | 10.1 | 29.42 | 100 |
 | iCEM, cylinder | 1/1 | 5.6 | 25.58 | 53 |
 
