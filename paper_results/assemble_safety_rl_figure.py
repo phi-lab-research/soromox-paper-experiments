@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Assemble Figure 13 from saved safety/RL data and the current rollout videos."""
+"""Reproduce the legacy combined safety/RL figure and single-arm RL montage."""
 
 from __future__ import annotations
 
@@ -198,7 +198,7 @@ def main(argv=None):
     parser.add_argument("--safety-dir", type=Path, default=SAFETY)
     parser.add_argument("--rl-dir", type=Path, default=RL)
     parser.add_argument("--output-base", type=Path, default=None)
-    parser.add_argument("--rl-only", action="store_true", help="Separate the existing RL panels from safety.")
+    parser.add_argument("--rl-only", action="store_true", help="Reproduce the legacy single-arm RL montage.")
     parser.add_argument(
         "--safety-times", type=float, nargs=4, default=(0.0, 0.75, 2.0, 7.9)
     )
@@ -208,7 +208,7 @@ def main(argv=None):
     parser.add_argument("--force", action="store_true")
     args = parser.parse_args(argv)
     if args.output_base is None:
-        args.output_base = ROOT / 'final_outputs' / 'parallel_reinforcement_learning' if args.rl_only else DEFAULT_OUTPUT
+        args.output_base = ROOT / 'final_outputs' / 'parallel_reinforcement_learning_legacy' if args.rl_only else DEFAULT_OUTPUT
     outputs = [
         args.output_base.with_suffix(ext) for ext in (".pdf", ".svg", ".png", ".json")
     ]

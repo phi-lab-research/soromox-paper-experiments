@@ -59,7 +59,6 @@ rejects mismatched data, times, camera settings, or obsolete studio settings.
 All saved trace points are plotted, without smoothing or downsampling.
 The suggested paper caption is in `figure_caption.tex`.
 
-The existing RL evidence is separated with
-`python ../assemble_safety_rl_figure.py --rl-only`; its planned grid-based
-redesign is a subsequent task. No extra diagnostic figure or appendix
-material is introduced for this safety redesign.
+The standalone parallel-RL figure is built by
+`../secVg_parallel_rl/code/plot_rl_summary.py`. No extra diagnostic figure or
+appendix material is introduced for this safety redesign.

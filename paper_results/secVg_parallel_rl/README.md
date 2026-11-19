@@ -71,11 +71,13 @@ The device tag comes from the folder name (CPU, or the GPU model of a
 file names of the form `SoRoMoX_<N>_envs_<run-id>.csv`; files without a count in
 their name (PyElastica and SoRoMoX CPU) are labeled with 2 envs. Runs with the
 same label are averaged and the shaded band shows one standard deviation.
-Before averaging, consecutive records of each run are merged so that every
-plotted point is the mean return of the same number of completed episodes
-(`--episodes-per-point`, default 512); otherwise the noise of a curve would
-mainly reflect how many episodes end at once rather than the training itself.
-A SoRoMoX record holds 8 episodes and a PyElastica record 2.
+The default reproduces the existing W&B-style processing: keep up to 1,500
+records per run with random seed 0, apply Gaussian smoothing with scale 10
+records, merge equal timestamps, and interpolate each run onto 500 points
+over the time interval common to the runs in its group. The band is one
+sample standard deviation across the two runs. Passing `--episodes-per-point
+512` instead selects equal-episode aggregation. A SoRoMoX record holds
+8 episodes and a PyElastica record 2.
 
 Rollout generation and rendering are separate steps. Generate the single-arm
 trajectory data for both the uniformly random initialized-policy baseline and
@@ -167,3 +169,55 @@ desktop graphics stacks that cannot create a hidden Open3D window. Training and
 rollout results are stochastic and accelerator dependent; the committed
 checkpoint, normalization state, reward CSVs, and rollout NPZ provide the paper
 provenance.
+
+## Redesigned main paper figure
+
+`code/plot_rl_summary.py` creates the main PDF, PNG, SVG, and provenance JSON
+under `../final_outputs/parallel_reinforcement_learning.*`. Panel A shows every
+environment in the saved trained-policy rollout, arranged as an 8x8 display
+grid at 5 s and 15 s. These are two times during execution of one fixed policy.
+Panel B retains both CPU baselines and all four GPU batch sizes, using the
+same data and processing as the preceding main figure. The displayed 64-env
+grid and the training-curve batch sizes have separate meanings.
+
+Reproduce the figure from the committed snapshots (from this directory):
+
+```bash
+python code/plot_rl_summary.py --force
+```
+
+To rebuild the snapshot geometry, use the experiments environment:
+
+```bash
+JAX_PLATFORMS=cpu python code/export_rl_grid_scene.py --force
+```
+
+The exporter reconstructs the existing RL robot and evaluates forward
+kinematics from the saved states. It applies the same grid offset to each
+robot, mount, and target. Grid spacing is 0.28 m; the mount rests on the shared
+studio floor. Both cameras are fitted together, and the composer computes
+one crop from all robot surfaces, mounts, and target bounds in both scenes.
+All 64 environments remain in view. Mean end-effector errors in these two
+snapshots are 5.204 and 4.511 mm, respectively; these are snapshot statistics
+for the 64 shown environments, distinct from the 128-env evaluation reported
+in the main text.
+
+Render in the RTX environment pinned by `../secVf_sampling_based_mpc/`:
+
+```bash
+python code/render_rl_grid_scene.py --geometry outputs/paper_snapshots/grid_1_geometry.npz --output outputs/paper_snapshots/grid_1.png --force
+python code/render_rl_grid_scene.py --geometry outputs/paper_snapshots/grid_2_geometry.npz --output outputs/paper_snapshots/grid_2.png --force
+python code/plot_rl_summary.py --force
+```
+
+The renderer imports `../paper_rtx_studio.py` directly, matching the MPC and
+safety materials, backdrop, lighting, and shadows. Geometry, snapshots, and
+figure manifests record source hashes, actual environment indices, time,
+camera, crop, and the saved data used for each curve. The composer rejects
+mismatched sources, incomplete grids, camera changes, and stale studio values.
+The suggested caption is `figure_caption.tex`.
+
+The existing random/trained single-arm videos remain available as supporting
+media. No additional appendix figure is introduced. The legacy assembler's
+`--rl-only` mode now writes `parallel_reinforcement_learning_legacy.*` so it
+cannot overwrite the redesigned canonical figure by default.

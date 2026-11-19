@@ -1,7 +1,7 @@
 # Shared paper rendering style
 
 `paper_render_style.py` defines `PAPER_STUDIO`, the shared material palette and
-studio-lighting conventions. Manipulation and safety share the same
+studio-lighting conventions. Manipulation, safety, and the parallel RL grids share the same
 `paper_rtx_studio.py` lighting and material implementation. Other application
 renderers can adopt these settings as their figures are revised.
 
@@ -131,3 +131,20 @@ Apply one rigid display transform to robot, obstacles, and
 target together. Frame provenance includes the full transform, data hashes,
 camera, common timestamp, and studio. No supplementary diagnostic figure is
 required for this comparison.
+
+## Parallel RL reference
+
+Use the shared RTX studio, coral robot surfaces, dark flared mounts, and green
+targets for all 64 saved environments. Show the full 8x8 grid at 5 s and 15 s
+of the same trained-policy rollout, with one camera and one geometry-derived
+crop. Preserve all robot and target coordinates relative to their own base;
+apply the display-grid offset equally to both. No target trails or ghost states
+are needed in this dense view. Identify rollout timestamps and displayed count
+separately from the training batch sizes in the plot.
+
+Keep the learning plot full width, with both CPU baselines before the GPU
+batch sizes in ascending order. CPU lines are dashed, GPU lines solid; reuse
+the established series colors. Keep the existing learning-curve processing
+and record it in the manifest. Explain policy evaluation, run counts, bands,
+and tracking statistics in the caption. The two grid snapshots show execution
+of a fixed trained policy. The learning curves show training progress.

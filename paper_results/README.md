@@ -44,21 +44,22 @@ The command writes `model_based_control.pdf` and a matching SVG under the
 Section Vc `outputs/` directory, and requires `--force` before replacing either
 existing output.
 
-Figure 13 combines the safety-control and reinforcement-learning studies:
+The safety and parallel-RL studies now have separate main figures:
 
 ```bash
-uv run --extra paper_results python paper_results/assemble_safety_rl_figure.py --force
+uv run --extra paper_results python paper_results/secVe_safety_constrained_control/code/plot_safety_summary.py --force
+uv run --extra paper_results python paper_results/secVg_parallel_rl/code/plot_rl_summary.py --force
 ```
 
-This assembles panels A–D from the Section Ve rollout data, Section Vg reward
-CSVs, and the current single-environment videos. It writes PDF, SVG, PNG and a
-source-hash manifest to `final_outputs/control_barrier_function_reinforcement_learning.*`.
-The plots remain vector graphics; snapshots retain the current studio composition.
-Each comparison uses a common crop across both controllers and all four times.
-Use `--safety-times` and `--rl-times` to select four timestamps per study; defaults
-are 0, 0.75, 2, 7.9 seconds and 0, 5, 10, 15 seconds, respectively. Videos must
-already exist and FFmpeg must be installed. Regenerate the section videos first
-when changing rendering settings. The script does not rerun simulations or training.
+These commands compose the committed matched studio snapshots and saved
+numerical evidence into `final_outputs/safety_constrained_control.*` and
+`final_outputs/parallel_reinforcement_learning.*`, including source manifests.
+See the case READMEs for geometry export and RTX snapshot regeneration.
+The RL figure shows the complete 64-environment grid at two rollout times.
+
+`assemble_safety_rl_figure.py` remains available for reproducing the legacy
+combined safety/RL figure. Its `--rl-only` mode writes a separate
+`parallel_reinforcement_learning_legacy.*` montage.
 
 ## PyElastica benchmark dependency
 
