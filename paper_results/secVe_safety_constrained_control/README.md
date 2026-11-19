@@ -44,11 +44,11 @@ python code/plot_safety_summary.py
 
 Use `--force` to replace existing renders or figures. The renderer uses
 `../paper_rtx_studio.py`, shared directly with MPC. The figure composer projects the recorded terminal backbone point as a white
-dot and its target as a green ring, joined by a dashed segment. A compact
+dot and its target as a green ring. A compact
 legend identifies the two markers. Both remain visible through the robot;
 they coincide when the end effector reaches the target. The terminal backbone
 point is the center of the rounded contact tip, not its outermost surface.
-The connector shows projected separation; panel C reports the full 3D distance.
+Panel C reports the full 3D distance between these points.
 These overlays do not change scene geometry.
 The two views have identical cameras, scales, lighting, and times.
 

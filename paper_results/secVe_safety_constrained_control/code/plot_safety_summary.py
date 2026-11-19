@@ -110,9 +110,6 @@ def build_figure(results, limit, snapshots):
         ax = fig.add_axes(rect(x, 43, 86, 75.25))
         ax.imshow(plt.imread(path))
         current, target = np.asarray(meta['end_effector_pixel_xy']), np.asarray(meta['target_pixel_xy'])
-        ax.plot(*np.stack((current, target)).T, color='#33363B', linewidth=1.0,
-                linestyle=(0, (2, 2)), zorder=3,
-                path_effects=[pe.Stroke(linewidth=2.1, foreground='white'), pe.Normal()])
         ax.scatter(*target, s=48, facecolors='none', edgecolors=PAPER_STUDIO.target,
                    linewidths=1.2, zorder=4,
                    path_effects=[pe.Stroke(linewidth=2, foreground='white'), pe.Normal()])
