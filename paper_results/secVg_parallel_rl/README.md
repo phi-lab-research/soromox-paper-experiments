@@ -51,10 +51,10 @@ tracking error, and success rate for a fixed rollout.
 
 ## Paper artifacts
 
-Recreate the reward curve from the committed training logs:
+Compose the grid, tracking, and training-curve panels:
 
 ```bash
-uv run python paper_results/secVg_parallel_rl/code/plot_rl.py
+uv run python paper_results/secVg_parallel_rl/code/plot_parallel_rl.py
 ```
 
 The plot reads three subfolders of `data/reward_logs/`, each holding one
@@ -71,11 +71,12 @@ The device tag comes from the folder name (CPU, or the GPU model of a
 file names of the form `SoRoMoX_<N>_envs_<run-id>.csv`; files without a count in
 their name (PyElastica and SoRoMoX CPU) are labeled with 2 envs. Runs with the
 same label are averaged and the shaded band shows one standard deviation.
-Before averaging, consecutive records of each run are merged so that every
-plotted point is the mean return of the same number of completed episodes
-(`--episodes-per-point`, default 512); otherwise the noise of a curve would
-mainly reflect how many episodes end at once rather than the training itself.
-A SoRoMoX record holds 8 episodes and a PyElastica record 2.
+The default reproduces the existing W&B-style processing: keep up to 1,500
+records per run with random seed 0, apply Gaussian smoothing with scale 10
+records, merge equal timestamps, and interpolate each run onto 500 points
+over the time interval common to the runs in its group. The band is one
+sample standard deviation across the two runs. The processing is implemented
+in `code/rl_training_curves.py`.
 
 Rollout generation and rendering are separate steps. Generate the single-arm
 trajectory data for both the uniformly random initialized-policy baseline and
@@ -167,3 +168,63 @@ desktop graphics stacks that cannot create a hidden Open3D window. Training and
 rollout results are stochastic and accelerator dependent; the committed
 checkpoint, normalization state, reward CSVs, and rollout NPZ provide the paper
 provenance.
+
+## Redesigned main paper figure
+
+`code/plot_parallel_rl.py` writes the main PDF, PNG, SVG, and provenance JSON
+under `../final_outputs/parallel_reinforcement_learning.*`:
+
+- A is one low, close view into a dense population of robots. Recorded states
+  from the 64-environment trained-policy rollout at 5 s are repeated as display
+  instances beyond the image boundaries. This is explicitly an illustration;
+  the extra instances do not represent additional independent simulations.
+- B shows environment 0 at 10 s, with its complete recorded 0--20 s target
+  (green dashed) and end-effector (blue solid) paths. The mean position error
+  over all 301 saved instants is 6.548 mm, including the initial approach.
+- C retains both CPU baselines and all four GPU batch sizes with the existing
+  learning-curve processing. These are the measured training comparisons.
+
+Reproduce from committed snapshots, from this directory:
+
+```bash
+python code/plot_parallel_rl.py --force
+```
+
+Export geometry with the experiments environment, then render in the RTX
+runtime pinned by `../secVf_sampling_based_mpc/`:
+
+```bash
+JAX_PLATFORMS=cpu python code/export_rl_grid_scene.py --force
+python code/render_rl_grid_scene.py --geometry outputs/paper_snapshots/grid_close_geometry.npz --output outputs/paper_snapshots/grid_close.png --force
+python code/render_rl_grid_scene.py --geometry outputs/paper_snapshots/tracking_geometry.npz --output outputs/paper_snapshots/tracking.png --force
+python code/plot_parallel_rl.py --force
+```
+
+The grid has 0.28 m spacing and includes 7,050 display instances after
+conservative culling against the full camera view. Every instance uses one of the 64 saved
+robot/target pairs; environment indices and base offsets are recorded. Distant
+meshes use fewer cross-sections and sides, while foreground robots retain the
+full mesh resolution. The shared studio floor extends to a backdrop bend at
+24 m for this large scene; all lighting and materials match MPC and safety.
+The final panoramic crop is [0, 160, 1800, 700], retaining the distant rows
+and a gray margin above them for the inset A label, while trimming empty
+floor below the foreground mounts. The separate white title
+band is removed; the complete figure is 180 by 119 mm. The foreground scale
+and low camera angle are preserved. The population reaches the horizon
+and continues beyond the lateral frame boundaries.
+
+The tracking detail uses the existing RL model for forward kinematics and
+preserves every saved time sample for both paths. Only the display base offset
+is applied. Its 6.548 mm whole-trajectory error for environment 0 is distinct
+from the 128-env final-step evaluation in the main text. Path meshes exclude
+shadows, and the complete robot and mounting remain visible. Its display crop
+is [240, 0, 880, 1000], removing empty side margins while retaining both
+complete paths. The narrower panel gives the learning plot 124 mm of width;
+its legend is 8 pt, tick labels 8 pt, and axis labels 9 pt. The row gap is
+reduced while retaining space for panel letters and the tracking legend.
+
+Snapshot and figure manifests contain source/geometry hashes, display-instance
+counts, original environment indices, cameras, crop, and trajectory time range.
+The renderer uses `../paper_rtx_studio.py` directly. The suggested caption is
+`figure_caption.tex`. Existing random/trained rollout videos remain available;
+this revision introduces no appendix figure.

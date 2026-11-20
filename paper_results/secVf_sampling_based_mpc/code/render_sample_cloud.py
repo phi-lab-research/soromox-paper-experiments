@@ -1,8 +1,10 @@
-"""Render the summary figure's panel A: one RTX frame of an iCEM replanning step's sample cloud.
+"""Render one iCEM sampling iteration in the shared paper studio.
 
 For a saved run's --timestep and CEM --iteration, draws every sample's predicted rod shape at
---horizon-step, each translucent by cost rank, the lowest-cost sample solid, the best
---max-object-samples predicted object poses, the real executed rod/object, and the goal marker.
+--horizon-step, each translucent by cost rank, the lowest-cost sample in faint
+coral, optional --max-object-samples predicted object poses, and the goal marker.
+The current recorded rod and object use the same solid scene geometry and
+materials as the overview, unchanged across optimization iterations.
 Run once per iteration to show the elite population narrowing.
 
 Runs in this section's environment (../pyproject.toml) and needs an RTX GPU. Needs ovrtx 0.4.x:
@@ -17,6 +19,8 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import hashlib
+import json
 import os
 from pathlib import Path
 
@@ -29,10 +33,12 @@ import warp as wp  # noqa: E402
 
 import run_experiment  # noqa: E402
 from rendering import (  # noqa: E402
-    CAMERA_EYE,
     CAMERA_TARGET,
+    PAPER_CAMERAS,
     ROD_COLLISION_BODIES,
     ROD_COLOR,
+    OBJECT_COLOR,
+    PAPER_STUDIO,
     TABLE_COLOR,
     ExampleViewerRTX,
     build_goal_overlay,
@@ -44,8 +50,11 @@ from four_tendon_soft_arm import FourTendonSoftArm  # noqa: E402
 from newton_cosserat.gvs import gvs_state_views  # noqa: E402
 
 
-SAMPLE_COLOR = paper_rgb("pre_opt_1")  # cloud samples, their objects, and the real executed rod/object
-BEST_PREDICTION_COLOR = ROD_COLOR
+SAMPLE_COLOR = paper_rgb("pre_opt_1")  # translucent candidate predictions
+# Keep the overview's viewing direction, moving closer to the tentacle.
+CAMERA_EYE = tuple(np.asarray(CAMERA_TARGET) + 0.56 * (
+    np.asarray(PAPER_CAMERAS["overview"][0]) - np.asarray(PAPER_CAMERAS["overview"][1])
+))
 CAP_LATITUDE_RINGS = 4
 WORST_SAMPLE_OPACITY_FACTOR = 0.1  # worst-ranked sample's opacity relative to --sample-opacity
 OBJECT_MASS = 0.05  # render-only scene, never stepped, so the mass is irrelevant
@@ -331,13 +340,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--object-shape", choices=("box", "cylinder"), default="box", help="Must match the run's --object-shape.")
     parser.add_argument("--device", default="cuda", help="ViewerRTX requires a real GPU; cpu will not work.")
     parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--width", type=int, default=960)
-    parser.add_argument("--height", type=int, default=540)
-    parser.add_argument("--samples-per-pixel", type=int, default=8)
-    parser.add_argument("--backbone-points", type=int, default=25, help="Arc-length samples along each drawn tentacle shape.")
-    parser.add_argument("--ring-sides", type=int, default=8, help="Cross-section polygon resolution (>=3) for the drawn tubes.")
+    parser.add_argument("--width", type=int, default=1200)
+    parser.add_argument("--height", type=int, default=900)
+    parser.add_argument("--samples-per-pixel", type=int, default=128)
+    parser.add_argument("--force", action="store_true")
+    parser.add_argument("--backbone-points", type=int, default=35, help="Arc-length samples along each drawn tentacle shape.")
+    parser.add_argument("--ring-sides", type=int, default=12, help="Cross-section polygon resolution (>=3) for the drawn tubes.")
     parser.add_argument(
-        "--sample-opacity", type=float, default=0.5,
+        "--sample-opacity", type=float, default=0.12,
         help="Display opacity in [0, 1] of the best non-best cloud sample; the others scale down by "
              "cost rank to --sample-opacity * 0.1 at the worst.",
     )
@@ -347,15 +357,15 @@ def parse_args() -> argparse.Namespace:
              "--sample-opacity. Defaults to --sample-opacity.",
     )
     parser.add_argument(
-        "--max-object-samples", type=int, default=None,
+        "--max-object-samples", type=int, default=0,
         help="Draw predicted-object boxes for only this many of the best drawn samples (rods unaffected; "
-             "default: all). The boxes' top faces are coplanar, so a ray crosses one per box, and "
+             "default: 0, keeping the current solid object unobscured). The boxes' top faces are coplanar, so a ray crosses one per box, and "
              "ViewerRTX's bounded transmission-bounce budget turns deep stacks black. Lowering the "
              "opacity makes this worse; capping the box count fixes it.",
     )
     parser.add_argument(
         "--object-sink", type=float, default=0.001,
-        help="Sink the translucent cloud boxes this far below the table top [m] so the solid best-sample "
+        help="Sink the translucent cloud boxes this far below the table top [m] so the solid current "
              "box is no longer coplanar with them and reads unveiled. 0 disables it. Does not stop the "
              "cloud boxes blackening each other; --max-object-samples controls that.",
     )
@@ -376,7 +386,7 @@ def _log_solid_mesh(viewer, name: str, mesh: tuple, color, opacity: float | None
         wp.array(indices, dtype=wp.int32),
         normals=wp.array(normals, dtype=wp.vec3),
         color=color,
-        roughness=1.0,
+        roughness=PAPER_STUDIO.robot_roughness,
         metallic=0.0,
         opacity=opacity,
     )
@@ -384,6 +394,9 @@ def _log_solid_mesh(viewer, name: str, mesh: tuple, color, opacity: float | None
 
 def main() -> None:
     args = parse_args()
+    manifest_path = args.output.with_suffix(".json")
+    if not args.force and (args.output.exists() or manifest_path.exists()):
+        raise FileExistsError("Sample-cloud output exists; pass --force to replace it")
 
     data = np.load(args.npz, allow_pickle=True)
     for required in ("X_final", "object_pose", "goal_xy", "reach_tolerance",
@@ -397,6 +410,7 @@ def main() -> None:
     reach_tolerance = data["reach_tolerance"]
     iter_X_samples = data["diagnostics_iter_X_samples"]
     iter_cost = data["diagnostics_iter_cost"]
+    data.close()
 
     num_timesteps = iter_X_samples.shape[0]
     if not (0 <= args.timestep < num_timesteps):
@@ -424,7 +438,7 @@ def main() -> None:
     # Never stepped: sync_kinematics() alone places the rod from the saved q.
     model, box_bodies, coupled_solver, _, _ = run_experiment.build_scene(
         robot, args.device, object_shape=args.object_shape, object_mass=OBJECT_MASS, world_count=1,
-        num_collision_bodies=ROD_COLLISION_BODIES, tentacle_color=SAMPLE_COLOR, object_color=SAMPLE_COLOR,
+        num_collision_bodies=ROD_COLLISION_BODIES, tentacle_color=ROD_COLOR, object_color=OBJECT_COLOR,
         table_color=TABLE_COLOR,
     )
     gvs_solver = coupled_solver.solver("gvs")
@@ -443,7 +457,8 @@ def main() -> None:
 
     # New named geometry must be logged before the first begin_frame(): ViewerRTX bakes it into the build-phase scene.
     goal_corners, goal_meshes = build_goal_overlay(
-        viewer, object_pose, goal_xy, reach_tolerance, run_experiment.OBJECT_FOOTPRINT, args.object_shape
+        viewer, object_pose, goal_xy, reach_tolerance, run_experiment.OBJECT_FOOTPRINT, args.object_shape,
+        initial_timestep=args.timestep,
     )
 
     s_ps = np.linspace(0.0, float(robot.length), args.backbone_points)
@@ -486,16 +501,17 @@ def main() -> None:
                 SAMPLE_COLOR, object_opacity * factor,
             )
 
-    _log_solid_mesh(viewer, "best_sample", rod_mesh(best_idx), BEST_PREDICTION_COLOR)
-    _log_solid_mesh(viewer, "best_sample_object", object_mesh(best_idx, object_half_extent), BEST_PREDICTION_COLOR)
-    # Exploratory, untested on a GPU: overlapping translucent tubes showed dark streaks that may be cast shadows.
-    viewer.shadow_excluded_mesh_names = (*sample_mesh_names, "best_sample", "best_sample_object")
+    _log_solid_mesh(viewer, "best_prediction", rod_mesh(best_idx), ROD_COLOR, 0.3)
+    # Only the current configuration casts shadows. Faint candidates remain
+    # shadow-free, like the future-state overlays in the overview.
+    viewer.shadow_excluded_mesh_names = (*sample_mesh_names, "best_prediction")
 
-    # Real executed rod/object at --timestep, drawn underneath the cloud for context.
+    # Solid means current state, as in the overview. Optimization changes the
+    # predicted overlays, never this recorded rod or the object's full pose.
     row = X_final[args.timestep]
     q_internal = row[:ndof]
     qd_internal = row[ndof : 2 * ndof]
-    cube_x, cube_vx, cube_y, cube_vy = row[2 * ndof : 2 * ndof + 4]
+    cube_vx, cube_vy = row[2 * ndof + 1], row[2 * ndof + 3]
     # row[2 * ndof + 4] is object_yaw; the base pose starts one column later.
     base_pose = row[2 * ndof + 5 : 2 * ndof + 5 + num_base_coordinates]
 
@@ -513,9 +529,7 @@ def main() -> None:
 
     body_q = state.body_q.numpy()
     body_qd = state.body_qd.numpy()
-    body_q[box_body, 0] = cube_x
-    body_q[box_body, 1] = cube_y
-    body_q[box_body, 2:7] = object_pose[args.timestep, 2:7]
+    body_q[box_body] = object_pose[args.timestep]
     body_qd[box_body, 0] = cube_vx
     body_qd[box_body, 1] = cube_vy
     state.body_q.assign(body_q)
@@ -529,6 +543,28 @@ def main() -> None:
     viewer.end_frame()
     viewer.save_screenshot(str(args.output))
     viewer.close()
+    manifest_path.write_text(json.dumps({
+        "source_file": args.npz.name,
+        "source_sha256": hashlib.sha256(args.npz.read_bytes()).hexdigest(),
+        "renderer_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        "studio_renderer_sha256": hashlib.sha256(Path(__file__).with_name("rendering.py").read_bytes()).hexdigest(),
+        "studio": PAPER_STUDIO.manifest(),
+        "camera_eye": list(CAMERA_EYE), "camera_target": list(CAMERA_TARGET),
+        "timestep": args.timestep, "iteration": args.iteration,
+        "horizon_step": args.horizon_step, "sample_count": int(step_X.shape[0]),
+        "drawn_cloud_samples": n_cloud, "drawn_object_samples": n_object_boxes,
+        "sample_opacity": args.sample_opacity, "object_opacity": object_opacity,
+        "object_sink": args.object_sink, "object_shape": args.object_shape,
+        "best_sample_index": best_idx, "width": args.width, "height": args.height,
+        "solid_configuration": "current_recorded_state",
+        "solid_object_pose_xyz_xyzw": object_pose[args.timestep].tolist(),
+        "best_prediction_opacity": 0.3,
+        "solid_geometry": "shared_scene_capsules_and_object",
+        "shadow_policy": "solid_configuration_only",
+        "backbone_points": args.backbone_points, "ring_sides": args.ring_sides,
+        "samples_per_pixel": args.samples_per_pixel,
+        "file": args.output.name,
+    }, indent=2) + "\n")
     print(f"wrote {args.output}")
 
 

@@ -3,7 +3,6 @@ from pathlib import Path
 
 import matplotlib
 import numpy as np
-import pytest
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
@@ -105,37 +104,6 @@ def comparison_run() -> simulation.ComparisonRun:
     )
 
 
-def test_canonical_figure_has_expected_layout(monkeypatch):
-    monkeypatch.setattr(plotter.shutil, "which", lambda _: None)
-    fig = plotter.build_configuration_space_paper_figure(comparison_run())
-
-    np.testing.assert_allclose(
-        fig.get_size_inches(), plotter.cm_to_inches((16.5, 9.5))
-    )
-    assert len(fig.axes) == 3
-    assert fig.axes[2].get_xlabel() == r"Time $\mathrm{[s]}$"
-    assert "Setpoint regulation" in [text.get_text() for text in fig.axes[0].texts]
-    assert "Trajectory tracking" in [text.get_text() for text in fig.axes[0].texts]
-    assert all(
-        text.get_text() not in tuple("ABCDEF")
-        for ax in fig.axes
-        for text in ax.texts
-    )
-    desired_line = fig.axes[0].lines[0]
-    assert desired_line.get_label() == "Desired"
-    assert desired_line.get_linewidth() == 2.0
-    assert desired_line.get_zorder() == 5
-    np.testing.assert_allclose(
-        fig.axes[2].lines[0].get_ydata(),
-        1.0 + np.array([0.0, 0.1, 0.2, 0.3]),
-    )
-    np.testing.assert_allclose(
-        fig.axes[2].lines[1].get_ydata(),
-        1.0 + 0.9 * np.array([0.0, 0.1, 0.2, 0.3]),
-    )
-    plt.close(fig)
-
-
 def test_tracking_errors_remain_configuration_displacements(monkeypatch):
     monkeypatch.setattr(plotter.shutil, "which", lambda _: None)
     run = comparison_run()
@@ -191,16 +159,3 @@ def test_rmse_uses_separate_saved_phase_results(monkeypatch):
         for text in ax.texts
     )
     plt.close(fig)
-
-
-def test_canonical_save_requires_force(tmp_path, monkeypatch):
-    monkeypatch.setattr(plotter.shutil, "which", lambda _: None)
-    output = tmp_path / "configuration.pdf"
-    plotter.save_configuration_space_paper_figure(
-        comparison_run(), output, show=False, force=False
-    )
-    assert output.stat().st_size > 0
-    with pytest.raises(FileExistsError, match="--force"):
-        plotter.save_configuration_space_paper_figure(
-            comparison_run(), output, show=False, force=False
-        )

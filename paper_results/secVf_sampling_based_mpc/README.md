@@ -1,7 +1,7 @@
 # Section Vf: Sampling-Based MPC
 
-This case runs closed-loop sampling-based MPC, iCEM by default and MPPI with
-`--mppi`, in which a tapered four-tendon soft arm on a kinematically driven
+This case runs closed-loop sampling-based MPC, with MPPI via `--mppi` and
+iCEM by default, in which a tapered four-tendon soft arm on a kinematically driven
 floating base pushes a box or cylinder around a 10 cm square. The arm is
 defined in `code/four_tendon_soft_arm.py`, and the planner primitives and push
 cost live in `code/smpc.py`. Each replan samples rollouts against the full
@@ -78,8 +78,8 @@ The script runs three parts, each over seeds 0, 1 and 2:
   K = 200 to 1600, white noise), an iCEM iteration sweep at K = 200
   (`cmp_icem_k200_it*.npz`, 1 to 4 iterations), and an iCEM sample-count sweep
   at 3 iterations (`cmp_icem_it3_k*.npz`, K = 50 to 400);
-- full square pushes with iCEM (`data/square_icem_seed*.npz`) and MPPI with
-  K = 800 (`data/square_mppi_k800_white_seed*.npz`); the seed-0 iCEM run is
+- full square pushes with MPPI at K = 800 (`data/square_mppi_k800_white_seed*.npz`)
+  and iCEM (`data/square_icem_seed*.npz`); the seed-0 iCEM run is
   saved with `--save-samples`;
 - two seed-0 iCEM square-push variants, a 100 g box
   (`data/square_icem_box100g.npz`) and a cylinder
@@ -111,8 +111,8 @@ Square push:
 
 | Configuration | Success | Final error [mm] | Time per MPC step [s] | MPC steps |
 | --- | --- | --- | --- | --- |
-| iCEM, box | 3/3 | 8.0 ± 1.3 | 26.54 ± 0.20 | 51 |
 | MPPI K = 800, box | 1/3 | 15.9 ± 9.3 | 8.50 ± 0.84 | 85 |
+| iCEM, box | 3/3 | 8.0 ± 1.3 | 26.54 ± 0.20 | 51 |
 | iCEM, 100 g box | 0/1 | 10.1 | 29.42 | 100 |
 | iCEM, cylinder | 1/1 | 5.6 | 25.58 | 53 |
 
@@ -138,44 +138,137 @@ Planner comparison (20 steps toward the single goal):
 
 ## Paper artifacts
 
-Recreate the summary figure from the committed data and renders:
+The main figure gives the complete robot the largest view: **A**, a full
+Franka–tentacle scene; **B**, object paths for all three seeds of each planner;
+**C**, three iCEM sampling iterations across the full bottom row; **D**, the
+planner tradeoff stacked beneath the centered trajectory plot in the upper
+right. The trajectory legend sits above its plot; the tradeoff
+legend identifies all three marker families inside unused plot space. The
+diagnostic figure is excluded from the paper; no additional appendix material
+is planned for this figure. Panel letters,
+axis labels, and legends remain in the figures; explanations, seed counts,
+marker meanings, success rates, and timing statistics belong in the captions.
+See [the shared rendering style](../RENDERING_STYLE.md) and
+[`figure_caption.tex`](figure_caption.tex) for the proposed main-figure caption.
+
+### Main figure
+
+Render only the required saved states on an RTX host, without rerunning the
+experiment or encoding a video. Run from this section directory with the pinned
+figure environment installed. Both JAX and Newton must use the GPU; do not set
+`JAX_PLATFORMS=cpu` for rendering.
 
 ```bash
-uv run --project . python code/plot_smpc_summary.py
+uv run --project . python code/rendering.py \
+  --run-path data/square_icem_seed0.npz --view overview --snapshot-steps 19 \
+  --future-steps 21 23 --future-opacity 0.3 \
+  --width 2400 --height 1800 --samples-per-pixel 128
 ```
 
-This writes `../final_outputs/sampling_based_mpc.pdf`. Panel A shows RTX renders of the sample
-cloud across iCEM iterations, B the MPPI-versus-iCEM planning-time and
-performance trade-off, C RTX renders of the Franka-mounted arm pushing along the
-trajectory, and D the top-down square-push trajectories of iCEM and MPPI
-K = 800 over three seeds each. Panel B averages the seeds under
-`data/cmp_seeds/`. LaTeX is used for text when it is installed.
+Images and provenance are written under `outputs/paper_snapshots/overview/`.
+Pass `--force` to replace existing snapshots. Steps are saved trajectory row
+indices, including the initial row; physical time is `step * --control-dt`.
+The overview uses opaque step 19 (0.95 s), with faint steps
+21 and 23 (1.05 and 1.15 s). The renderer verifies that all intervening states
+keep the same active goal and that the selected cube poses approach it
+(83.2 → 41.0 → 14.8 mm). The faint tentacle and cube use recorded configurations;
+the matching Franka poses use the existing kinematic display model. They show
+later executed motion, not predictions from the current MPC step. The active
+goal stays fixed. Omit `--future-steps` for a single-state overview. These times are fixed across the
+figure and are recorded in the manifests. Batches use a fresh render process
+for each snapshot to preserve path-tracing accumulation in the pinned RTX
+backend; the batch manifest is published after all selected states render.
 
-Render the panel A frames, one per iCEM iteration of MPC step 0, from a run
-saved with `--save-samples`:
+Render the three sampling iterations with the same studio (from the run saved
+with `--save-samples`). The shared camera is fixed across the three frames:
 
 ```bash
-code/render_sample_cloud.sh data/square_icem_seed0.npz
+OUT_DIR=outputs/paper_snapshots/sampling code/render_sample_cloud.sh data/square_icem_seed0.npz 10 --force
 ```
 
-An optional second argument selects the drawn horizon step (default 10);
-further arguments pass through to `code/render_sample_cloud.py`. The frames are
-written to `outputs/frames/square_icem_seed0_t0_iter{0,1,2}.png`; set `OUT_DIR`
-to override the directory.
+Each PNG has a JSON sidecar with source and style provenance. The current
+recorded tentacle and cube use the overview's native geometry, coral/gold
+materials, and soft shadows. Their poses are identical across iterations,
+including the cube's full recorded position and quaternion. The viewing
+direction matches the overview. The lowest-cost predicted tentacle is faint
+coral (opacity 0.3). Translucent blue tentacles show all other candidates, with
+opacity decreasing from 0.12 to 0.012 by cost rank. Prediction overlays cast no
+shadows. Predicted objects are omitted by default (`--max-object-samples 0`),
+so only the current recorded cube is visible.
 
-Render a saved run as an RTX path-traced video:
+Export the planner sweep scores once with the section environment (the scored
+JSON is also committed, so composing the main figure needs no JAX):
+
+```bash
+JAX_PLATFORMS=cpu uv run --project . python code/compute_planner_tradeoff.py --force
+```
+
+This writes `outputs/planner_tradeoff.json`, including source hashes and all
+12 plotted configurations (the two iCEM sweep families share one configuration).
+
+Compose the figure from these snapshots and the saved square-push and sweep results:
+
+```bash
+uv run --project . python code/plot_smpc.py --force
+```
+
+This writes `../final_outputs/sampling_based_mpc.{pdf,svg,png,json}`. The generator
+needs only NumPy and Matplotlib and can also run on a CPU/macOS environment with
+those packages, without installing the RTX dependencies. It verifies snapshot
+trajectory and studio settings before composing images. A fixed overview crop
+(normalized x: 0.25–0.84, y: 0.10–0.90) removes empty background around the
+complete robot without stretching it. The trajectory plot uses equal axis
+scaling; both plots are stacked closely in the upper right. The sampling views
+use one fixed crop (normalized x: 0.05–0.95, y: 0.04–0.88), recorded in the figure
+manifest; the original PNGs remain intact. The generator verifies the scored
+sweep source hashes and computes caption statistics directly from the runs using the same reach test as
+`code/summarize_runs.py`. Timing excludes the first MPC step and reports mean
+and population standard deviation across the three seed means. `--data-dir`,
+`--snapshot-dir`, `--tradeoff-data`, and `--output-dir` allow staged builds. Existing figure outputs
+require `--force` before replacement.
+
+### Videos and camera overrides
 
 ```bash
 uv run --project . python code/rendering.py --run-path data/square_icem_cylinder.npz \
-  --object-shape cylinder --output outputs/square_icem_cylinder.mp4 --gif
+  --object-shape cylinder --view overview --output outputs/square_icem_cylinder.mp4 --gif
 ```
 
-The renderer reads the saved trajectory without re-simulating and adds a
-decorative Franka FR3 whose end effector follows the arm base; `--franka-base`
-moves it. The numbered PNG frames are kept under `outputs/<stem>_frames/frames/`.
-The committed videos, `outputs/square_icem_{seed0,box100g,cylinder}.{mp4,gif}`,
-are stored in Git LFS.
-Panel C reads frames 75, 189, 318 and 453 directly from
-`outputs/square_icem_seed0_frames/frames/`, so render `data/square_icem_seed0.npz`
-with `--output outputs/square_icem_seed0.mp4` first. Encoding the MP4 and GIF
-requires ffmpeg.
+The renderer reads saved trajectories and adds a decorative Franka FR3 whose
+end effector follows the tentacle base. `--franka-base` changes its placement.
+The default `overview` camera includes the complete system; `detail` focuses on
+the contact region, and `legacy` retains the previous camera. Explicit
+`--camera-eye X Y Z` and `--camera-target X Y Z` override either preset.
+All views use the shared studio materials and lighting.
+
+Numbered video frames are kept under `outputs/<stem>_frames/frames/`. The
+committed legacy videos remain available and are stored with Git LFS. Encoding
+MP4/GIF requires ffmpeg; snapshot-only rendering does not. Sample-cloud scenes
+use translucent blue candidate overlays with the shared coral/gold scene materials.
+
+### Interpreting the sampling views
+
+These are successive iterations of the first MPC planning step, evaluated at
+prediction step 10. They are distinct renders of different candidate sets:
+
+| Iteration | Candidates | Best whole-rollout cost | Selected object x, y at prediction step 10 [mm] |
+| --- | ---: | ---: | --- |
+| 1 | 200 | 1943.30 | 45.35, −5.98 |
+| 2 | 100 | 1867.62 | 49.91, −0.11 |
+| 3 | 50 | 1781.56 | 49.23, −1.12 |
+
+The solid current tentacle and cube are intentionally identical in all three
+views. The candidate sets and faint selected tentacle predictions differ, and
+the best cost across the complete rollout improves by 4.61% in the last
+iteration. That cost change is not an error metric for the single frame.
+The predicted object positions in the table are diagnostics, omitted from the
+renderings; the last two differ by 1.22 mm at this prediction step.
+The source is `diagnostics_iter_X_samples[0]` and `diagnostics_iter_cost[0]` in
+`data/square_icem_seed0.npz`; the renderer selects each iteration's minimum-cost
+candidate. The iteration identifiers in the figure distinguish the views, while
+the explanation and candidate counts remain in the caption.
+
+The main tradeoff plot labels each tested sample count `K` and iteration count
+`I`. The shared iCEM point is labeled `K=200, I=3`. Marker shapes retain the
+fixed-iteration and fixed-sample-budget sweep distinction, and MPPI appears
+first in the legend. The main caption defines the two label symbols.

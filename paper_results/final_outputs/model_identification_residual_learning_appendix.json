@@ -1,0 +1,81 @@
+{
+  "dimensions_mm": [
+    158.0,
+    113.0
+  ],
+  "shape_configurations_one_based": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "shape_stages": [
+    "initial",
+    "identified"
+  ],
+  "shape_markers_one_based": [
+    2,
+    4
+  ],
+  "quantitative_configurations_one_based": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22
+  ],
+  "evaluation_sha256": "8c2549270f4e86a427d5f85ea8dadc9057f323d6a43da04025ede5e1cdc4a2fb",
+  "marker_geometry_sha256": "cc5685555786ffc9c49570cd45570c6d36e895d1efa654c31035c343cce5a040",
+  "composer_sha256": "c91d3731112c8dc3799e06fff7dbc73472fd201e8d9bec62d27a51bee1bb4b7b",
+  "shared_composer_sha256": "d643daa4b988c4f01283cb75b7e9cc20394df1d415502847ed85d7c3c6f8ae84",
+  "per_marker_rmse_mm": {
+    "initial": [
+      11.329506197965705,
+      13.726900424627102,
+      26.503810110510504,
+      94.39457967653227
+    ],
+    "identified": [
+      11.965876992628075,
+      13.15274739426046,
+      14.022823145307667,
+      31.16195214737084
+    ],
+    "learned": [
+      8.187990232793588,
+      6.931868206720054,
+      5.684117569772935,
+      6.4983016320687925
+    ],
+    "fitted_residual": [
+      8.168274331320365,
+      6.863631817453962,
+      5.3356805727413095,
+      5.427950389103492
+    ]
+  },
+  "metric": "sqrt(mean over 22 configurations of squared Euclidean marker error)",
+  "distribution": "empirical cumulative distribution of all 88 Euclidean errors per stage",
+  "pdf_sha256": "074d3b5f10bf096ca0a7e2384d9b6d664f0d9ab8164e961c5e49f4c9a2577fcc"
+}

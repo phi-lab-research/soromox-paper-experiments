@@ -1,0 +1,161 @@
+{
+  "kind": "tracking",
+  "num_segments": 2,
+  "source_sha256": "5ca077028a14a4786ec9b621077e7d9f632e63133ab71cd4e9ca166de62a9c0b",
+  "timestep": 625,
+  "time_s": 6.25,
+  "camera_eye": [
+    0.03109737767669775,
+    -0.21031840009448505,
+    0.353464328934305
+  ],
+  "camera_target": [
+    -5.157416071223386e-05,
+    -0.002658721178418491,
+    0.08350674634341848
+  ],
+  "width": 1640,
+  "height": 1400,
+  "end_effector_world": [
+    0.029264689030002438,
+    -0.027083131677150298,
+    0.1960998221352186
+  ],
+  "target_world": [
+    0.029248310192596702,
+    -0.02702191514748135,
+    0.1993855348948177
+  ],
+  "display_transform": [
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.0,
+      0.01
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "path_interval_s": [
+    4.0,
+    8.0
+  ],
+  "recorded_pose_overlays": [
+    {
+      "mesh_name": "recorded_pose_400",
+      "timestep": 400,
+      "time_s": 4.0,
+      "opacity": 0.2,
+      "omitted_proximal_length_m": 0.015625,
+      "embedded_faces_omitted": true,
+      "end_effector_world": [
+        -0.0004292044004256706,
+        -0.0006228783859249907,
+        0.20764282138161053
+      ],
+      "opaque_state_foreground": true
+    },
+    {
+      "mesh_name": "recorded_pose_475",
+      "timestep": 475,
+      "time_s": 4.75,
+      "opacity": 0.2,
+      "omitted_proximal_length_m": 0.015625,
+      "embedded_faces_omitted": true,
+      "end_effector_world": [
+        -0.062071020710813496,
+        -0.023440934332794185,
+        0.17211532564837548
+      ],
+      "opaque_state_foreground": true
+    },
+    {
+      "mesh_name": "recorded_pose_725",
+      "timestep": 725,
+      "time_s": 7.25,
+      "opacity": 0.2,
+      "omitted_proximal_length_m": 0.015625,
+      "embedded_faces_omitted": true,
+      "end_effector_world": [
+        0.06200830616207351,
+        0.023965625703946992,
+        0.1722807552174404
+      ],
+      "opaque_state_foreground": true
+    }
+  ],
+  "overlay_semantics": "other recorded states along the same tracking rollout",
+  "tip_facing_camera_cosine": 0.8178525631669986,
+  "exporter_sha256": "d891812ac514bafca8c366015ab2b34dc048977416201fe16e4284c90d4f1ba8",
+  "vertical_fov_degrees": 45.0,
+  "current_state_only": false,
+  "solid_state_is_recorded": true,
+  "tip_geometry": "flat-ended swept PCS surface",
+  "mesh_names": [
+    "robot",
+    "mount",
+    "target_path",
+    "target_frame",
+    "recorded_pose_400",
+    "recorded_pose_475",
+    "recorded_pose_725"
+  ],
+  "studio": {
+    "version": "paper-studio-v1",
+    "robot": "#F1552E",
+    "mount": "#33363B",
+    "target": "#0EAD69",
+    "obstacle": "#7B2CBF",
+    "manipulated_object": "#E7AC42",
+    "surface": "#DEE1E5",
+    "backdrop": "#C9CDD2",
+    "robot_roughness": 0.72,
+    "backdrop_start": 3.0,
+    "backdrop_radius": [
+      2.0,
+      2.0
+    ],
+    "key_rotation_degrees": [
+      29.0,
+      14.0,
+      0.0
+    ],
+    "key_angle_degrees": 28.0,
+    "fill_rotation_degrees": [
+      -30.0,
+      -25.0,
+      0.0
+    ],
+    "rim_rotation_degrees": [
+      40.0,
+      15.0,
+      180.0
+    ],
+    "fill_angle_degrees": 50.0,
+    "rtx_ambient": 60.0,
+    "rtx_key": 1000.0,
+    "rtx_fill": 160.0,
+    "rtx_rim": 160.0,
+    "rtx_backdrop_emission": 0.08
+  },
+  "samples_per_pixel": 128,
+  "renderer_sha256": "65e84f096a85a6ae458bc8d0334589c9347d0a93891ea6b9f4cf394b343033a9",
+  "studio_renderer_sha256": "c1ba185b56467776357df5ebe129050a1506ef2dfd82e3c41731cbadde23baa3",
+  "geometry_sha256": "0284fc1182f46b7727bb16dad141996b5ba417d713359450afceaee3da57dabb"
+}

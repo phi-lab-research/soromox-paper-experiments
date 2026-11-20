@@ -1,0 +1,114 @@
+{
+  "method": "with_cbf",
+  "source_file": "rollout_with_cbf.npz",
+  "source_sha256": "11593ea79fc7bd64860296525fec2226bf1d27d2ab6c9b3836bad96ebe6731fe",
+  "parameters_sha256": "c1377c2a88bd7131c7e36672a003776b721a4cf5e0ad014e37e025be4c8e69f6",
+  "exporter_sha256": "54c945a2d2ed29a06667d6eda38f6f9acc352530807474952f4e4840f244b210",
+  "timestep": 7999,
+  "time_s": 7.9990000000000006,
+  "selection": "last recorded state in both rollouts",
+  "force_n": 4.986682047354398,
+  "goal_distance_m": 0.03005772943617719,
+  "force_limit_n": 5.0,
+  "display_transform": [
+    [
+      0.90630778703665,
+      0.42261826174069944,
+      5.175581015019659e-17,
+      0.0
+    ],
+    [
+      0.42261826174069944,
+      -0.90630778703665,
+      -1.1099069304367546e-16,
+      0.0
+    ],
+    [
+      0.0,
+      1.2246467991473532e-16,
+      -1.0,
+      0.45
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "mount_style": "flared_collar",
+  "end_effector_world": [
+    0.08496380077058609,
+    -0.002316346609285154,
+    0.116406006934543
+  ],
+  "target_world": [
+    0.1117616917907,
+    -0.0030535631777625924,
+    0.13
+  ],
+  "current_state_only": true,
+  "tip_geometry": "contact-model hemisphere",
+  "contact_radius_m": 0.036,
+  "maximum_penetration_m": 0.004986682047354116,
+  "target_pixel_xy": [
+    990.1798769649905,
+    1193.1363113556529
+  ],
+  "vertical_fov_degrees": 45.0,
+  "studio": {
+    "version": "paper-studio-v1",
+    "robot": "#F1552E",
+    "mount": "#33363B",
+    "target": "#0EAD69",
+    "obstacle": "#7B2CBF",
+    "manipulated_object": "#E7AC42",
+    "surface": "#DEE1E5",
+    "backdrop": "#C9CDD2",
+    "robot_roughness": 0.72,
+    "backdrop_start": 3.0,
+    "backdrop_radius": [
+      2.0,
+      2.0
+    ],
+    "key_rotation_degrees": [
+      29.0,
+      14.0,
+      0.0
+    ],
+    "key_angle_degrees": 28.0,
+    "fill_rotation_degrees": [
+      -30.0,
+      -25.0,
+      0.0
+    ],
+    "rim_rotation_degrees": [
+      40.0,
+      15.0,
+      180.0
+    ],
+    "fill_angle_degrees": 50.0,
+    "rtx_ambient": 60.0,
+    "rtx_key": 1000.0,
+    "rtx_fill": 160.0,
+    "rtx_rim": 160.0,
+    "rtx_backdrop_emission": 0.08
+  },
+  "camera_eye": [
+    0.04,
+    -0.6,
+    0.4214
+  ],
+  "camera_target": [
+    0.04,
+    -0.01,
+    0.32
+  ],
+  "width": 1600,
+  "height": 1400,
+  "samples_per_pixel": 128,
+  "renderer_sha256": "dfeb8b0326da889530d6df456d12ef09af9ecc4af7f04a32665a6ce74a4d2ab0",
+  "studio_renderer_sha256": "9106744ab59835ba033904ec3a4d79d3a91564c6504ba508b7f6cf709a1eeaa5",
+  "geometry_sha256": "39ddbb43415b4ee5b2f5d637db68341c1c4428c2f0a20c49c2fa6fa6ab8eba77",
+  "file": "with_cbf.png"
+}

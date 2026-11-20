@@ -1,0 +1,46 @@
+{
+  "audit": {
+    "configuration_source_sha256": "46cc87c27eb41e837ef374bb3a505c75590163f4b4656f156411c239fb0d521d",
+    "tuning_source_sha256": "c93feaed81b8a5288cf46afd4454adb9da28163479d0212733a23cc413ee6340",
+    "configuration_segments": 1,
+    "configuration_actuation": "fully actuated",
+    "configuration_controller_order": [
+      "PD (model-free)",
+      "PID (model-free)",
+      "Potential Compensation",
+      "Feedforward Compensation",
+      "Computed Torque"
+    ],
+    "configuration_interval_s": [
+      0.0,
+      30.0
+    ],
+    "tuning_segments": 1,
+    "tuning_tendons": 3,
+    "tuning_case": "collocated actuation-space control",
+    "initial_batch_zero_based": 5,
+    "optimized_batch_zero_based": 1,
+    "optimized_iteration_zero_based": 99,
+    "initial_selection": "recorded run nearest the median initial loss",
+    "initial_band": "pointwise per-coordinate min-max across all six initial runs",
+    "loss_band": "pointwise min-max across finite starts at each optimization iteration",
+    "loss_curve": "minimum across finite starts at each iteration",
+    "improvement_from_initial_batch_median_percent": 46.557604750837015,
+    "tuning_interval_s": [
+      0.0,
+      5.0
+    ],
+    "displayed_response_interval_s": [
+      0.0,
+      2.0
+    ],
+    "displayed_loss_multiplier": 1000
+  },
+  "plotter_sha256": "534f9fe6663a374189e2b2191c14e44c0aa9354734fb94d75eb4319f56459ea0",
+  "dimensions_mm": [
+    180,
+    132
+  ],
+  "axis_label_pt": 8.5,
+  "tick_pt": 8
+}

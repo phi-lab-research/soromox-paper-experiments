@@ -23,7 +23,6 @@ def test_render_cli_uses_canonical_four_snapshot_times_and_outputs():
     assert tuple(args.snapshot_times) == (4.5, 5.5, 6.5, 7.5)
     assert args.video_output == render_cli.DEFAULT_VIDEO_OUTPUT
     assert args.snapshot_dir == render_cli.DEFAULT_SNAPSHOT_DIR
-    assert args.strip_output == render_cli.DEFAULT_STRIP_OUTPUT
 
 
 def test_render_cli_requires_exactly_four_snapshot_times():

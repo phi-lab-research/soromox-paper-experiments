@@ -79,3 +79,31 @@ throughput by 679.7× and 32-segment GVS throughput by 133.6×.
 
 Use an explicit temporary `--csv` path for validation runs to avoid replacing
 the committed hardware measurements.
+
+## Main paper figure
+
+```bash
+uv run python paper_results/secIVb_parallel_rollouts_gpu/code/plot_gpu_scaling_compact.py
+```
+
+This creates `final_outputs/gpu_simulation_scaling_compact.{pdf,png,svg,json}`
+at 87 by 67 mm for single-column placement. Colors distinguish the four model
+families. Markers and line styles distinguish the six tested link or segment
+counts. Light shaded envelopes span the tested sizes. Aggregate throughput is
+simulated seconds across the batch per wall-clock second. The caption is in
+`figure_caption.tex`. Pass `--force` to replace existing outputs.
+
+`code/gpu_scaling_data.py` validates the complete 264-row model/size/batch grid,
+rejects duplicates and mixed settings, and verifies the throughput normalization.
+The measurements use FP64 on an RTX 5090, Tsit5 at 0.1 ms, one simulated second,
+one warm-up, and three timed runs. The generator synchronizes device results
+before ending each timer. Articulated models use JAX. PCS and GVS use Warp.
+The CSV contains mean runtimes rather than individual timing samples.
+
+## Preserved original figure
+
+`outputs/parallel_rollout_benchmark_combined.pdf` and
+`final_outputs/benchmark_gpu.pdf` preserve the original compact figure. Both have
+SHA-256 `204b677da19f99234f6ba6304d7925070123e4be15210b0fc4de85b71e56f82d`.
+Its unchanged generator, `code/plot_parallel_rollout_benchmark.py`, remains
+available with its case-local outputs. The current composer writes separate files.

@@ -44,12 +44,9 @@ uv run --extra paper_results python paper_results/secVc_model_based_control/conf
 uv run --extra paper_results python paper_results/secVc_model_based_control/configuration_space_comparison/code/plot_configuration_space_comparison.py /tmp/soromox-secVc/configuration/data/regulation_tracking_comparison.npz --output-dir /tmp/soromox-secVc/configuration/outputs --no-show
 ```
 
-Generate the canonical regulation-to-tracking paper figure from the committed
-data:
-
-```bash
-uv run --extra paper_results python paper_results/secVc_model_based_control/configuration_space_comparison/code/plot_configuration_space_paper_figure.py --force
-```
+The paper appendix combines these control results with actuation-space gain
+optimization. Generate it with `code/plot_control_tuning_appendix.py` from
+the parent Section Vc directory.
 
 Generate the phase-separated RMSE diagnostic, with independent setpoint and
 trajectory-tracking columns and one explicitly labeled row for each controlled

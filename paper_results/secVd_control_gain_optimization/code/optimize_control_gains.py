@@ -32,6 +32,7 @@ from secvd_init import (  # noqa: E402
 )
 from secvd_loop import run_gain_optimization  # noqa: E402
 from secvd_objective import OBJECTIVE_NAME  # noqa: E402
+from secvd_metrics import archive_metrics, write_report  # noqa: E402
 from secvd_results import (  # noqa: E402
     improvement_over_initial_median,
     save_optimization_outputs,
@@ -102,7 +103,7 @@ def main() -> None:
             "q_des_ts": problem.reference_ts,
         }
     )
-    save_optimization_outputs(
+    archive_path = save_optimization_outputs(
         result_dir,
         method=method,
         batch_size=args.batch_size,
@@ -136,6 +137,10 @@ def main() -> None:
         is_placeholder=args.placeholder,
         **reference,
     )
+    if not args.placeholder:
+        metrics_path = result_dir / "performance_metrics.json"
+        write_report(metrics_path, archive_metrics(archive_path))
+        print(f"Saved {metrics_path}")
     print(
         "Improvement over the initial median: "
         f"{100 * improvement_over_initial_median(loss_history, mask_history):.2f} %"

@@ -5,3 +5,7 @@
 !force_goal_distance_plot.png
 !rollout_with_cbf.mp4
 !rollout_without_cbf.mp4
+
+# Canonical matched paper snapshots and their geometry/provenance.
+!paper_snapshots/
+!paper_snapshots/**

@@ -5,7 +5,7 @@ MPC step. A run succeeds when it reaches every goal (all four square corners, or
 planner-comparison goal), with the reach test run_experiment.py applies online. The final error is
 the distance from the object's last (x, y) position to the last active goal. The step time sums
 diagnostics_iter_time over iterations and averages over steps 1.., skipping step 0's JIT warm-up,
-as plot_smpc_summary.py does.
+as plot_smpc.py does.
 """
 
 from pathlib import Path
@@ -53,8 +53,8 @@ HEADER = "| Configuration | Success | Final error [mm] | Time per MPC step [s] |
 
 if __name__ == "__main__":
     print("Square push:\n\n" + HEADER)
-    print(row("iCEM, box", [DATA_DIR / f"square_icem_seed{s}.npz" for s in SEEDS], 4))
     print(row("MPPI K = 800, box", [DATA_DIR / f"square_mppi_k800_white_seed{s}.npz" for s in SEEDS], 4))
+    print(row("iCEM, box", [DATA_DIR / f"square_icem_seed{s}.npz" for s in SEEDS], 4))
     print(row("iCEM, 100 g box", [DATA_DIR / "square_icem_box100g.npz"], 4))
     print(row("iCEM, cylinder", [DATA_DIR / "square_icem_cylinder.npz"], 4))
     print("\nPlanner comparison (20 steps, single goal):\n\n" + HEADER)

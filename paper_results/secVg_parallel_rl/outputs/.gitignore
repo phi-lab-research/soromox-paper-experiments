@@ -9,3 +9,7 @@
 
 # Pre-separated workflow artifacts use an obsolete, ambiguous stem and schema.
 rl_rollout-64.*
+
+# Complete matched paper grids and source geometry/provenance.
+!paper_snapshots/
+!paper_snapshots/**

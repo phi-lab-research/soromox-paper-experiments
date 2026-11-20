@@ -1,5 +1,5 @@
 """Render a saved run_experiment.py run with Newton's ViewerRTX path tracer,
-producing an MP4 (and optionally a GIF).
+producing an MP4/GIF or selected, traceable paper snapshots.
 
 Reads the saved X_final trajectory directly -- no re-simulation. Writing q/qd
 and the object pose into a state, then calling SolverGVS.sync_kinematics(), is
@@ -15,10 +15,13 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import hashlib
+import json
 import os
 import shutil
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 os.environ.setdefault("PXR_WORK_THREAD_LIMIT", "1")
@@ -40,6 +43,8 @@ if str(PAPER_RESULTS_DIR) not in sys.path:
     sys.path.insert(0, str(PAPER_RESULTS_DIR))
 
 from paper_style import PAPER_COLORS  # noqa: E402
+from paper_render_style import PAPER_STUDIO, rgb  # noqa: E402
+from paper_rtx_studio import PaperViewerRTX as ExampleViewerRTX, look_at  # noqa: E402
 
 
 def paper_rgb(key: str, stop: float = 1.0) -> tuple[float, float, float]:
@@ -61,14 +66,21 @@ def paper_rgb(key: str, stop: float = 1.0) -> tuple[float, float, float]:
 
 
 DEVICE = "cuda"
-ROD_COLOR = paper_rgb("post_opt_1", stop=0.875)
-OBJECT_COLOR = paper_rgb("obstacle")
-TABLE_COLOR = (0.34, 0.36, 0.40)
-GOAL_COLOR = paper_rgb("target")
+ROD_COLOR = rgb(PAPER_STUDIO.robot, linear=True)
+OBJECT_COLOR = rgb(PAPER_STUDIO.manipulated_object, linear=True)
+TABLE_COLOR = rgb(PAPER_STUDIO.surface, linear=True)
+GOAL_COLOR = rgb(PAPER_STUDIO.target, linear=True)
 ROD_COLLISION_BODIES = 150  # render-only: many short capsules for a smooth rod (the experiment uses (1, 3, 12, 12))
 
 CAMERA_EYE = (0.55, -0.45, 0.55)
 CAMERA_TARGET = (0.04, 0.0, 0.15)
+
+# Fixed cameras shared by all selected times. The overview includes the full FR3.
+PAPER_CAMERAS = {
+    "overview": ((0.98, -0.92, 0.84), (0.22, 0.16, 0.32)),
+    "detail": ((0.40, -0.45, 0.32), (0.075, -0.045, 0.09)),
+    "legacy": (CAMERA_EYE, CAMERA_TARGET),
+}
 
 GOAL_TOLERANCE_OPACITY = 0.5
 GOAL_MARKER_Z_OFFSET = 5.0e-4
@@ -82,17 +94,6 @@ FRANKA_END_EFFECTOR_LINK = "fr3_link8"
 FRANKA_BASE_XY = (0.45, 0.45)
 FRANKA_FLANGE_ALIGNMENT_ANGLE = -0.5 * np.pi
 
-STUDIO_COLOR = (0.18, 0.175, 0.165)
-STUDIO_AMBIENT = 60.0
-STUDIO_KEY = 1000.0
-STUDIO_FILL = 160.0
-STUDIO_RIM = 160.0
-STUDIO_KEY_ANGLE = 28.0
-STUDIO_BACKDROP_START = 80.0
-STUDIO_BACKDROP_RADIUS = (8.0, 8.0)
-STUDIO_BACKDROP_EMISSION = 0.22
-STUDIO_ROD_ROUGHNESS = 0.72
-STUDIO_FLOOR_HEIGHT = -0.05
 
 
 def _find_label(labels: list[str], suffix: str) -> int:
@@ -240,174 +241,6 @@ class FrankaDisplay:
         return poses
 
 
-def look_at(viewer, eye, target) -> None:
-    """Aim a Z-up viewer camera at a world-space point."""
-    eye, target = np.asarray(eye, dtype=float), np.asarray(target, dtype=float)
-    direction = target - eye
-    direction /= np.linalg.norm(direction)
-    viewer.set_camera(
-        wp.vec3(*eye),
-        pitch=float(np.rad2deg(np.arcsin(direction[2]))),
-        yaw=float(np.rad2deg(np.arctan2(direction[1], direction[0]))),
-    )
-
-
-class ExampleViewerRTX(newton.viewer.ViewerRTX):
-    """RTX viewer with a neutral studio backdrop and lights, and opt-in shadow-link exclusion."""
-
-    shadow_excluded_mesh_names: tuple[str, ...] = ()
-
-    def __init__(self, *args, samples_per_pixel: int, **kwargs):
-        """Configure the path-tracer sample budget.
-
-        Args:
-            samples_per_pixel: Path-tracer sample count per frame.
-        """
-        if samples_per_pixel < 1:
-            raise ValueError("samples_per_pixel must be positive")
-        self.samples_per_pixel = samples_per_pixel
-        super().__init__(*args, environment="none", async_rendering=False, **kwargs)
-        self.show_ui = False
-        self.show_joints = False
-        self.show_contacts = False
-        self.show_com = False
-        self.show_inertia_boxes = False
-        self.show_collision = False
-
-    def _add_camera_lights_and_render_product(self) -> None:
-        """Configure the path-tracer render product, then add the studio."""
-        from pxr import Sdf
-
-        super()._add_camera_lights_and_render_product()
-        product = self.stage.GetPrimAtPath(self._render_product_path)
-        product.GetAttribute("omni:rtx:rendermode").Set("PathTracing")
-        product.GetAttribute("omni:rtx:quality").Set(1)
-        product.GetAttribute("omni:rtx:pt:samplesPerPixel").Set(self.samples_per_pixel)
-        product.CreateAttribute("omni:rtx:pt:samplesPerIteration", Sdf.ValueTypeNames.Int).Set(
-            min(32, self.samples_per_pixel)
-        )
-        product.GetAttribute("omni:rtx:pt:denoising:enabled").Set(self.samples_per_pixel > 1)
-        product.GetAttribute("omni:rtx:dlss:frameGeneration").Set(False)
-        self._add_studio()
-
-    def _render_and_display(self) -> None:
-        """Render until the path tracer converges to samples_per_pixel; save_screenshot() reads the result."""
-        if self._rtx is None or self._should_close:
-            return
-        for attempt in range(self.samples_per_pixel + 2):
-            self._render_products = self._rtx.step(
-                render_products={self._render_product_path},
-                delta_time=1.0 / self.fps if attempt == 0 else 0.0,
-            )
-            frames = [frame for product in self._render_products.values() for frame in product.frames]
-            if frames and all(frame.converged for frame in frames):
-                break
-        else:
-            raise RuntimeError(
-                f"RTX did not converge to the requested sample count: {[frame.progression for frame in frames]}"
-            )
-
-    def _capture_screenshot_pixels(self) -> np.ndarray:
-        """Read LdrColor from the last render; ovrtx may prefix the render-var key with its path."""
-        from ovrtx import Device
-
-        for product in self._render_products.values():
-            for frame in product.frames:
-                for key, render_var in frame.render_vars.items():
-                    if key == "LdrColor" or key.endswith("/LdrColor"):
-                        with render_var.map(device=Device.CPU) as mapping:
-                            return np.array(np.from_dlpack(mapping), copy=True)
-        raise RuntimeError("save_screenshot() could not find the LdrColor render output")
-
-    def _apply_ground_material(self) -> None:
-        """Skip Newton's ground material; _add_studio binds the backdrop material to the ground."""
-
-    def _add_studio(self) -> None:
-        """Author the studio backdrop mesh and key/fill/rim/ambient lights, excluding shadow_excluded_mesh_names from their shadows."""
-        from pxr import Gf, Sdf, UsdGeom, UsdLux, UsdShade
-
-        material = UsdShade.Material.Define(self.stage, "/root/Studio/Matte")
-        shader = UsdShade.Shader.Define(self.stage, "/root/Studio/Matte/Surface")
-        shader.CreateIdAttr("UsdPreviewSurface")
-        shader.CreateInput("diffuseColor", Sdf.ValueTypeNames.Color3f).Set(Gf.Vec3f(*STUDIO_COLOR))
-        shader.CreateInput("roughness", Sdf.ValueTypeNames.Float).Set(1.0)
-        shader.CreateInput("metallic", Sdf.ValueTypeNames.Float).Set(0.0)
-        shader.CreateInput("useSpecularWorkflow", Sdf.ValueTypeNames.Int).Set(1)
-        shader.CreateInput("specularColor", Sdf.ValueTypeNames.Color3f).Set(Gf.Vec3f(0.0))
-        shader.CreateInput("emissiveColor", Sdf.ValueTypeNames.Color3f).Set(Gf.Vec3f(STUDIO_BACKDROP_EMISSION))
-        material.CreateSurfaceOutput().ConnectToSource(shader.ConnectableAPI(), "surface")
-
-        bend = STUDIO_BACKDROP_START
-        radius_y, radius_z = STUDIO_BACKDROP_RADIUS
-        span = bend + 2.0 * radius_y
-        profile = [(-span, 0.0), (bend, 0.0)]
-        normals = [(0.0, 0.0, 1.0)] * 2
-        for angle in np.linspace(0.0, np.pi / 2, 33)[1:]:
-            profile.append((bend + radius_y * np.sin(angle), radius_z * (1.0 - np.cos(angle))))
-            normal = np.asarray((0.0, -radius_z * np.sin(angle), radius_y * np.cos(angle)))
-            normals.append(tuple(normal / np.linalg.norm(normal)))
-        profile.append((bend + radius_y, radius_z + 1.0))
-        normals.append((0.0, -1.0, 0.0))
-        vertices = [(float(x), float(y), float(STUDIO_FLOOR_HEIGHT + z)) for y, z in profile for x in (-span, span)]
-        mesh = UsdGeom.Mesh.Define(self.stage, "/root/Studio/Backdrop")
-        mesh.CreatePointsAttr(vertices)
-        mesh.CreateFaceVertexCountsAttr([4] * (len(profile) - 1))
-        mesh.CreateFaceVertexIndicesAttr(
-            [index for row in range(len(profile) - 1) for index in (2 * row, 2 * row + 1, 2 * row + 3, 2 * row + 2)]
-        )
-        mesh.CreateSubdivisionSchemeAttr("none")
-        mesh.CreateNormalsAttr([Gf.Vec3f(*normal) for normal in normals for _ in range(2)])
-        mesh.SetNormalsInterpolation(UsdGeom.Tokens.vertex)
-        mesh.CreateDoubleSidedAttr(True)
-        UsdShade.MaterialBindingAPI.Apply(mesh.GetPrim()).Bind(material)
-        for name, ground in self._meshes.items():
-            if "plane" in name.lower():
-                UsdShade.MaterialBindingAPI.Apply(ground.GetPrim()).Bind(material)
-
-        rod_material = UsdShade.Material.Define(self.stage, "/root/Studio/Rod")
-        rod_surface = UsdShade.Shader.Define(self.stage, "/root/Studio/Rod/Surface")
-        rod_surface.CreateIdAttr("UsdPreviewSurface")
-        color = UsdShade.Shader.Define(self.stage, "/root/Studio/Rod/Color")
-        color.CreateIdAttr("UsdPrimvarReader_float3")
-        color.CreateInput("varname", Sdf.ValueTypeNames.Token).Set("displayColor")
-        color.CreateOutput("result", Sdf.ValueTypeNames.Float3)
-        rod_surface.CreateInput("diffuseColor", Sdf.ValueTypeNames.Color3f).ConnectToSource(
-            color.ConnectableAPI(), "result"
-        )
-        rod_surface.CreateInput("roughness", Sdf.ValueTypeNames.Float).Set(STUDIO_ROD_ROUGHNESS)
-        rod_surface.CreateInput("metallic", Sdf.ValueTypeNames.Float).Set(0.0)
-        rod_material.CreateSurfaceOutput().ConnectToSource(rod_surface.ConnectableAPI(), "surface")
-        for name, prototype in self._meshes.items():
-            if "capsule" in name.lower():
-                UsdShade.MaterialBindingAPI.Apply(prototype.GetPrim()).Bind(rod_material)
-
-        dome = UsdLux.DomeLight.Define(self.stage, "/root/Studio/Ambient")
-        dome.CreateColorAttr(Gf.Vec3f(1.0))
-        dome.CreateIntensityAttr(STUDIO_AMBIENT)
-        key = UsdLux.DistantLight.Define(self.stage, "/root/Studio/Key")
-        key.CreateColorAttr(Gf.Vec3f(1.0))
-        key.CreateIntensityAttr(STUDIO_KEY)
-        key.CreateAngleAttr(STUDIO_KEY_ANGLE)
-        UsdGeom.Xformable(key).AddRotateXYZOp().Set(Gf.Vec3f(29.0, 14.0, 0.0))
-        for name, position, intensity in (
-            ("Fill", (0.0, -0.8, 0.8), STUDIO_FILL),
-            ("Rim", (0.0, 0.4, 0.75), STUDIO_RIM),
-        ):
-            light = UsdLux.SphereLight.Define(self.stage, f"/root/Studio/{name}")
-            light.CreateColorAttr(Gf.Vec3f(1.0))
-            light.CreateIntensityAttr(intensity)
-            light.CreateRadiusAttr(0.3)
-            UsdGeom.Xformable(light).AddTranslateOp().Set(Gf.Vec3d(*position))
-
-        mesh_paths = [
-            self._mesh_prim_paths[self._qualify(name)]
-            for name in self.shadow_excluded_mesh_names
-            if self._qualify(name) in self._mesh_prim_paths
-        ]
-        for light_path in ("/root/Studio/Ambient", "/root/Studio/Key", "/root/Studio/Fill", "/root/Studio/Rim"):
-            excludes = UsdLux.LightAPI(self.stage.GetPrimAtPath(light_path)).GetShadowLinkCollectionAPI().CreateExcludesRel()
-            for mesh_path in mesh_paths:
-                excludes.AddTarget(Sdf.Path(mesh_path))
 
 
 def single_surface_opacity(desired: float) -> float:
@@ -429,7 +262,7 @@ def single_surface_opacity(desired: float) -> float:
 class RTXFrameWriter:
     """Render video frames to PNG files with a fixed initial camera."""
 
-    def __init__(self, model: newton.Model, output_dir: Path, *, width: int, height: int, fps: int, samples_per_pixel: int):
+    def __init__(self, model: newton.Model, output_dir: Path, *, width: int, height: int, fps: int, samples_per_pixel: int, camera_eye=CAMERA_EYE, camera_target=CAMERA_TARGET):
         """Create the frames directory and an RTX viewer for `model`.
 
         Args:
@@ -447,9 +280,9 @@ class RTXFrameWriter:
             width=width, height=height, headless=True, fps=fps, samples_per_pixel=samples_per_pixel,
         )
         self.viewer.set_model(model)
-        look_at(self.viewer, CAMERA_EYE, CAMERA_TARGET)
+        look_at(self.viewer, camera_eye, camera_target)
 
-    def write(self, time_value: float, state: newton.State, extra_log_fn) -> None:
+    def write(self, time_value: float, state: newton.State, extra_log_fn, *, filename: str | None = None) -> None:
         """Render one frame to a numbered PNG in `frames_dir`.
 
         Args:
@@ -463,7 +296,7 @@ class RTXFrameWriter:
         self.viewer.log_state(state)
         extra_log_fn()
         self.viewer.end_frame()
-        self.viewer.save_screenshot(str(self.frames_dir / f"frame_{self.frame_index:04d}.png"))
+        self.viewer.save_screenshot(str(self.frames_dir / (filename or f"frame_{self.frame_index:04d}.png")))
         self.frame_index += 1
 
     def close(self) -> None:
@@ -540,7 +373,24 @@ def parse_args() -> argparse.Namespace:
         "--object-shape", choices=("box", "cylinder"), default="box",
         help="Must match the original run's --object-shape.",
     )
-    return parser.parse_args()
+    parser.add_argument("--view", choices=tuple(PAPER_CAMERAS), default="overview")
+    parser.add_argument("--camera-eye", type=float, nargs=3, metavar=("X", "Y", "Z"))
+    parser.add_argument("--camera-target", type=float, nargs=3, metavar=("X", "Y", "Z"))
+    parser.add_argument("--snapshot-steps", type=int, nargs="+", help="Render only these saved trajectory rows, without encoding video.")
+    parser.add_argument("--snapshot-dir", type=Path, help="Snapshot root; images go in its frames/ subdirectory.")
+    parser.add_argument("--future-steps", type=int, nargs="+", help="Overlay a few later recorded states on a single static snapshot.")
+    parser.add_argument("--future-opacity", type=float, default=0.25)
+    parser.add_argument("--force", action="store_true", help="Replace existing snapshot files and their manifest.")
+    args = parser.parse_args()
+    if min(args.width, args.height, args.fps, args.frames_per_step, args.samples_per_pixel) < 1 or args.control_dt <= 0:
+        parser.error("Image sizes, rates, sample count and control-dt must be positive")
+    if args.snapshot_dir is not None and args.snapshot_steps is None:
+        parser.error("--snapshot-dir requires --snapshot-steps")
+    if args.future_steps is not None and (args.snapshot_steps is None or len(args.snapshot_steps) != 1):
+        parser.error("--future-steps requires exactly one --snapshot-steps index")
+    if not 0 < args.future_opacity < 1:
+        parser.error("--future-opacity must be between zero and one")
+    return args
 
 
 def _slerp_quat(q0: np.ndarray, q1: np.ndarray, alpha: float) -> np.ndarray:
@@ -644,6 +494,7 @@ def build_goal_overlay(
     reach_tolerance: np.ndarray,
     object_footprint: float,
     object_shape: str,
+    *, initial_timestep: int = 0,
 ) -> tuple[list[tuple[float, float]], list[tuple]]:
     """Log the planned-path line and one marker/tolerance mesh pair per distinct goal corner.
 
@@ -662,6 +513,8 @@ def build_goal_overlay(
         Distinct (x, y) goal corners in visit order, and each corner's
         (tolerance_mesh, marker_mesh) as (points, indices, normals) arrays.
     """
+    # Author the requested initial goal before the USD stage is initialized.
+    # Runtime visibility updates are applied only on subsequent viewer frames.
     corners = ordered_unique_goals(goal_xy)
     waypoints = [tuple(object_pose[0, :2]), *corners, corners[0]]
     line_points = np.asarray([(x, y, GOAL_LINE_Z_OFFSET) for x, y in waypoints], dtype=np.float32)
@@ -696,7 +549,7 @@ def build_goal_overlay(
                 roughness=1.0,
                 metallic=0.0,
                 opacity=opacity,
-                hidden=(i != 0),
+                hidden=not np.allclose(goal_xy[min(initial_timestep, len(goal_xy) - 1)], (goal_x, goal_y)),
             )
     return corners, meshes
 
@@ -732,6 +585,156 @@ def update_goal_overlay(
             )
 
 
+def render_snapshot_batch(args, output_root: Path) -> None:
+    """Use an independent USD stage per state for reliable high-quality captures.
+
+    The pinned ovrtx 0.4 renderer can repeatedly invalidate path-tracing history
+    after runtime pose updates. Separate processes also release native resources
+    between snapshots. Publish the requested batch only after every capture succeeds.
+    """
+    output_root.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix="snapshot-batch-", dir=output_root) as temporary:
+        staged = []
+        manifests = []
+        for step in args.snapshot_steps:
+            destination = Path(temporary) / str(step)
+            command = [
+                sys.executable, str(Path(__file__).resolve()),
+                "--run-path", str(args.run_path.resolve()), "--view", args.view,
+                "--snapshot-steps", str(step), "--snapshot-dir", str(destination.resolve()),
+                "--control-dt", str(args.control_dt), "--fps", str(args.fps),
+                "--width", str(args.width), "--height", str(args.height),
+                "--samples-per-pixel", str(args.samples_per_pixel),
+                "--object-shape", args.object_shape,
+                "--franka-base", *(str(x) for x in args.franka_base),
+            ]
+            if args.camera_eye is not None:
+                command.extend(["--camera-eye", *(str(x) for x in args.camera_eye)])
+            if args.camera_target is not None:
+                command.extend(["--camera-target", *(str(x) for x in args.camera_target)])
+            subprocess.run(command, check=True)
+            manifest = json.loads((destination / "snapshots.json").read_text())
+            manifests.append(manifest)
+            staged.extend((destination / entry["file"], output_root / entry["file"]) for entry in manifest["snapshots"])
+        merged = manifests[0]
+        merged["snapshots"] = [entry for manifest in manifests for entry in manifest["snapshots"]]
+        for source, destination in staged:
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(source, destination)
+        (output_root / "snapshots.json").write_text(json.dumps(merged, indent=2) + "\n")
+
+
+@wp.kernel
+def _distinct_ghost_faces(vertices: wp.array(dtype=wp.vec3), triangles: wp.array(dtype=wp.int32),
+                          current_mesh: wp.uint64, tolerance: float, keep: wp.array(dtype=wp.int32)):
+    face = wp.tid()
+    center = (vertices[triangles[3 * face]] + vertices[triangles[3 * face + 1]]
+              + vertices[triangles[3 * face + 2]]) / 3.0
+    query = wp.mesh_query_point(current_mesh, center, tolerance)
+    keep[face] = 1
+    if query.result:
+        closest = wp.mesh_eval_position(current_mesh, query.face, query.u, query.v)
+        if wp.length(center - closest) < tolerance:
+            keep[face] = 0
+
+
+def add_future_overlay(viewer, robot, franka, trajectory, object_pose, goals, current_step, future_steps, opacity, object_shape, control_dt):
+    """Ghost complete later states while keeping the highlighted target unchanged."""
+    from figure_states import transform_mesh, validate_future_steps
+    from render_sample_cloud import (
+        _log_solid_mesh, _rollout_backbone_poses, _yawed_object_ghost_mesh,
+        cross_section_radii, tube_mesh_points, tube_mesh_topology,
+    )
+    distances = validate_future_steps(object_pose, goals, current_step, future_steps)
+    ndof, nbase = robot.num_internal_dofs, robot.num_base_coordinates
+    abscissae = np.linspace(0.0, float(robot.length), 35)
+    radii = cross_section_radii(robot, abscissae, ndof, nbase)
+    indices = tube_mesh_topology(1, len(abscissae), 12)
+    names, states = [], []
+    active_goal = goals[min(current_step, len(goals) - 1)]
+    arm_current = franka.body_poses(trajectory[current_step, -nbase:])
+    shape_bodies = franka.model.shape_body.numpy()
+    shape_flags = franka.model.shape_flags.numpy()
+    shape_transforms = franka.model.shape_transform.numpy()
+    shape_scales = franka.model.shape_scale.numpy()
+    shape_colors = franka.model.shape_color.numpy()
+    current_vertices, current_triangles = [], []
+    offset = 0
+    for shape, body in enumerate(shape_bodies):
+        if body < 0 or not shape_flags[shape] & int(newton.ShapeFlags.VISIBLE):
+            continue
+        source = franka.model.shape_source[shape]
+        pose = arm_current[body - franka.body_start]
+        world = wp.transform_multiply(wp.transform(wp.vec3(*pose[:3]), wp.quat(*pose[3:])),
+                                      wp.transform_expand(shape_transforms[shape]))
+        vertices, _ = transform_mesh(source._vertices, None,
+                                     np.concatenate((np.asarray(world.p), np.asarray(world.q))), shape_scales[shape])
+        current_vertices.append(vertices)
+        current_triangles.append(np.asarray(source._indices, dtype=np.int32).ravel() + offset)
+        offset += len(vertices)
+    current_surface = wp.Mesh(points=wp.array(np.concatenate(current_vertices), dtype=wp.vec3),
+                              indices=wp.array(np.concatenate(current_triangles), dtype=wp.int32))
+    for step, distance in zip(future_steps, distances[1:], strict=True):
+        row = trajectory[step]
+        poses = _rollout_backbone_poses(robot, row, ndof, nbase, abscissae)
+        points, normals = tube_mesh_points([poses], radii, 12)
+        name = f"future_tentacle_{step}"
+        _log_solid_mesh(viewer, name, (points, indices, normals), ROD_COLOR, opacity)
+        names.append(name)
+        name = f"future_object_{step}"
+        vertices, triangles, normals = _yawed_object_ghost_mesh(
+            object_shape, 0.0, 0.0, 0.0, 0.5 * run_experiment.OBJECT_FOOTPRINT, 0.0)
+        vertices, normals = transform_mesh(vertices, normals, object_pose[step])
+        _log_solid_mesh(viewer, name, (vertices, triangles, normals), OBJECT_COLOR, min(0.8, 1.5 * opacity))
+        names.append(name)
+        arm_poses = franka.body_poses(row[-nbase:])
+        arm_names = []
+        for shape, body in enumerate(shape_bodies):
+            if body < 0 or not shape_flags[shape] & int(newton.ShapeFlags.VISIBLE):
+                continue
+            body_row = body - franka.body_start
+            # Fixed links coincide exactly; drawing copies only darkens them.
+            if np.allclose(arm_poses[body_row], arm_current[body_row], rtol=0, atol=1e-5):
+                continue
+            source = franka.model.shape_source[shape]
+            if not isinstance(source, newton.Mesh):
+                raise TypeError("Expected a visual mesh for the Franka display")
+            body_pose = arm_poses[body_row]
+            world = wp.transform_multiply(wp.transform(wp.vec3(*body_pose[:3]), wp.quat(*body_pose[3:])),
+                                          wp.transform_expand(shape_transforms[shape]))
+            pose = np.concatenate((np.asarray(world.p), np.asarray(world.q)))
+            vertices, normals = transform_mesh(source._vertices, source._normals, pose, shape_scales[shape])
+            triangles = np.asarray(source._indices, dtype=np.int32).reshape(-1, 3)
+            if np.prod(shape_scales[shape]) < 0:
+                triangles = triangles[:, [0, 2, 1]]
+            # Coincident ghost/current faces z-fight in the pinned RTX backend.
+            # The solid pose already depicts them; retain only distinct surfaces.
+            keep = wp.empty(len(triangles), dtype=wp.int32)
+            wp.launch(_distinct_ghost_faces, len(triangles),
+                      inputs=[wp.array(vertices, dtype=wp.vec3), wp.array(triangles.ravel(), dtype=wp.int32),
+                              current_surface.id, 0.0005], outputs=[keep])
+            triangles = triangles[keep.numpy().astype(bool)]
+            if not len(triangles):
+                continue
+            name = f"future_franka_{step}_{shape}"
+            viewer.log_mesh(name, wp.array(vertices, dtype=wp.vec3), wp.array(triangles.ravel(), dtype=wp.int32),
+                            normals=None if normals is None else wp.array(normals, dtype=wp.vec3),
+                            color=tuple(shape_colors[shape]), roughness=0.72, metallic=0.0,
+                            opacity=0.6 * opacity)
+            names.append(name)
+            arm_names.append(name)
+        states.append({"step": step, "time_s": step * control_dt,
+                       "object_pose": object_pose[step].tolist(), "goal_xy": active_goal.tolist(),
+                       "goal_distance_m": float(distance), "franka_body_poses": arm_poses.tolist(),
+                       "franka_ghost_mesh_count": len(arm_names)})
+    viewer.shadow_excluded_mesh_names += tuple(names)
+    return {"kind": "later_recorded_states_same_goal", "tentacle_opacity": opacity,
+            "object_opacity": min(0.8, 1.5 * opacity), "franka_opacity": 0.6 * opacity,
+            "coincident_arm_surface_tolerance_m": 0.0005,
+            "goal_xy": active_goal.tolist(), "current_goal_distance_m": float(distances[0]),
+            "states": states}
+
+
 def main() -> None:
     """Render a saved run_experiment.py trajectory to an MP4 (and optionally a GIF)."""
     args = parse_args()
@@ -746,6 +749,28 @@ def main() -> None:
         raise ValueError(f"object_pose has shape {object_pose.shape}, expected {(X_final.shape[0], 7)}")
     goal_xy = data["goal_xy"]
     reach_tolerance = data["reach_tolerance"]
+    data.close()
+    if args.future_steps is not None:
+        from figure_states import validate_future_steps
+        validate_future_steps(object_pose, goal_xy, args.snapshot_steps[0], args.future_steps)
+
+    camera_eye, camera_target = PAPER_CAMERAS[args.view]
+    camera_eye = tuple(args.camera_eye) if args.camera_eye is not None else camera_eye
+    camera_target = tuple(args.camera_target) if args.camera_target is not None else camera_target
+    if not np.all(np.isfinite([*camera_eye, *camera_target])) or np.allclose(camera_eye, camera_target):
+        raise ValueError("Camera eye and target must be finite and distinct")
+    output_root = args.output.parent / (args.output.stem + "_frames")
+    if args.snapshot_steps is not None:
+        if len(set(args.snapshot_steps)) != len(args.snapshot_steps) or any(i < 0 or i >= len(X_final) for i in args.snapshot_steps):
+            raise ValueError("Snapshot steps must be distinct saved trajectory row indices")
+        output_root = args.snapshot_dir or OUTPUTS_DIR / "paper_snapshots" / args.view
+        targets = [output_root / "frames" / f"step_{i:04d}.png" for i in args.snapshot_steps]
+        targets.append(output_root / "snapshots.json")
+        if not args.force and any(p.exists() for p in targets):
+            raise FileExistsError("Snapshot output exists; pass --force to replace it")
+        if len(args.snapshot_steps) > 1:
+            render_snapshot_batch(args, output_root)
+            return
 
     robot = FourTendonSoftArm().model
     ndof = robot.num_internal_dofs
@@ -788,14 +813,21 @@ def main() -> None:
     box_body = int(box_bodies[0])
 
     writer = RTXFrameWriter(
-        model, args.output.parent / (args.output.stem + "_frames"),
+        model, output_root,
         width=args.width, height=args.height, fps=args.fps, samples_per_pixel=args.samples_per_pixel,
+        camera_eye=camera_eye, camera_target=camera_target,
     )
 
     goal_corners, goal_meshes = build_goal_overlay(
-        writer.viewer, object_pose, goal_xy, reach_tolerance, run_experiment.OBJECT_FOOTPRINT, args.object_shape
+        writer.viewer, object_pose, goal_xy, reach_tolerance, run_experiment.OBJECT_FOOTPRINT, args.object_shape,
+        initial_timestep=args.snapshot_steps[0] if args.snapshot_steps else 0,
     )
     writer.viewer.shadow_excluded_mesh_names = tuple(f"goal_tolerance_{i}" for i in range(len(goal_corners)))
+    future_overlay = None
+    if args.future_steps:
+        future_overlay = add_future_overlay(writer.viewer, robot, franka, X_final, object_pose, goal_xy,
+                                            args.snapshot_steps[0], args.future_steps, args.future_opacity,
+                                            args.object_shape, args.control_dt)
 
     body_q = state.body_q.numpy()
     body_qd = state.body_qd.numpy()
@@ -803,7 +835,7 @@ def main() -> None:
     qd_full = qd_view.numpy()
     num_base_velocities = robot.num_base_velocities
 
-    def write_frame(row: np.ndarray, t: float, box_pose: np.ndarray, log_overlay: bool, row_idx: int) -> None:
+    def write_frame(row: np.ndarray, t: float, box_pose: np.ndarray, log_overlay: bool, row_idx: int, filename: str | None = None) -> None:
         """Write one interpolated frame: sync kinematics to `row`/`box_pose`, then render."""
         q_internal = row[:ndof]
         qd_internal = row[ndof : 2 * ndof]
@@ -833,7 +865,32 @@ def main() -> None:
             if log_overlay:
                 update_goal_overlay(writer.viewer, goal_xy, goal_corners, goal_meshes, row_idx)
 
-        writer.write(t, state, extra_log_fn)
+        writer.write(t, state, extra_log_fn, filename=filename)
+
+    if args.snapshot_steps is not None:
+        try:
+            for index in args.snapshot_steps:
+                write_frame(X_final[index], index * args.control_dt, object_pose[index], True, index, f"step_{index:04d}.png")
+        finally:
+            writer.close()
+        manifest = {
+            "source_file": args.run_path.name,
+            "source_sha256": hashlib.sha256(args.run_path.read_bytes()).hexdigest(),
+            "renderer_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+            "view": args.view,
+            "camera_eye": camera_eye,
+            "camera_target": camera_target,
+            "franka_base_xy": args.franka_base,
+            "object_shape": args.object_shape,
+            "width": args.width, "height": args.height,
+            "samples_per_pixel": args.samples_per_pixel,
+            "control_dt": args.control_dt,
+            "studio": PAPER_STUDIO.manifest(),
+            "future_overlay": future_overlay,
+            "snapshots": [{"step": i, "time_s": i * args.control_dt, "active_goal_xy": goal_xy[min(i, len(goal_xy) - 1)].tolist(), "file": f"frames/step_{i:04d}.png"} for i in args.snapshot_steps],
+        }
+        (output_root / "snapshots.json").write_text(json.dumps(manifest, indent=2) + "\n")
+        return
 
     num_rows = X_final.shape[0]
     try:

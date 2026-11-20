@@ -1,0 +1,377 @@
+{
+  "evaluation_sha256": "8c2549270f4e86a427d5f85ea8dadc9057f323d6a43da04025ede5e1cdc4a2fb",
+  "selected_indices_zero_based": [
+    1,
+    5,
+    17
+  ],
+  "rmse_mm": {
+    "initial": 49.82362423750546,
+    "identified": 19.26060621332788,
+    "learned": 6.885330375806392,
+    "fitted_residual": 6.552905460140778
+  },
+  "dimensions_mm": [
+    180,
+    90
+  ],
+  "marker_geometry_sha256": "cc5685555786ffc9c49570cd45570c6d36e895d1efa654c31035c343cce5a040",
+  "overview_crop_pixels": [
+    0,
+    280,
+    1152,
+    1720
+  ],
+  "comparison_crop_pixels": [
+    0,
+    130,
+    680,
+    1080
+  ],
+  "render_status": "RTX studio",
+  "composer_sha256": "d643daa4b988c4f01283cb75b7e9cc20394df1d415502847ed85d7c3c6f8ae84",
+  "renders": {
+    "overview": {
+      "image_sha256": "72aabe49d6d37f94ed53f058e07f1181f98836930bc9aadbf774a08b0aadc05b",
+      "metadata": {
+        "kind": "overview",
+        "configuration_index_zero_based": 17,
+        "csv": "m12_u0015002.csv",
+        "geometry_source": "learned residual static equilibrium; no measured continuous surface is available",
+        "mounting": "schematic mount from the shared model renderer; not hardware CAD",
+        "display_translation": [
+          0.0,
+          0.0,
+          0.43
+        ],
+        "width": 1152,
+        "height": 1962,
+        "camera_eye": [
+          0.07682358440797185,
+          -0.5167604646734784,
+          0.4810908261525281
+        ],
+        "camera_target": [
+          0.07682358440797185,
+          -0.005914056271981237,
+          0.3533792240521538
+        ],
+        "vertical_fov_degrees": 45.0,
+        "mesh_names": [
+          "robot",
+          "mount",
+          "measurements"
+        ],
+        "mesh_colors": {
+          "robot": "#F1552E",
+          "mount": "#33363B",
+          "measurements": "#FFBC42"
+        },
+        "mesh_opacity": {
+          "robot": 1.0
+        },
+        "evaluation_sha256": "8c2549270f4e86a427d5f85ea8dadc9057f323d6a43da04025ede5e1cdc4a2fb",
+        "marker_geometry_sha256": "cc5685555786ffc9c49570cd45570c6d36e895d1efa654c31035c343cce5a040",
+        "exporter_sha256": "5df242d0a0fb22249e8d64aa681ed4ce5fd4a72afd02e9d7706ad098e4e72baf",
+        "studio": {
+          "version": "paper-studio-v1",
+          "robot": "#F1552E",
+          "mount": "#33363B",
+          "target": "#0EAD69",
+          "obstacle": "#7B2CBF",
+          "manipulated_object": "#E7AC42",
+          "surface": "#DEE1E5",
+          "backdrop": "#C9CDD2",
+          "robot_roughness": 0.72,
+          "backdrop_start": 3.0,
+          "backdrop_radius": [
+            2.0,
+            2.0
+          ],
+          "key_rotation_degrees": [
+            29.0,
+            14.0,
+            0.0
+          ],
+          "key_angle_degrees": 28.0,
+          "fill_rotation_degrees": [
+            -30.0,
+            -25.0,
+            0.0
+          ],
+          "rim_rotation_degrees": [
+            40.0,
+            15.0,
+            180.0
+          ],
+          "fill_angle_degrees": 50.0,
+          "rtx_ambient": 60.0,
+          "rtx_key": 1000.0,
+          "rtx_fill": 160.0,
+          "rtx_rim": 160.0,
+          "rtx_backdrop_emission": 0.08
+        },
+        "samples_per_pixel": 128,
+        "renderer_sha256": "a1842c421d31e7041716a70b933d2a9d19808de816f95ea72da91df68f3b14df",
+        "studio_renderer_sha256": "c1ba185b56467776357df5ebe129050a1506ef2dfd82e3c41731cbadde23baa3",
+        "geometry_sha256": "d816887f563bb7b3c6312cba882d4a79eb2932d1127bc8ac6758c1b89099d576"
+      }
+    },
+    "comparison_1": {
+      "image_sha256": "0b150062d01bb01a60ca0ecddbcf979a9bb92f34b8aff2ec8194edeb98ddde58",
+      "metadata": {
+        "kind": "comparison_1",
+        "configuration_index_zero_based": 1,
+        "csv": "m1_u015.csv",
+        "geometry_source": "learned residual static equilibrium; no measured continuous surface is available",
+        "mounting": "schematic mount from the shared model renderer; not hardware CAD",
+        "display_translation": [
+          0.0,
+          0.0,
+          0.43
+        ],
+        "width": 680,
+        "height": 1140,
+        "camera_eye": [
+          0.08332358440797186,
+          -0.6625546714983853,
+          0.4610834973856658
+        ],
+        "camera_target": [
+          0.08332358440797186,
+          -0.0008075634035189239,
+          0.2956467203619492
+        ],
+        "vertical_fov_degrees": 45.0,
+        "mesh_names": [
+          "robot",
+          "mount"
+        ],
+        "mesh_colors": {
+          "robot": "#F1552E",
+          "mount": "#33363B",
+          "measurements": "#FFBC42"
+        },
+        "mesh_opacity": {
+          "robot": 0.32
+        },
+        "evaluation_sha256": "8c2549270f4e86a427d5f85ea8dadc9057f323d6a43da04025ede5e1cdc4a2fb",
+        "marker_geometry_sha256": "cc5685555786ffc9c49570cd45570c6d36e895d1efa654c31035c343cce5a040",
+        "exporter_sha256": "5df242d0a0fb22249e8d64aa681ed4ce5fd4a72afd02e9d7706ad098e4e72baf",
+        "studio": {
+          "version": "paper-studio-v1",
+          "robot": "#F1552E",
+          "mount": "#33363B",
+          "target": "#0EAD69",
+          "obstacle": "#7B2CBF",
+          "manipulated_object": "#E7AC42",
+          "surface": "#DEE1E5",
+          "backdrop": "#C9CDD2",
+          "robot_roughness": 0.72,
+          "backdrop_start": 3.0,
+          "backdrop_radius": [
+            2.0,
+            2.0
+          ],
+          "key_rotation_degrees": [
+            29.0,
+            14.0,
+            0.0
+          ],
+          "key_angle_degrees": 28.0,
+          "fill_rotation_degrees": [
+            -30.0,
+            -25.0,
+            0.0
+          ],
+          "rim_rotation_degrees": [
+            40.0,
+            15.0,
+            180.0
+          ],
+          "fill_angle_degrees": 50.0,
+          "rtx_ambient": 60.0,
+          "rtx_key": 1000.0,
+          "rtx_fill": 160.0,
+          "rtx_rim": 160.0,
+          "rtx_backdrop_emission": 0.08
+        },
+        "samples_per_pixel": 128,
+        "renderer_sha256": "a1842c421d31e7041716a70b933d2a9d19808de816f95ea72da91df68f3b14df",
+        "studio_renderer_sha256": "c1ba185b56467776357df5ebe129050a1506ef2dfd82e3c41731cbadde23baa3",
+        "geometry_sha256": "9abe8d61d633043c01231b0d4b51002afad8f1e9a4a615bec5d6f1beb8d71d5a"
+      }
+    },
+    "comparison_2": {
+      "image_sha256": "67d114935bdc3155ae6015a415fbbae9edeb262608d9be09d8d910b32aafdf0f",
+      "metadata": {
+        "kind": "comparison_2",
+        "configuration_index_zero_based": 5,
+        "csv": "m2_u015.csv",
+        "geometry_source": "learned residual static equilibrium; no measured continuous surface is available",
+        "mounting": "schematic mount from the shared model renderer; not hardware CAD",
+        "display_translation": [
+          0.0,
+          0.0,
+          0.43
+        ],
+        "width": 680,
+        "height": 1140,
+        "camera_eye": [
+          0.08332358440797186,
+          -0.6625546714983853,
+          0.4610834973856658
+        ],
+        "camera_target": [
+          0.08332358440797186,
+          -0.0008075634035189239,
+          0.2956467203619492
+        ],
+        "vertical_fov_degrees": 45.0,
+        "mesh_names": [
+          "robot",
+          "mount"
+        ],
+        "mesh_colors": {
+          "robot": "#F1552E",
+          "mount": "#33363B",
+          "measurements": "#FFBC42"
+        },
+        "mesh_opacity": {
+          "robot": 0.32
+        },
+        "evaluation_sha256": "8c2549270f4e86a427d5f85ea8dadc9057f323d6a43da04025ede5e1cdc4a2fb",
+        "marker_geometry_sha256": "cc5685555786ffc9c49570cd45570c6d36e895d1efa654c31035c343cce5a040",
+        "exporter_sha256": "5df242d0a0fb22249e8d64aa681ed4ce5fd4a72afd02e9d7706ad098e4e72baf",
+        "studio": {
+          "version": "paper-studio-v1",
+          "robot": "#F1552E",
+          "mount": "#33363B",
+          "target": "#0EAD69",
+          "obstacle": "#7B2CBF",
+          "manipulated_object": "#E7AC42",
+          "surface": "#DEE1E5",
+          "backdrop": "#C9CDD2",
+          "robot_roughness": 0.72,
+          "backdrop_start": 3.0,
+          "backdrop_radius": [
+            2.0,
+            2.0
+          ],
+          "key_rotation_degrees": [
+            29.0,
+            14.0,
+            0.0
+          ],
+          "key_angle_degrees": 28.0,
+          "fill_rotation_degrees": [
+            -30.0,
+            -25.0,
+            0.0
+          ],
+          "rim_rotation_degrees": [
+            40.0,
+            15.0,
+            180.0
+          ],
+          "fill_angle_degrees": 50.0,
+          "rtx_ambient": 60.0,
+          "rtx_key": 1000.0,
+          "rtx_fill": 160.0,
+          "rtx_rim": 160.0,
+          "rtx_backdrop_emission": 0.08
+        },
+        "samples_per_pixel": 128,
+        "renderer_sha256": "a1842c421d31e7041716a70b933d2a9d19808de816f95ea72da91df68f3b14df",
+        "studio_renderer_sha256": "c1ba185b56467776357df5ebe129050a1506ef2dfd82e3c41731cbadde23baa3",
+        "geometry_sha256": "34093e9452b59020eb2faec179610f9b2d780cfb85d7c7d269b9b4ddd25c9e34"
+      }
+    },
+    "comparison_3": {
+      "image_sha256": "090ce9689593e7f6cc653dfbb3c26936f7e8544d3cd27fc0bd5fac5717c75532",
+      "metadata": {
+        "kind": "comparison_3",
+        "configuration_index_zero_based": 17,
+        "csv": "m12_u0015002.csv",
+        "geometry_source": "learned residual static equilibrium; no measured continuous surface is available",
+        "mounting": "schematic mount from the shared model renderer; not hardware CAD",
+        "display_translation": [
+          0.0,
+          0.0,
+          0.43
+        ],
+        "width": 680,
+        "height": 1140,
+        "camera_eye": [
+          0.08332358440797186,
+          -0.6625546714983853,
+          0.4610834973856658
+        ],
+        "camera_target": [
+          0.08332358440797186,
+          -0.0008075634035189239,
+          0.2956467203619492
+        ],
+        "vertical_fov_degrees": 45.0,
+        "mesh_names": [
+          "robot",
+          "mount"
+        ],
+        "mesh_colors": {
+          "robot": "#F1552E",
+          "mount": "#33363B",
+          "measurements": "#FFBC42"
+        },
+        "mesh_opacity": {
+          "robot": 0.32
+        },
+        "evaluation_sha256": "8c2549270f4e86a427d5f85ea8dadc9057f323d6a43da04025ede5e1cdc4a2fb",
+        "marker_geometry_sha256": "cc5685555786ffc9c49570cd45570c6d36e895d1efa654c31035c343cce5a040",
+        "exporter_sha256": "5df242d0a0fb22249e8d64aa681ed4ce5fd4a72afd02e9d7706ad098e4e72baf",
+        "studio": {
+          "version": "paper-studio-v1",
+          "robot": "#F1552E",
+          "mount": "#33363B",
+          "target": "#0EAD69",
+          "obstacle": "#7B2CBF",
+          "manipulated_object": "#E7AC42",
+          "surface": "#DEE1E5",
+          "backdrop": "#C9CDD2",
+          "robot_roughness": 0.72,
+          "backdrop_start": 3.0,
+          "backdrop_radius": [
+            2.0,
+            2.0
+          ],
+          "key_rotation_degrees": [
+            29.0,
+            14.0,
+            0.0
+          ],
+          "key_angle_degrees": 28.0,
+          "fill_rotation_degrees": [
+            -30.0,
+            -25.0,
+            0.0
+          ],
+          "rim_rotation_degrees": [
+            40.0,
+            15.0,
+            180.0
+          ],
+          "fill_angle_degrees": 50.0,
+          "rtx_ambient": 60.0,
+          "rtx_key": 1000.0,
+          "rtx_fill": 160.0,
+          "rtx_rim": 160.0,
+          "rtx_backdrop_emission": 0.08
+        },
+        "samples_per_pixel": 128,
+        "renderer_sha256": "a1842c421d31e7041716a70b933d2a9d19808de816f95ea72da91df68f3b14df",
+        "studio_renderer_sha256": "c1ba185b56467776357df5ebe129050a1506ef2dfd82e3c41731cbadde23baa3",
+        "geometry_sha256": "ba8f20cab95d9d0104dd6622032152e6ae62c4eea3462c126f1f1c605c3d5981"
+      }
+    }
+  },
+  "pdf_sha256": "684aef37d4f146cfa721a809bf2f42271090bb07bd3c59213d604266f90f517b"
+}
