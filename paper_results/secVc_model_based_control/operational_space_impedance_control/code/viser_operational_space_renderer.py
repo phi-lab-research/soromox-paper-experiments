@@ -11,8 +11,6 @@ from pathlib import Path
 from typing import Any
 
 import jax.numpy as jnp
-import matplotlib as mpl
-import matplotlib.pyplot as plt
 import numpy as np
 from jax import Array
 from PIL import Image
@@ -403,92 +401,6 @@ def crop_snapshots_to_common_square(
             image.close()
 
 
-def save_snapshot_strip(
-    snapshot_paths: list[Path] | tuple[Path, ...],
-    output: Path,
-    *,
-    snapshot_times: tuple[float, ...] | list[float] | np.ndarray = (
-        DEFAULT_SNAPSHOT_TIMES
-    ),
-) -> Path:
-    """Assemble four cropped PNGs into a compact, time-annotated PDF strip."""
-    paths = [Path(path) for path in snapshot_paths]
-    if len(paths) != 4:
-        raise ValueError("Exactly four snapshots are required for the PDF strip.")
-    times = np.asarray(snapshot_times, dtype=np.float64)
-    if times.shape != (4,) or not np.all(np.isfinite(times)):
-        raise ValueError("Exactly four finite snapshot times are required.")
-    style_path = Path(__file__).resolve().parents[3] / "paper.mplstyle"
-    output = Path(output)
-    output.parent.mkdir(parents=True, exist_ok=True)
-
-    with plt.style.context(style_path), mpl.rc_context({"savefig.bbox": None}):
-        # 254 dpi is exactly 100 pixels/cm, which prevents Matplotlib from
-        # quantizing the physical PDF page size to coarse 0.01-inch steps.
-        fig = plt.figure(
-            figsize=tuple(value / 2.54 for value in SNAPSHOT_STRIP_SIZE_CM),
-            dpi=254,
-            facecolor="white",
-        )
-        grid = fig.add_gridspec(
-            1,
-            4,
-            left=0.005,
-            right=0.995,
-            bottom=0.185,
-            top=0.995,
-            # The source panels remain square.  A small negative spacing only
-            # overlaps their unused white margins, preserving image scale while
-            # moving the rendered robots closer together.
-            wspace=SNAPSHOT_STRIP_WSPACE,
-        )
-        panel_centers = []
-        for column, path in enumerate(paths):
-            axis = fig.add_subplot(grid[0, column])
-            with Image.open(path) as image:
-                axis.imshow(np.asarray(image.convert("RGB")))
-            panel_box = axis.get_position()
-            panel_centers.append(0.5 * (panel_box.x0 + panel_box.x1))
-            axis.set_axis_off()
-
-        for panel_center, time_seconds in zip(panel_centers, times, strict=True):
-            fig.text(
-                panel_center,
-                0.12,
-                rf"$t = {time_seconds:.2f}\,\mathrm{{s}}$",
-                color=TIME_TEXT_COLOR,
-                fontsize=7,
-                ha="center",
-                va="bottom",
-            )
-
-        arrow_axis = fig.add_axes((0.01, 0.01, 0.98, 0.095), frameon=False)
-        arrow_axis.set_axis_off()
-        arrow_axis.annotate(
-            "",
-            xy=(0.92, 0.5),
-            xytext=(0.02, 0.5),
-            xycoords="axes fraction",
-            arrowprops={
-                "arrowstyle": "->",
-                "color": TIME_ARROW_COLOR,
-                "linewidth": 0.8,
-            },
-        )
-        arrow_axis.text(
-            0.93,
-            0.5,
-            "Time",
-            color=TIME_TEXT_COLOR,
-            fontsize=7,
-            ha="left",
-            va="center",
-        )
-        fig.savefig(output, facecolor="white", bbox_inches=None)
-        plt.close(fig)
-    return output
-
-
 class OperationalSpacePaperRenderer(ViserRenderer):
     """Viser renderer with a deterministic moving target-pose disk overlay."""
 
@@ -820,7 +732,6 @@ __all__ = [
     "make_target_disk_geometry",
     "render_operational_space_tracking",
     "resample_periodic_path_by_arclength",
-    "save_snapshot_strip",
     "snapshot_filename",
     "snapshot_indices_for_times",
     "transform_segments",

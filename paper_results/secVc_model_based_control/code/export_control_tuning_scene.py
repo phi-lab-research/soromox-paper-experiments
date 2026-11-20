@@ -110,7 +110,6 @@ def export(output, motion=False, snapshot_time=5.0):
             poses[:, :3, :3], Rotation.from_rotvec(x[:, :3]).as_matrix(), atol=1e-7
         )
     output.mkdir(parents=True, exist_ok=True)
-    (output / "audit.json").write_text(json.dumps(audit, indent=2) + "\n")
     scenes = []
     transform = np.eye(4)
     transform[2, 3] = 0.01
@@ -184,7 +183,7 @@ def export(output, motion=False, snapshot_time=5.0):
     # Cull ghost triangles crossing its projected silhouette; transparent RTX
     # surfaces otherwise tint the opaque body at near intersections.
     from PIL import Image, ImageDraw
-    from plot_control_tuning_summary import project_point
+    from plot_control_tuning import project_point
 
     projection = dict(
         camera_eye=eye,

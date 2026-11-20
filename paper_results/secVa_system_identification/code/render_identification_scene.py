@@ -1,4 +1,4 @@
-"""Render audited identification meshes using the shared paper RTX studio."""
+"""Render identification meshes using the shared paper RTX studio."""
 
 import argparse
 import hashlib

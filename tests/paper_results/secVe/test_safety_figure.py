@@ -9,7 +9,7 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[3]
 CASE = ROOT/'paper_results/secVe_safety_constrained_control'
-spec = importlib.util.spec_from_file_location('safety_figure', CASE/'code/plot_safety_summary.py')
+spec = importlib.util.spec_from_file_location('safety_figure', CASE/'code/plot_safety_control.py')
 figure = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(figure)
 

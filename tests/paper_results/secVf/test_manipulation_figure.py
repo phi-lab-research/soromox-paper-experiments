@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[3]
 CODE = ROOT / "paper_results" / "secVf_sampling_based_mpc" / "code"
 sys.path.insert(0, str(CODE))
 spec = importlib.util.spec_from_file_location(
-    "manipulation_figure", CODE / "plot_smpc_summary.py"
+    "manipulation_figure", CODE / "plot_smpc.py"
 )
 figure = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(figure)

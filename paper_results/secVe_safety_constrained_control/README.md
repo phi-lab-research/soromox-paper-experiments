@@ -39,7 +39,7 @@ documented in `../secVf_sampling_based_mpc/README.md`:
 ```bash
 python code/render_safety_scene.py --geometry outputs/paper_snapshots/without_cbf_geometry.npz --output outputs/paper_snapshots/without_cbf.png
 python code/render_safety_scene.py --geometry outputs/paper_snapshots/with_cbf_geometry.npz --output outputs/paper_snapshots/with_cbf.png
-python code/plot_safety_summary.py
+python code/plot_safety_control.py
 ```
 
 Use `--force` to replace existing renders or figures. The renderer uses
@@ -60,5 +60,5 @@ All saved trace points are plotted, without smoothing or downsampling.
 The suggested paper caption is in `figure_caption.tex`.
 
 The standalone parallel-RL figure is built by
-`../secVg_parallel_rl/code/plot_rl_summary.py`. No extra diagnostic figure or
+`../secVg_parallel_rl/code/plot_parallel_rl.py`. No extra diagnostic figure or
 appendix material is introduced for this safety redesign.

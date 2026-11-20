@@ -1,4 +1,4 @@
-"""Render the canonical operational-space rollout to video and paper stills."""
+"""Render the canonical operational-space rollout to video and snapshots."""
 
 from __future__ import annotations
 
@@ -18,7 +18,6 @@ from viser_operational_space_renderer import (
     DEFAULT_SNAPSHOT_TIMES,
     crop_snapshots_to_common_square,
     render_operational_space_tracking,
-    save_snapshot_strip,
     snapshot_filename,
     snapshot_indices_for_times,
 )
@@ -27,7 +26,6 @@ jax.config.update("jax_enable_x64", True)
 
 DEFAULT_VIDEO_OUTPUT = OUTPUTS_DIR / "control_pcs_with_impedance_trajectory-render.mp4"
 DEFAULT_SNAPSHOT_DIR = OUTPUTS_DIR / "operational_space_impedance_snapshots"
-DEFAULT_STRIP_OUTPUT = OUTPUTS_DIR / "operational_space_impedance_snapshots.pdf"
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -50,12 +48,6 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         type=Path,
         default=DEFAULT_SNAPSHOT_DIR,
         help="Directory for the four cropped lossless PNG snapshots.",
-    )
-    parser.add_argument(
-        "--strip-output",
-        type=Path,
-        default=DEFAULT_STRIP_OUTPUT,
-        help="Output path for the four-panel PDF strip.",
     )
     parser.add_argument(
         "--snapshot-times",
@@ -143,7 +135,7 @@ def main(argv: list[str] | None = None) -> None:
     saved_times = np.asarray(run.t_traj, dtype=np.float64)
     actual_snapshot_times = tuple(float(saved_times[index]) for index in frame_indices)
     snapshot_paths = snapshot_output_paths(args.snapshot_dir, snapshot_times)
-    all_outputs = (args.video_output, *snapshot_paths, args.strip_output)
+    all_outputs = (args.video_output, *snapshot_paths)
     preflight_outputs(all_outputs, force=args.force)
     snapshot_path_map = dict(zip(frame_indices, snapshot_paths, strict=True))
 
@@ -178,13 +170,7 @@ def main(argv: list[str] | None = None) -> None:
         record_frame_timeout=args.record_frame_timeout,
     )
     crop_box = crop_snapshots_to_common_square(snapshot_paths)
-    strip_output = save_snapshot_strip(
-        snapshot_paths,
-        args.strip_output,
-        snapshot_times=actual_snapshot_times,
-    )
     print(f"Common snapshot crop: {crop_box}")
-    print(f"Snapshot strip: {strip_output}")
 
 
 if __name__ == "__main__":

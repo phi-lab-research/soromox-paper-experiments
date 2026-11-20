@@ -1,4 +1,4 @@
-"""Compact main-paper GPU scaling plot; preserve original and four-panel versions."""
+"""Compose the compact GPU scaling figure from the saved measurements."""
 
 import argparse
 import json
@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 from matplotlib.ticker import LogLocator, NullFormatter
 
-from plot_gpu_scaling_summary import (
+from gpu_scaling_data import (
     CASE,
     PAPER,
     PAPER_COLORS,
@@ -153,7 +153,7 @@ def compose(csv_path, output, force=False):
         dimensions_mm=[width, height],
         composer_sha256=sha256(Path(__file__)),
         audit_source_sha256=sha256(
-            Path(__file__).with_name("plot_gpu_scaling_summary.py")
+            Path(__file__).with_name("gpu_scaling_data.py")
         ),
         markers="Every second measured batch is marked to reduce clutter; all 264 measurements define the lines.",
         pdf_sha256=sha256(output / f"{NAME}.pdf"),

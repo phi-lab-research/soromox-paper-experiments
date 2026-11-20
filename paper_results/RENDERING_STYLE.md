@@ -190,4 +190,4 @@ crop horizontal pixels 60--948 to balance the two groups. At full width, use
 8.5 pt axis labels/legends and 8 pt ticks, with similarly wide quantitative plots. Before composition, check
 source hashes, geometry provenance, shared studio settings, and matched
 camera/time/scale for the gain comparison. Reproduction commands and the
-model/run audit are in `secVc_model_based_control/README.md`.
+model and run selection are in `secVc_model_based_control/README.md`.

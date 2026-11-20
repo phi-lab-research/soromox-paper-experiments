@@ -163,17 +163,12 @@ uv run --project . python code/rendering.py \
   --run-path data/square_icem_seed0.npz --view overview --snapshot-steps 19 \
   --future-steps 21 23 --future-opacity 0.3 \
   --width 2400 --height 1800 --samples-per-pixel 128
-
-uv run --project . python code/rendering.py \
-  --run-path data/square_icem_seed0.npz --view detail --snapshot-steps 12 19 \
-  --width 1600 --height 1000 --samples-per-pixel 128
 ```
 
-Images and provenance are written under `outputs/paper_snapshots/{overview,detail}/`.
+Images and provenance are written under `outputs/paper_snapshots/overview/`.
 Pass `--force` to replace existing snapshots. Steps are saved trajectory row
 indices, including the initial row; physical time is `step * --control-dt`.
-Step 12 is the first transition to the second corner goal, and step 19 is partway
-along that push. The overview uses opaque step 19 (0.95 s), with faint steps
+The overview uses opaque step 19 (0.95 s), with faint steps
 21 and 23 (1.05 and 1.15 s). The renderer verifies that all intervening states
 keep the same active goal and that the selected cube poses approach it
 (83.2 → 41.0 → 14.8 mm). The faint tentacle and cube use recorded configurations;
@@ -205,7 +200,7 @@ Export the planner sweep scores once with the section environment (the scored
 JSON is also committed, so composing the main figure needs no JAX):
 
 ```bash
-JAX_PLATFORMS=cpu uv run --project . python code/plot_smpc_diagnostics.py
+JAX_PLATFORMS=cpu uv run --project . python code/compute_planner_tradeoff.py --force
 ```
 
 This writes `outputs/planner_tradeoff.json`, including source hashes and all
@@ -214,7 +209,7 @@ This writes `outputs/planner_tradeoff.json`, including source hashes and all
 Compose the figure from these snapshots and the saved square-push and sweep results:
 
 ```bash
-uv run --project . python code/plot_smpc_summary.py --force
+uv run --project . python code/plot_smpc.py --force
 ```
 
 This writes `../final_outputs/sampling_based_mpc.{pdf,svg,png,json}`. The generator
@@ -231,18 +226,6 @@ sweep source hashes and computes caption statistics directly from the runs using
 and population standard deviation across the three seed means. `--data-dir`,
 `--snapshot-dir`, `--tradeoff-data`, and `--output-dir` allow staged builds. Existing figure outputs
 require `--force` before replacement.
-
-### Internal diagnostics
-
-```bash
-uv run --project . python code/plot_smpc_diagnostics.py
-```
-
-This writes `outputs/sampling_based_mpc_diagnostics.pdf`, containing the
-two contact-detail frames and the complete single-goal planner cost/time sweep.
-It is an internal analysis artifact, excluded from the paper and its appendix.
-The sweep requires the SoRoMoX/JAX dependencies for rescoring the saved runs;
-it does not rerun planning. On a CPU-only host, set `JAX_PLATFORMS=cpu`.
 
 ### Videos and camera overrides
 

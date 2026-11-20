@@ -5,7 +5,7 @@ MPC step. A run succeeds when it reaches every goal (all four square corners, or
 planner-comparison goal), with the reach test run_experiment.py applies online. The final error is
 the distance from the object's last (x, y) position to the last active goal. The step time sums
 diagnostics_iter_time over iterations and averages over steps 1.., skipping step 0's JIT warm-up,
-as plot_smpc_summary.py does.
+as plot_smpc.py does.
 """
 
 from pathlib import Path

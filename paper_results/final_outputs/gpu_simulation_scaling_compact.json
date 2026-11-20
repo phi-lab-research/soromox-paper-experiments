@@ -237,8 +237,8 @@
     87.0,
     67.0
   ],
-  "composer_sha256": "382f3c3b91d16c5a2a771a44a28997aeb649c5de7e2d49022353f2d9eca577a3",
-  "audit_source_sha256": "f72caab98369bc092791a352db0ca62d704e5e1f758c742a71b58d902b35ccb0",
+  "composer_sha256": "b488f9e5b26d0b2c935b7bfa1cccf8657e0ef41c37c5098aef9e853f184a367b",
+  "audit_source_sha256": "c6831349ffbc60a8b3bc76e47a3b67670425df94c1cd43c103c45b8c66849b30",
   "markers": "Every second measured batch is marked to reduce clutter; all 264 measurements define the lines.",
   "pdf_sha256": "855be3a0b45e3ad1e77cf71cff959322e7ba7cd4874a27cde147b955c15ed235"
 }

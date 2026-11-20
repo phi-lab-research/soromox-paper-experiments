@@ -48,14 +48,12 @@ uv run python $G --method synergistic --num-iters 100 --force
 `--device auto` defers to JAX; `--device cpu` and `--device gpu` are strict.
 Use `--result-dir` to stage results outside the committed data directory.
 
-Regenerate the comparison figure:
+The main and appendix figures combine these runs with model-based control:
 
 ```bash
-uv run python paper_results/secVd_control_gain_optimization/code/plot_control_gain_optimization.py
+uv run python paper_results/secVc_model_based_control/code/plot_control_tuning.py
+uv run python paper_results/secVc_model_based_control/code/plot_control_tuning_appendix.py
 ```
-
-Panels A and C share a loss axis. `--ylim-a` through `--ylim-d` accept no values
-for per-panel autoscaling or `LOW HIGH` for explicit limits.
 
 Render the optimized rollouts:
 

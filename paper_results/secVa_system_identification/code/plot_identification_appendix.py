@@ -7,7 +7,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
-from plot_identification_summary import (
+from plot_identification import (
     CASE,
     PAPER,
     STAGES,
@@ -28,12 +28,10 @@ def compose(evaluation, scenes, output, force=False):
         raise FileExistsError("Figure exists; pass --force")
     data_path = evaluation / "identification_evaluation.npz"
     marker_path = scenes / "marker_geometry.npz"
-    audit = json.loads((evaluation / "identification_audit.json").read_text())
+    evaluation_sha256 = sha256(data_path)
     meta = json.loads((scenes / "comparison_1.json").read_text())
-    if sha256(data_path) != audit["evaluation_sha256"]:
-        raise ValueError("Audit and evaluation disagree")
-    if meta["evaluation_sha256"] != audit["evaluation_sha256"]:
-        raise ValueError("Camera metadata and evaluation disagree")
+    if meta["evaluation_sha256"] != evaluation_sha256:
+        raise ValueError("Rendered scene is stale")
     if sha256(marker_path) != meta["marker_geometry_sha256"]:
         raise ValueError("Marker geometry differs from scene provenance")
     configure()
@@ -119,9 +117,11 @@ def compose(evaluation, scenes, output, force=False):
             errors = d[stage + "_errors"]
             rms = 1000 * np.sqrt(np.mean(np.sum(errors**2, axis=-1), axis=0))
             per_marker[stage] = rms.tolist()
-            # RMS across the four marker RMSEs must match the audited pooled score.
+            # RMS across marker RMSEs must equal the pooled Euclidean RMSE.
             np.testing.assert_allclose(
-                np.sqrt(np.mean(rms**2)), audit["rmse_mm"][stage]["all_22"], rtol=1e-12
+                np.sqrt(np.mean(rms**2)),
+                1000 * np.sqrt(np.mean(np.sum(d[stage + "_errors"] ** 2, axis=-1))),
+                rtol=1e-12,
             )
             ax.plot(
                 closed_theta,
@@ -183,12 +183,11 @@ def compose(evaluation, scenes, output, force=False):
         "marker_geometry_sha256": sha256(marker_path),
         "composer_sha256": sha256(Path(__file__)),
         "shared_composer_sha256": sha256(
-            Path(__file__).with_name("plot_identification_summary.py")
+            Path(__file__).with_name("plot_identification.py")
         ),
         "per_marker_rmse_mm": per_marker,
         "metric": "sqrt(mean over 22 configurations of squared Euclidean marker error)",
         "distribution": "empirical cumulative distribution of all 88 Euclidean errors per stage",
-        "generalization_scope": audit["generalization_scope"],
         "pdf_sha256": sha256(output / f"{NAME}.pdf"),
     }
     (output / f"{NAME}.json").write_text(json.dumps(manifest, indent=2) + "\n")

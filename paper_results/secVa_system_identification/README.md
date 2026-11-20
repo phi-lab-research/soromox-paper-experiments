@@ -26,66 +26,38 @@ uv run python paper_results/secVa_system_identification/code/identify_soft_tenta
   --force --no-show
 ```
 
-Plot the committed or regenerated arrays without rerunning identification:
+## Paper figures
+
+The figures use the saved models evaluated on all 22 configurations. The error
+metric is the RMS Euclidean marker-position error across configurations and
+markers. One representative shape per tendon-input family is selected nearest
+the median identified-model error. The learned residual uses the saved network
+checkpoint, with its original negative tendon-force features.
+
+Compose the main and appendix figures from the committed arrays and studio renders:
 
 ```bash
-uv run python paper_results/secVa_system_identification/code/plot_system_id_residual.py
+uv run python paper_results/secVa_system_identification/code/plot_identification.py
+uv run python paper_results/secVa_system_identification/code/plot_identification_appendix.py
 ```
 
-The parameter and residual optimizations are computationally intensive. Their
-CLIs refuse to overwrite generated data unless `--force` is supplied.
+These write `final_outputs/model_identification_residual_learning.*` and
+`final_outputs/model_identification_residual_learning_appendix.*` in PDF, SVG,
+PNG, and JSON formats. The appendix contains the eight fitting configurations,
+per-marker RMSE spiderweb plot, and error distribution. Its numerical plots use
+all 22 configurations and four markers. JSON sidecars record source hashes and
+plotted values. The captions are in `figure_caption.tex` and
+`appendix_figure_caption.tex`.
 
-## Audited identification figure
-
-See `identification_audit.md` for the corrected metric, common evaluation set,
-checkpoint input sign, model provenance, and representative-selection rule.
-The canonical historical arrays are preserved. The new figure uses explicit
-re-evaluations of the saved models, without rerunning optimization or training.
+To re-evaluate the models and export scene geometry:
 
 ```bash
 uv run python paper_results/secVa_system_identification/code/identification_data.py
 uv run python paper_results/secVa_system_identification/code/export_identification_scene.py
 ```
 
-Render the four exported `*_geometry.npz` files with
-`code/render_identification_scene.py --geometry PATH --output PATH.png` in the
-same NVIDIA RTX environment used for the other paper figures. Geometry and
-rendering are separate so model evaluation does not require an RTX GPU.
-
-```bash
-uv run python paper_results/secVa_system_identification/code/plot_identification_summary.py
-```
-
-The outputs are `model_identification_residual_learning`,
-`identification_shape_comparisons`, and `identification_error_details` in
-`paper_results/final_outputs/`, in PDF, SVG, and PNG formats. The main figure
-also includes a JSON manifest. Each CLI refuses overwrites unless `--force`
-is supplied. `figure_caption.tex` contains the corresponding manuscript caption.
-The old combined CPU/identification figure and its plotting script are retained
-as legacy assets; their aggregate bars must not be interpreted as true RMSE.
-
-A local layout preview can be rendered with `code/render_identification_preview.py` using the same geometry arguments. Its metadata identifies Open3D preview rendering separately from the RTX studio output. The current figure uses the shared RTX studio with 128 samples per pixel; the local preview renderer remains available for layout work.
-
-## Appendix figure
-
-```bash
-uv run python paper_results/secVa_system_identification/code/plot_identification_appendix.py
-```
-
-`final_outputs/model_identification_residual_learning_appendix.pdf` combines one
-3D overlay of the eight physical-parameter fitting configurations, the per-marker
-RMSE spiderweb plot, and the empirical distribution of all 88 Euclidean marker
-errors per model stage. The shape overlay compares initial and identified models
-and displays only markers M2 and M4, following the original paper figure.
-Colors, line styles, and marker conventions match the main figure; both
-quantitative plots use all 22 configurations and all four markers. The spiderweb
-uses a shared linear scale and recomputes RMS Euclidean errors from the audited
-arrays; the historical `errnorm_*.npy` means are not used as RMSE. A JSON manifest
-records every plotted per-marker value and the input hashes.
-
-The script checks that the RMS of the four marker RMSEs reproduces each audited
-pooled RMSE. It generates PDF, SVG, and PNG files without a GPU render; use
-`--force` to replace existing outputs. `appendix_figure_caption.tex` provides
-the manuscript caption. This composite supersedes the two preliminary appendix
-outputs `identification_shape_comparisons` and `identification_error_details`,
-which remain available from the main composer.
+The evaluator checks recomputed predictions against the saved arrays. Render
+each exported `*_geometry.npz` with `code/render_identification_scene.py
+--geometry PATH --output PATH.png` in the shared NVIDIA RTX environment.
+The plotters verify that scene metadata matches the evaluation and marker
+geometry. Each command requires `--force` to replace existing outputs.

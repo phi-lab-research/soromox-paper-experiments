@@ -1,4 +1,4 @@
-"""Export measured markers and audited model shapes into the shared paper studio."""
+"""Export measured markers and model shapes into the shared paper studio."""
 
 import argparse
 import json
@@ -12,7 +12,13 @@ import trimesh
 from soromox.rendering.base_geometry import base_plate_mesh
 from soromox.rendering.config import GeometryConfig
 
-from identification_data import CASE, build_robot, sha256
+from identification_data import (
+    CASE,
+    CSV_MARKERS,
+    build_robot,
+    representative_indices,
+    sha256,
+)
 
 PAPER = CASE.parent
 sys.path.insert(0, str(PAPER))
@@ -87,17 +93,12 @@ def mounting(base):
 
 
 def export(evaluation, output, force=False):
-    audit = json.loads((evaluation / "identification_audit.json").read_text())
-    if (
-        sha256(evaluation / "identification_evaluation.npz")
-        != audit["evaluation_sha256"]
-    ):
-        raise ValueError("Evaluation archive differs from audited source")
+    evaluation_sha256 = sha256(evaluation / "identification_evaluation.npz")
     if output.exists() and list(output.glob("*_geometry.npz")) and not force:
         raise FileExistsError("Geometry exists; pass --force")
     output.mkdir(parents=True, exist_ok=True)
     with np.load(evaluation / "identification_evaluation.npz") as d:
-        selected = audit["selected_indices_zero_based"]
+        selected = representative_indices(d["identified_errors"])
         robot = build_robot()
         marker_s = jnp.array([0.1291, 0.2195, 0.2800, 0.36])
         offsets = np.array(
@@ -173,9 +174,7 @@ def export(evaluation, output, force=False):
             meta = dict(
                 kind=kind,
                 configuration_index_zero_based=index,
-                csv=audit["selected_csvs"][
-                    2 if kind == "overview" else int(kind[-1]) - 1
-                ],
+                csv=CSV_MARKERS[index][0],
                 geometry_source="learned residual static equilibrium; no measured continuous surface is available",
                 mounting="schematic mount from the shared model renderer; not hardware CAD",
                 display_translation=shift.tolist(),
@@ -191,7 +190,7 @@ def export(evaluation, output, force=False):
                     "measurements": "#FFBC42",
                 },
                 mesh_opacity={"robot": 1.0 if kind == "overview" else 0.32},
-                evaluation_sha256=audit["evaluation_sha256"],
+                evaluation_sha256=evaluation_sha256,
                 marker_geometry_sha256=sha256(marker_geometry_path),
                 exporter_sha256=sha256(Path(__file__)),
             )

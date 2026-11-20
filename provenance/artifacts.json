@@ -5,41 +5,9 @@
   "library_release_commit": "61a5ebd9cc5e56786044b0c35d33dac7893a9f46",
   "paper": "https://arxiv.org/abs/2608.06650",
   "artifacts": {
-    "paper_results/final_outputs/benchmark_cpu_system_id_residual_learning.pdf": {
-      "sha256": "66a9de9bff8ad68c4bf0b6ea4aad6f76b141c071741c08ef8e0d8d8abce1240d",
-      "bytes": 145952
-    },
-    "paper_results/final_outputs/benchmark_cpu_system_id_residual_learning.svg": {
-      "sha256": "cbcf95b4f1b2ac395afd1f1081813a0c66da58a0f14da5d29039959d7551e167",
-      "bytes": 699795
-    },
     "paper_results/final_outputs/benchmark_gpu.pdf": {
       "sha256": "204b677da19f99234f6ba6304d7925070123e4be15210b0fc4de85b71e56f82d",
       "bytes": 29115
-    },
-    "paper_results/final_outputs/control_barrier_function_reinforcement_learning.json": {
-      "sha256": "60e2522d37c52454b925b89e22c9c67743ce3c7d0bcd9745bba8cdbdbce8f258",
-      "bytes": 1256
-    },
-    "paper_results/final_outputs/control_barrier_function_reinforcement_learning.pdf": {
-      "sha256": "7e17e41a692839989cfd2c149c2cbad97d666891b61dcc328f4b56d65dc309e1",
-      "bytes": 534990
-    },
-    "paper_results/final_outputs/control_barrier_function_reinforcement_learning.png": {
-      "sha256": "a7fc1f1dff2c9d8812c4be7f9980226b6c3e1e29310751f897dfe90bf1aa2d98",
-      "bytes": 803301
-    },
-    "paper_results/final_outputs/control_barrier_function_reinforcement_learning.svg": {
-      "sha256": "e55fc86afe6b5f2c59a202c0353073cf122bd4965d7768c6f3a66cea9c7c03a2",
-      "bytes": 879636
-    },
-    "paper_results/final_outputs/control_gain_optimization.pdf": {
-      "sha256": "70bf5ced3b2d63d784e4332995630c0a4ded5b9e0993e2ab36f3df1e6cb982ff",
-      "bytes": 961844
-    },
-    "paper_results/final_outputs/control_gain_optimization.svg": {
-      "sha256": "4d5463185206daaf41bcb2a0985efee12fefc5fdd1c241f73f3b951179111f78",
-      "bytes": 15719402
     },
     "paper_results/final_outputs/renderers_and_presets.json": {
       "sha256": "5f23eb478b5727fa7fce857f7abd149a2162dc1a0ad4cbd73d8a0957b2e61ab8",
@@ -469,22 +437,6 @@
       "sha256": "a7f88c7428c2c340cbf56688e0e22742fd8bba93174a43be2ff62df4c740d17f",
       "bytes": 13039
     },
-    "paper_results/secVa_system_identification/outputs/3d_shape_comparison.pdf": {
-      "sha256": "25d892e9404094fa4ef2409a6f53524889fea7e03161bd4910fbb125abda9ff0",
-      "bytes": 43640
-    },
-    "paper_results/secVa_system_identification/outputs/bar_overall_rmse.pdf": {
-      "sha256": "75807f75759d2e32ace5443871e66312ce5a4bb60866e686b2b697b50bec38d5",
-      "bytes": 9222
-    },
-    "paper_results/secVa_system_identification/outputs/radar_rmse_per_marker.pdf": {
-      "sha256": "5453c5049c2b02903b9a7c1bf3f9b4415de2cddb41c790f7c39793b27bd4a0bf",
-      "bytes": 17364
-    },
-    "paper_results/secVa_system_identification/outputs/violin_error_distribution.pdf": {
-      "sha256": "7076444809b2ef627e6e317344b0f00189cac9d027ea3f0af17d880b596fc731",
-      "bytes": 36643
-    },
     "paper_results/secVc_model_based_control/configuration_space_comparison/data/regulation_tracking_comparison.npz": {
       "sha256": "46cc87c27eb41e837ef374bb3a505c75590163f4b4656f156411c239fb0d521d",
       "bytes": 5507406
@@ -496,10 +448,6 @@
     "paper_results/secVc_model_based_control/configuration_space_comparison/data/trajectory_tracking_comparison.npz": {
       "sha256": "366c7749415fb79113d0828e293f701c3afa78e6183b9dda072b92de28ceab8a",
       "bytes": 5221281
-    },
-    "paper_results/secVc_model_based_control/configuration_space_comparison/outputs/configuration_space_comparison.pdf": {
-      "sha256": "d6fca16a8f4a286fa327687755e69471893ad0ee8c62c11603a54203691a8123",
-      "bytes": 266816
     },
     "paper_results/secVc_model_based_control/configuration_space_comparison/outputs/regulation_tracking_rmse.pdf": {
       "sha256": "8cb60061571ff54a6c742f447bbdfb8a3827f717edb75e6bae4ac33bb5e0d85c",
@@ -520,34 +468,6 @@
     "paper_results/secVc_model_based_control/operational_space_impedance_control/outputs/operational_space_impedance_control.pdf": {
       "sha256": "8b2f9d34a7b89aa4ab618ae968568c0293a5289e6b72de64d49ecaa1f71a5fd8",
       "bytes": 189041
-    },
-    "paper_results/secVc_model_based_control/operational_space_impedance_control/outputs/operational_space_impedance_snapshots.pdf": {
-      "sha256": "f1550b16768e52d7bbfbe0ea21da9a94a7ebf74d56c9178a74a2ef4941e9e002",
-      "bytes": 227280
-    },
-    "paper_results/secVc_model_based_control/operational_space_impedance_control/outputs/operational_space_impedance_snapshots/snapshot_t04p50s.png": {
-      "sha256": "18a8d3228bb516b5cd176642de9f39d8c37e1830a3a3ca036281e8c4b4a1c120",
-      "bytes": 241676
-    },
-    "paper_results/secVc_model_based_control/operational_space_impedance_control/outputs/operational_space_impedance_snapshots/snapshot_t05p50s.png": {
-      "sha256": "a8ca83d1e934f4715441cc9feaf181b582cf64145166005b8e030122bbfbcd1a",
-      "bytes": 268122
-    },
-    "paper_results/secVc_model_based_control/operational_space_impedance_control/outputs/operational_space_impedance_snapshots/snapshot_t06p50s.png": {
-      "sha256": "a0189fcbb09bd8357262fec4ae8bdfb99da5c507fc21a6529e6bd3e52b212608",
-      "bytes": 242145
-    },
-    "paper_results/secVc_model_based_control/operational_space_impedance_control/outputs/operational_space_impedance_snapshots/snapshot_t07p50s.png": {
-      "sha256": "903802e92e2d7cb8d7ba84da2365b86df43f16d68dc47f8d2eb3c46ebf3d227a",
-      "bytes": 269111
-    },
-    "paper_results/secVc_model_based_control/outputs/model_based_control.pdf": {
-      "sha256": "1af0de1cf9c152d045ef5c0b80a0b7b05e54001335edb061f7cbd605e65493d2",
-      "bytes": 458938
-    },
-    "paper_results/secVc_model_based_control/outputs/model_based_control.svg": {
-      "sha256": "309276b410cb615368a0f1d9de2d7cca641626a2518a5e88693f1fca12276f3b",
-      "bytes": 804401
     },
     "paper_results/secVd_control_gain_optimization/data/collocated/optimization_results.npz": {
       "sha256": "c93feaed81b8a5288cf46afd4454adb9da28163479d0212733a23cc413ee6340",
@@ -577,14 +497,6 @@
       "sha256": "68565b4056108d12b02f3e5ae24e2b24a4b3c1436e031cf3f0b6c85822e534c7",
       "bytes": 14532
     },
-    "paper_results/secVd_control_gain_optimization/outputs/plot_control_gain_opt.pdf": {
-      "sha256": "d1b91f23a1e5f99c73ab1722db88424a89bfe5d15495dd7fa95a1fa3d8c02cf8",
-      "bytes": 696819
-    },
-    "paper_results/secVd_control_gain_optimization/outputs/plot_control_gain_opt.png": {
-      "sha256": "b7a4cfd776bb9d7db3ad03b7665a37bfc9d632ecca71c31bd01e85ad1327b23b",
-      "bytes": 277903
-    },
     "paper_results/secVd_control_gain_optimization/outputs/synergistic_initial_median_tracking.gif": {
       "sha256": "276704b1d88744b65044781894349fb0e2563b5c72e024a4b625596c24c4f40f",
       "bytes": 693786
@@ -609,49 +521,9 @@
       "sha256": "8219dc583e48ee58e15161ed8fc01c11f7496cf028e407a683f9f00d394c989f",
       "bytes": 3277197
     },
-    "paper_results/secVe_safety_constrained_control/data/snapshot_frame_00000_cf.png": {
-      "sha256": "edcd125cca5b5fe866022cb2401adfd939fb7160006e644558b214a6e1364d4b",
-      "bytes": 67157
-    },
-    "paper_results/secVe_safety_constrained_control/data/snapshot_frame_00000_nocf.png": {
-      "sha256": "14d754a88e5ea161dae1847beecb1fbf88aff507292395ce32eebfb370e679e0",
-      "bytes": 67993
-    },
-    "paper_results/secVe_safety_constrained_control/data/snapshot_frame_00015_cf.png": {
-      "sha256": "e196cb80adc407951c970bf223df419024237327d42382025116bab91c790369",
-      "bytes": 76702
-    },
-    "paper_results/secVe_safety_constrained_control/data/snapshot_frame_00015_nocf.png": {
-      "sha256": "e101c5bff76362baec10b1e2e79a30a9328990067febb3e2c39ec88af81ad52a",
-      "bytes": 71180
-    },
-    "paper_results/secVe_safety_constrained_control/data/snapshot_frame_00030_cf.png": {
-      "sha256": "ab47db92dbe90d533bceabf2e4fe021a4891e931c287cd8597cdefb6f3473a3a",
-      "bytes": 84217
-    },
-    "paper_results/secVe_safety_constrained_control/data/snapshot_frame_00030_nocf.png": {
-      "sha256": "07db44eea98cb8fc93c23b253b6d35e5fba9390169a307e86c5273e9a11fb1d0",
-      "bytes": 78283
-    },
-    "paper_results/secVe_safety_constrained_control/data/snapshot_frame_00136_cf.png": {
-      "sha256": "3cb96c839bb9fb41ac29d18183b7c1b687e39d4b1bdbf0bd8df48eb8f3bb1d8a",
-      "bytes": 83748
-    },
-    "paper_results/secVe_safety_constrained_control/data/snapshot_frame_00182_nocf.png": {
-      "sha256": "430fec2909efdd5ad88294a872e276f3f5967fcdc214ecf18f187bb125409bd3",
-      "bytes": 75946
-    },
     "paper_results/secVe_safety_constrained_control/data/system_parameters.npz": {
       "sha256": "c1377c2a88bd7131c7e36672a003776b721a4cf5e0ad014e37e025be4c8e69f6",
       "bytes": 6560
-    },
-    "paper_results/secVe_safety_constrained_control/outputs/force_goal_distance_plot.pdf": {
-      "sha256": "8f38cb5250c845a7c08ec9f2268355b2307e969eccb7dda621b0278a2ef47382",
-      "bytes": 13522
-    },
-    "paper_results/secVe_safety_constrained_control/outputs/force_goal_distance_plot.png": {
-      "sha256": "4629400091c6fb7cdba241f6b2d4dfe57c10056081ca6cf446fe3639e0ad43a5",
-      "bytes": 195219
     },
     "paper_results/secVe_safety_constrained_control/outputs/rollout_with_cbf.mp4": {
       "sha256": "bfd81b1b9669fcccc22fcc288b1e2caf7f5e6b3e43b1c94c036ff5477ef8f4df",
@@ -981,38 +853,6 @@
       "sha256": "ec9fa637779b543ccbe57197cdcbdaae87665e9ff83471d0f10ac4ed61273638",
       "bytes": 34835
     },
-    "paper_results/secVg_parallel_rl/data/snapshot_frame_00000_init.png": {
-      "sha256": "05eab4b5593e09b112b79b5fc737f41c9a4fa6483027014fc29c45a208d1e14c",
-      "bytes": 88449
-    },
-    "paper_results/secVg_parallel_rl/data/snapshot_frame_00000_opt.png": {
-      "sha256": "f011cd7cc72c6899a67d30b0622df46c0b1b2330377e5f8dbeb383cad004d3e1",
-      "bytes": 89050
-    },
-    "paper_results/secVg_parallel_rl/data/snapshot_frame_00064_init.png": {
-      "sha256": "0463a762870676ecaeaba1f0657e81cb8316e5a004d9ee2c55b2bcc4c9cffe17",
-      "bytes": 93469
-    },
-    "paper_results/secVg_parallel_rl/data/snapshot_frame_00064_opt.png": {
-      "sha256": "e1a2a218e0ec22e82aec5b28ff67fd85b2ac1f48e0cccc0490cef4e05b581f83",
-      "bytes": 98278
-    },
-    "paper_results/secVg_parallel_rl/data/snapshot_frame_00144_init.png": {
-      "sha256": "a39dced4e9291f63550d8eef5ca557c3872cc4f2df753acd1ee54ece36bacb68",
-      "bytes": 96612
-    },
-    "paper_results/secVg_parallel_rl/data/snapshot_frame_00144_opt.png": {
-      "sha256": "2c0aebfd797dfcfe7b2b6b19d6f3c86d721a76d22d982019044929952ca51545",
-      "bytes": 88452
-    },
-    "paper_results/secVg_parallel_rl/data/snapshot_frame_00282_init.png": {
-      "sha256": "ba2619c49af1b1cb3fe1ffd9d7a11bc41debd8ec3dd035cd585389f8494cf6db",
-      "bytes": 98155
-    },
-    "paper_results/secVg_parallel_rl/data/snapshot_frame_00282_opt.png": {
-      "sha256": "7f868451b49ac17abf57e6613a0cd544752cec150bd0cd3c027ad8c416391c9d",
-      "bytes": 89692
-    },
     "paper_results/secVg_parallel_rl/data/traj/rl_rollout_initialized_1_env.npz": {
       "sha256": "2bdf5411247ff089a35237d41a88cd46d3108fb26bfe9da06d77590a895dfe42",
       "bytes": 32516
@@ -1028,10 +868,6 @@
     "paper_results/secVg_parallel_rl/data/traj/rl_rollout_trained_64_envs.npz": {
       "sha256": "10ac868dd2d0dde4c207e9cb6a7575d84af106dc646d93631a6353ceac2d15f4",
       "bytes": 1586363
-    },
-    "paper_results/secVg_parallel_rl/outputs/reward_curve.pdf": {
-      "sha256": "eddbeae44faaad2e2acd121d0679a7872c3dea7e53aba33a98283a83d836392e",
-      "bytes": 78770
     },
     "paper_results/secVg_parallel_rl/outputs/rl_rollout_initialized_1_env.gif": {
       "sha256": "47bf756642343873d9d7fb81e1ea24147d27b2682b0aefc8e551d68199498c4b",

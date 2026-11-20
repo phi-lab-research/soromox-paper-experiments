@@ -51,10 +51,10 @@ tracking error, and success rate for a fixed rollout.
 
 ## Paper artifacts
 
-Recreate the reward curve from the committed training logs:
+Compose the grid, tracking, and training-curve panels:
 
 ```bash
-uv run python paper_results/secVg_parallel_rl/code/plot_rl.py
+uv run python paper_results/secVg_parallel_rl/code/plot_parallel_rl.py
 ```
 
 The plot reads three subfolders of `data/reward_logs/`, each holding one
@@ -75,9 +75,8 @@ The default reproduces the existing W&B-style processing: keep up to 1,500
 records per run with random seed 0, apply Gaussian smoothing with scale 10
 records, merge equal timestamps, and interpolate each run onto 500 points
 over the time interval common to the runs in its group. The band is one
-sample standard deviation across the two runs. Passing `--episodes-per-point
-512` instead selects equal-episode aggregation. A SoRoMoX record holds
-8 episodes and a PyElastica record 2.
+sample standard deviation across the two runs. The processing is implemented
+in `code/rl_training_curves.py`.
 
 Rollout generation and rendering are separate steps. Generate the single-arm
 trajectory data for both the uniformly random initialized-policy baseline and
@@ -172,7 +171,7 @@ provenance.
 
 ## Redesigned main paper figure
 
-`code/plot_rl_summary.py` writes the main PDF, PNG, SVG, and provenance JSON
+`code/plot_parallel_rl.py` writes the main PDF, PNG, SVG, and provenance JSON
 under `../final_outputs/parallel_reinforcement_learning.*`:
 
 - A is one low, close view into a dense population of robots. Recorded states
@@ -188,7 +187,7 @@ under `../final_outputs/parallel_reinforcement_learning.*`:
 Reproduce from committed snapshots, from this directory:
 
 ```bash
-python code/plot_rl_summary.py --force
+python code/plot_parallel_rl.py --force
 ```
 
 Export geometry with the experiments environment, then render in the RTX
@@ -198,7 +197,7 @@ runtime pinned by `../secVf_sampling_based_mpc/`:
 JAX_PLATFORMS=cpu python code/export_rl_grid_scene.py --force
 python code/render_rl_grid_scene.py --geometry outputs/paper_snapshots/grid_close_geometry.npz --output outputs/paper_snapshots/grid_close.png --force
 python code/render_rl_grid_scene.py --geometry outputs/paper_snapshots/tracking_geometry.npz --output outputs/paper_snapshots/tracking.png --force
-python code/plot_rl_summary.py --force
+python code/plot_parallel_rl.py --force
 ```
 
 The grid has 0.28 m spacing and includes 7,050 display instances after
@@ -229,6 +228,3 @@ counts, original environment indices, cameras, crop, and trajectory time range.
 The renderer uses `../paper_rtx_studio.py` directly. The suggested caption is
 `figure_caption.tex`. Existing random/trained rollout videos remain available;
 this revision introduces no appendix figure.
-
-The legacy assembler's `--rl-only` mode writes
-`parallel_reinforcement_learning_legacy.*` to avoid replacing the current figure.

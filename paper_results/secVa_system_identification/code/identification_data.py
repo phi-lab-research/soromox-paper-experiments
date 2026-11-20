@@ -1,17 +1,17 @@
-"""Audit and re-evaluate the saved Section Va models on a common dataset.
+"""Re-evaluate the saved Section Va models on a common dataset.
 
 No parameter fitting or neural-network training is performed here.
 """
 
 import argparse
 import hashlib
-import json
 from pathlib import Path
 
 import equinox as eqx
 import jax
 import jax.numpy as jnp
 import numpy as np
+from identification_metrics import representative_indices, dataset_rmse_mm
 import optimistix as optx
 import pandas as pd
 
@@ -32,9 +32,6 @@ from identify_soft_tentacle_residual import TauNN, checkpoint_features, markers_
 CASE = Path(__file__).resolve().parents[1]
 DATA = CASE / "data"
 STAGES = ("initial", "identified", "learned", "fitted_residual")
-# The checkpoint predates the positive-tension API. Its features remain negative.
-CHECKPOINT_INPUT_SIGN = -1.0
-DECLARED_TEST_INDICES = [1, 16]
 LOAD_PAIRS = [
     (0.1, 0),
     (0.15, 0),
@@ -177,14 +174,6 @@ def sha256(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def marker_rmse(errors):
-    """RMS Euclidean marker error; do not average norms or divide by XYZ."""
-    errors = np.asarray(errors)
-    if errors.shape[-2:] != (4, 3) or not np.isfinite(errors).all():
-        raise ValueError("Expected finite errors with trailing shape (4, 3)")
-    return np.sqrt(np.mean(np.sum(errors**2, axis=-1)))
-
-
 def measured_from_csv(data):
     rotation = np.array([[1, 0, 0], [0, 0, 1], [0, -1, 0]])
     offset = np.array([-0.03, -0.013, 0.0])
@@ -201,19 +190,9 @@ def measured_from_csv(data):
     return np.array(measurements)
 
 
-def representative_indices(errors):
-    """One median-error case per tendon-input family, selected before residuals."""
-    rms = np.sqrt(np.mean(np.sum(errors**2, axis=-1), axis=1))
-    families = ([0, 1, 2, 3, 8, 9, 10], [4, 5, 6, 7, 11, 12, 13], list(range(14, 22)))
-    return [
-        int(ids[np.argmin(abs(rms[ids] - np.median(rms[ids])))]) for ids in families
-    ]
-
-
 def evaluate(data, output, force=False):
     targets = [
         output / "identification_evaluation.npz",
-        output / "identification_audit.json",
     ]
     if not force and any(p.exists() for p in targets):
         raise FileExistsError("Evaluation exists; pass --force")
@@ -230,7 +209,7 @@ def evaluate(data, output, force=False):
         ],
         axis=1,
     ).T
-    results, convergence = {}, {}
+    results = {}
     s = np.linspace(0.0, 0.36, 161)
     rounded = build_robot()
     fk = jax.jit(jax.vmap(lambda q: rounded.forward_kinematics_abscissa_batched(q, s)))
@@ -286,14 +265,11 @@ def evaluate(data, output, force=False):
         results[stage] = dict(
             q=q, markers=markers, errors=errors, poses=np.asarray(fk(q))
         )
-        convergence[stage] = float(np.max(abs(residual)))
-        print(stage, "RMSE [mm]", 1000 * marker_rmse(errors), flush=True)
+        print(stage, "RMSE [mm]", dataset_rmse_mm(errors), flush=True)
     # Compare against independent archived errors, curves, and NN error norms.
-    checks = {}
 
     def check(name, actual, expected, atol=5e-7):
-        np.testing.assert_allclose(actual, expected, atol=atol, rtol=1e-6)
-        checks[name] = float(np.max(abs(actual - expected)))
+        np.testing.assert_allclose(actual, expected, atol=atol, rtol=1e-6, err_msg=name)
 
     check(
         "initial_eight_errors",
@@ -348,51 +324,6 @@ def evaluate(data, output, force=False):
         ),
     )
     chosen = representative_indices(results["identified"]["errors"])
-    train = np.setdiff1d(np.arange(22), DECLARED_TEST_INDICES)
-    summary = {
-        stage: {
-            name: float(1000 * marker_rmse(d["errors"][ids]))
-            for name, ids in [
-                ("all_22", np.arange(22)),
-                ("parameter_fit_8", np.arange(8)),
-                ("declared_nn_train_20", train),
-                ("declared_nn_test_2", DECLARED_TEST_INDICES),
-            ]
-        }
-        for stage, d in results.items()
-    }
-    audit = dict(
-        schema_version=1,
-        stages=list(STAGES),
-        metric="sqrt(mean over configurations and markers of squared Euclidean position error)",
-        units="mm",
-        configurations=22,
-        markers_per_configuration=4,
-        num_segments=2,
-        num_dofs=9,
-        first_link_basis="constant torsion, linear bending in two axes, linear axial strain (7 DOF)",
-        second_link_basis="constant bending in two axes (2 DOF)",
-        exact_identified_parameters=[
-            float(np.load(data / f"{n}_hat.npy")) for n in ["E", "nu", "rho"]
-        ],
-        residual_model_parameters=[315000.0, 0.45, 1320.0],
-        checkpoint_input_sign=CHECKPOINT_INPUT_SIGN,
-        checkpoint_split_provenance="20/2 indices declared by source; checkpoint contains weights but no training metadata",
-        declared_nn_test_indices_zero_based=DECLARED_TEST_INDICES,
-        generalization_scope="All-22 summary includes fitted and NN-training configurations; not a held-out score. First declared NN test case also belongs to the physical parameter fit set.",
-        selected_indices_zero_based=chosen,
-        selection_rule="nearest median identified-model per-configuration RMS error within each of tendon 1 only, tendon 2 only, and both tendons; first index breaks ties",
-        selected_csvs=[CSV_MARKERS[i][0] for i in chosen],
-        rmse_mm=summary,
-        convergence_max_abs=convergence,
-        archive_checks_max_abs=checks,
-        source_sha256={
-            p.name: sha256(p)
-            for p in sorted(data.iterdir())
-            if p.suffix in {".csv", ".npy", ".eqx"}
-        },
-        evaluator_sha256=sha256(Path(__file__)),
-    )
     output.mkdir(parents=True, exist_ok=True)
     arrays = {
         f"{stage}_{name}": value
@@ -408,9 +339,7 @@ def evaluate(data, output, force=False):
         tau_fitted=tau_star,
         s=s,
     )
-    audit["evaluation_sha256"] = sha256(targets[0])
-    targets[1].write_text(json.dumps(audit, indent=2) + "\n")
-    print("Representative inputs:", audit["selected_csvs"], flush=True)
+    print("Representative inputs:", [CSV_MARKERS[i][0] for i in chosen], flush=True)
 
 
 if __name__ == "__main__":

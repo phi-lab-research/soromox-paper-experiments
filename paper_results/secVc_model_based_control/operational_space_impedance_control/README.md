@@ -55,10 +55,8 @@ uv run --extra paper_results python paper_results/secVc_model_based_control/oper
   partial-feedback-linearization controller.
 - `outputs/control_pcs_with_impedance_trajectory-render.mp4` is the canonical
   RL-inspired Viser rendering of the saved operational-space rollout.
-- `outputs/operational_space_impedance_snapshots/` contains the four identically
-  cropped, lossless PNG stills.
-- `outputs/operational_space_impedance_snapshots.pdf` is the compact 15.2 cm-wide
-  four-frame strip with per-frame timestamps and the paper-style time arrow.
+- The video renderer also exports four identically cropped PNG stills to
+  `outputs/operational_space_impedance_snapshots/`.
 
 Standalone trajectory and configuration plots are reproducible diagnostics and
 remain uncommitted. The checked-in NPZ file was regenerated from scratch with

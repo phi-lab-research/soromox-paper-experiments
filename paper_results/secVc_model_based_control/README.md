@@ -20,16 +20,6 @@ and renderers consume saved NPZ data and write only to their case `outputs/`
 directory by default. The case READMEs list complete reproduction commands and
 artifact inventories.
 
-Reproduce the legacy Section Vc application figure from the canonical comparison
-data and operational snapshots with:
-
-```bash
-uv run --extra paper_results python paper_results/secVc_model_based_control/code/plot_model_based_control.py
-```
-
-The command writes `outputs/model_based_control.pdf` and a matching SVG; pass
-`--force` to replace existing outputs.
-
 ## Evaluation metrics
 
 Generate the complete human-readable report and its machine-readable JSON from
@@ -49,16 +39,6 @@ pairwise reference span for each task quantity, and RMSE normalized by that
 span in percent. The command writes `data/metrics.json` by default; an explicit
 path may be supplied after `--json-output`.
 
-The committed Section Vc paper figures are:
-
-- `outputs/model_based_control.pdf`
-- `configuration_space_comparison/outputs/configuration_space_comparison.pdf`
-- `configuration_space_comparison/outputs/regulation_tracking_rmse.pdf`
-- `operational_space_impedance_control/outputs/operational_space_impedance_control.pdf`
-
-All use the shared `paper_results/paper.mplstyle` publication settings and the
-regenerated Section Vc trajectory data.
-
 ## Combined control and gain-tuning main figure
 
 The main paper now combines pose tracking and gain tuning in
@@ -67,17 +47,15 @@ composite below contains configuration-space control
 and actuation-space tuning. The full componentwise pose histories remain a
 separate appendix figure; operational-space tuning is shown in the main figure.
 
-The model/run audit is recorded in [control_tuning_audit.md](control_tuning_audit.md).
 The tracking robot has two fully actuated segments. Both gain-tuning cases use
 one segment and three tendons. The main comparison uses the synergistic case:
 initial start 5 (nearest the median initial loss) and optimized start 2 at
 iteration 100, with numbers counted from one. These are different starts.
-The pointwise coordinate median from the legacy plot is not rendered as a robot.
 
 Compose the committed studio snapshots and complete recorded error histories:
 
 ```bash
-uv run --extra paper_results python paper_results/secVc_model_based_control/code/plot_control_tuning_summary.py --force
+uv run --extra paper_results python paper_results/secVc_model_based_control/code/plot_control_tuning.py --force
 ```
 
 Outputs are PDF, SVG, PNG, and a JSON manifest in `paper_results/final_outputs/`.
@@ -98,8 +76,7 @@ uv run --extra paper_results python paper_results/secVc_model_based_control/code
 
 This checks forward kinematics against the stored poses and recomputes the
 objectives from all initial/best saved rollouts. `outputs/paper_snapshots/`
-contains exported geometry, rendered PNGs, provenance JSON sidecars, and an
-audit JSON. Render each geometry on an NVIDIA RTX host using the Section Vf
+contains exported geometry, rendered PNGs, and provenance JSON sidecars. Render each geometry on an NVIDIA RTX host using the Section Vf
 Newton environment, for example:
 
 ```bash

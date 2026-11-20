@@ -23,7 +23,6 @@ CASE_DIR = SCRIPT_PATH.parent.parent
 PAPER_STYLE = SCRIPT_PATH.parents[3] / "paper.mplstyle"
 CM_TO_INCH = 1.0 / 2.54
 CANONICAL_INPUT = CASE_DIR / "data" / "regulation_tracking_comparison.npz"
-CANONICAL_OUTPUT = OUTPUTS_DIR / "configuration_space_comparison.pdf"
 
 STRAIN_UNITS = (
     r"rad\,m^{-1}",
@@ -198,54 +197,6 @@ def _phase_labels(axes: np.ndarray, boundary_time: float, t1: float) -> None:
             va="bottom",
             fontsize=7,
         )
-
-
-def build_configuration_space_paper_figure(run: ComparisonRun) -> plt.Figure:
-    """Build the canonical regulation-to-tracking comparison figure."""
-    group = next((item for item in run.plot_groups if item.key == "combined"), None)
-    if group is None or group.phase_boundary_time is None:
-        raise ValueError("The canonical figure requires the combined phase plot group.")
-
-    configure_matplotlib()
-    fig, axes = plt.subplots(
-        3,
-        1,
-        figsize=cm_to_inches((16.5, 9.5)),
-        sharex=True,
-        constrained_layout=True,
-    )
-    plot_tracking_axes(run, group, axes, errors=False)
-    axes[-1].set_xlabel(r"Time $\mathrm{[s]}$")
-
-    t1 = float(_group_results(run, group)[group.controller_names[0]]["t"][-1])
-    _phase_labels(axes[:1], group.phase_boundary_time, t1)
-    handles, labels = axes[0].get_legend_handles_labels()
-    fig.legend(
-        handles,
-        labels,
-        loc="outside upper center",
-        ncol=3,
-        columnspacing=1.2,
-        handlelength=2.5,
-    )
-    return fig
-
-
-def save_configuration_space_paper_figure(
-    run: ComparisonRun,
-    output: Path,
-    *,
-    show: bool,
-    force: bool,
-) -> Path:
-    """Save the canonical configuration-space comparison PDF."""
-    ensure_writable(output, force=force)
-    fig = build_configuration_space_paper_figure(run)
-    fig.savefig(output, bbox_inches=None)
-    if show:
-        plt.show()
-    plt.close(fig)
-    return output
 
 
 def plot_tracking_group(

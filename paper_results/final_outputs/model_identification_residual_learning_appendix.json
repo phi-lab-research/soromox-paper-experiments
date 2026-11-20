@@ -47,8 +47,8 @@
   ],
   "evaluation_sha256": "8c2549270f4e86a427d5f85ea8dadc9057f323d6a43da04025ede5e1cdc4a2fb",
   "marker_geometry_sha256": "cc5685555786ffc9c49570cd45570c6d36e895d1efa654c31035c343cce5a040",
-  "composer_sha256": "b8e47071b19eb0d0b55d9f02d1003f127386dcfc7981e3ce91ad0b7824637f8a",
-  "shared_composer_sha256": "d5e63b9e595b5610d476119dcc6bca1dc4f17388877f31057e53d7bacae40329",
+  "composer_sha256": "c91d3731112c8dc3799e06fff7dbc73472fd201e8d9bec62d27a51bee1bb4b7b",
+  "shared_composer_sha256": "d643daa4b988c4f01283cb75b7e9cc20394df1d415502847ed85d7c3c6f8ae84",
   "per_marker_rmse_mm": {
     "initial": [
       11.329506197965705,
@@ -77,6 +77,5 @@
   },
   "metric": "sqrt(mean over 22 configurations of squared Euclidean marker error)",
   "distribution": "empirical cumulative distribution of all 88 Euclidean errors per stage",
-  "generalization_scope": "All-22 summary includes fitted and NN-training configurations; not a held-out score. First declared NN test case also belongs to the physical parameter fit set.",
   "pdf_sha256": "074d3b5f10bf096ca0a7e2384d9b6d664f0d9ab8164e961c5e49f4c9a2577fcc"
 }

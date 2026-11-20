@@ -1,5 +1,4 @@
 import importlib.util
-import re
 import sys
 from pathlib import Path
 from types import SimpleNamespace
@@ -298,43 +297,3 @@ def test_common_snapshot_crop_is_square_and_identical(tmp_path):
 
 def test_snapshot_filename_preserves_png_extension():
     assert renderer.snapshot_filename(4.5) == "snapshot_t04p50s.png"
-
-
-def test_snapshot_strip_has_exact_publication_page_size(tmp_path):
-    paths = []
-    coral_u8 = tuple(int(value) for value in np.rint(renderer.CORAL_RGB * 255.0))
-    for index in range(4):
-        path = tmp_path / f"frame_{index}.png"
-        Image.new("RGB", (32, 32), coral_u8).save(path)
-        paths.append(path)
-    output = tmp_path / "strip.pdf"
-
-    renderer.save_snapshot_strip(
-        paths,
-        output,
-        snapshot_times=(4.5, 5.5, 6.5, 7.5),
-    )
-
-    match = re.search(
-        rb"/MediaBox\s*\[\s*0\s+0\s+([0-9.]+)\s+([0-9.]+)\s*\]",
-        output.read_bytes(),
-    )
-    assert match is not None
-    width_points, height_points = (float(value) for value in match.groups())
-    assert width_points == pytest.approx(15.2 / 2.54 * 72.0, abs=0.01)
-    assert height_points == pytest.approx(4.8 / 2.54 * 72.0, abs=0.01)
-
-
-def test_snapshot_strip_requires_four_finite_times(tmp_path):
-    paths = []
-    for index in range(4):
-        path = tmp_path / f"frame_{index}.png"
-        Image.new("RGB", (32, 32), "white").save(path)
-        paths.append(path)
-
-    with pytest.raises(ValueError, match="four finite snapshot times"):
-        renderer.save_snapshot_strip(
-            paths,
-            tmp_path / "strip.pdf",
-            snapshot_times=(4.5, 5.5, 6.5),
-        )

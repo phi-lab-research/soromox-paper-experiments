@@ -52,7 +52,7 @@ def compose(frame_dir, output_dir):
 
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
-    from plot_control_tuning_summary import draw_snapshot
+    from plot_control_tuning import draw_snapshot
     from control_tuning_data import sha256
     import shutil
 
