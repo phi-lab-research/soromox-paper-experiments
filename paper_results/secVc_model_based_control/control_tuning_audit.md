@@ -76,8 +76,10 @@ position/orientation errors and the tuning transient. Numerical statistics,
 selection details, and timestamps belong in the caption.
 
 Machine-readable values and source hashes are in `outputs/paper_snapshots/audit.json`.
-The full gain histories, both gain cases, the configuration-space comparison,
-and the componentwise pose histories remain available for the appendix.
+The dedicated appendix figure contains the configuration-space comparison and
+the actuation-space gain-optimization case. Componentwise pose histories remain
+separate; the operational-space tuning result is shown in the main figure.
+The original full gain plots remain available as legacy outputs.
 
 The matching motion comparison renders 61 saved states from 0--5 s for each
 selected run at 12 fps. It uses the same fixed cameras, materials, and marker
@@ -102,3 +104,24 @@ position-error norms across all six initial gain sets. The blue line is the
 selected actual initial run, and the coral line is the best optimized run.
 Labels explicitly identify selected/best runs; the band is an empirical range,
 not a confidence interval. The gap between plot axes is reduced to 13.5 mm.
+
+## Dedicated appendix figure
+
+The appendix combines configuration-space control with the collocated
+actuation-space gain-optimization case. All five controllers, commanded strains,
+and 30 s of the configuration comparison are retained. Axial strain includes
+the undeformed offset. The lower panels show all 100 optimization iterations
+and the first 2 s of the stored 5 s angular-strain responses.
+
+The initial response is actual collocated start 6, selected by proximity to the
+initial loss median; the optimized response is start 2 at iteration 100. This
+uses the same selection rule as the main figure. Initial coordinate bands are
+pointwise min--max envelopes, not confidence intervals. The loss curve is the
+minimum at each iteration and its band spans the six starts. A linear loss axis
+uses an explicit multiplier of 1000; no underlying metric is changed. The
+46.5576% improvement remains relative to the initial batch median.
+
+The separate JSON manifest records source hashes, model scope, selected runs,
+plot intervals, and displayed loss units. The paper no longer uses the legacy
+pointwise-median response curves or the duplicated operational-space tuning
+panels in its appendix figure.

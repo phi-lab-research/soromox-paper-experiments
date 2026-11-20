@@ -62,9 +62,10 @@ regenerated Section Vc trajectory data.
 ## Combined control and gain-tuning main figure
 
 The main paper now combines pose tracking and gain tuning in
-`../final_outputs/control_and_gain_optimization.pdf`. The complete configuration
-and componentwise pose plots above, and the Section Vd loss/history figure,
-supply the appendix detail.
+`../final_outputs/control_and_gain_optimization.pdf`. The dedicated appendix
+composite below contains configuration-space control
+and actuation-space tuning. The full componentwise pose histories remain a
+separate appendix figure; operational-space tuning is shown in the main figure.
 
 The model/run audit is recorded in [control_tuning_audit.md](control_tuning_audit.md).
 The tracking robot has two fully actuated segments. Both gain-tuning cases use
@@ -142,3 +143,35 @@ position-error norms across all six initial gain sets. The blue line is the
 selected actual initial run, and the coral line is the best optimized run.
 Labels explicitly identify selected/best runs; the band is an empirical range,
 not a confidence interval. The gap between plot axes is reduced to 13.5 mm.
+
+## Configuration-space control and actuation-space tuning appendix
+
+```bash
+uv run --extra paper_results python paper_results/secVc_model_based_control/code/plot_control_tuning_appendix.py --force
+```
+
+This writes `final_outputs/control_and_gain_optimization_appendix.{pdf,png,svg,json}`.
+The 180 by 143 mm figure uses the same 8.5 pt axis labels, 8 pt ticks, semantic
+palette, and vector plots as the main figure. The source data are unchanged.
+
+- A retains all five controllers and all 30 s of configuration-space regulation
+  and tracking. Physical axial strain is `1 + Delta sigma_x`; the boundary at
+  15 s separates regulation from tracking.
+- B shows all 100 iterations of actuation-space gain optimization. The curve
+  is the minimum objective at each iteration; the band is the range across six
+  starts. The loss is displayed in units of 0.001 on a linear axis.
+- C shows the first 2 s of the stored 5 s angular-strain responses. The initial
+  trajectory is actual start 6, nearest the initial loss median; the optimized
+  trajectory is start 2 at iteration 100. Numbers are one-based. Dash-dot and
+  solid curves distinguish these two runs; dashed curves mark the targets.
+  Coordinate-colored bands show the min--max range across all six initial runs.
+
+The [caption](appendix_figure_caption.tex) distinguishes the two robot/controller
+experiments and explains the selections. Both robots have one PCS segment;
+configuration-space control is fully actuated, while the tuning example has
+three tendons and collocated potential-shaping control. The JSON manifest records
+source hashes, intervals, selection rules, and loss scaling. The loader checks
+common reference/time arrays and recomputes each saved tuning objective.
+
+This composite replaces the separate configuration-space and gain-optimization
+figures in the appendix. Legacy generators and their outputs remain available.

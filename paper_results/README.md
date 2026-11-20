@@ -43,9 +43,18 @@ uv run --extra paper_results python paper_results/secVc_model_based_control/code
 It writes `final_outputs/control_and_gain_optimization.*`. The
 [Section Vc README](secVc_model_based_control/README.md) records the verified
 model and run selection, geometry export, shared studio rendering, and motion
-comparison. Full configuration-space, pose-component, and gain-history figures
-are retained for the appendix. The legacy `plot_model_based_control.py` entry
+comparison. A dedicated appendix figure combines configuration-space control
+and actuation-space tuning, while componentwise pose histories remain separate. The legacy `plot_model_based_control.py` entry
 point remains available for reproducing the earlier Section Vc composite.
+
+Compose the configuration-space control and actuation-space tuning appendix:
+
+```bash
+uv run --extra paper_results python paper_results/secVc_model_based_control/code/plot_control_tuning_appendix.py --force
+```
+
+It writes `final_outputs/control_and_gain_optimization_appendix.*`, using the
+saved five-controller comparison and the collocated gain-optimization archive.
 
 The safety and parallel-RL studies now have separate main figures:
 
