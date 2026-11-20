@@ -108,7 +108,7 @@ paper_results/secVf_sampling_based_mpc/.venv/bin/python paper_results/secVc_mode
 
 Repeat for `initial` and `optimized`. Each state uses a fresh renderer, the
 shared studio, and 128 samples per pixel. The gain views share the same camera,
-physical scale, time (0.5 s), and hanging mounting. Pose tracking is shown at
+physical scale, time (5 s), and hanging mounting. Pose tracking is shown at
 6.25 s with its upright mounting and the tip facing the camera; faint shapes
 show recorded states at 4.0, 4.75, and 7.25 s. They cast no shadows, and their proximal
 15.625 mm are omitted where they overlap the solid robot to avoid transparency

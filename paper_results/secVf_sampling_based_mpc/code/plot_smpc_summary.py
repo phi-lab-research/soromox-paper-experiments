@@ -217,8 +217,23 @@ def load_tradeoff(path, data_dir):
 
 
 def draw_tradeoff(ax, tradeoff):
-    """Keep all sweep points; detailed configuration labels remain in the appendix."""
+    """Identify sample budgets and iteration counts beside the sweep points."""
     markers = {"mppi": "^", "icem_fixed_iters": "x", "icem_fixed_batch": "o"}
+    # Keep labels close to their own markers; split the two nearly coincident
+    # MPPI budgets above/below and identify them with short leader lines.
+    label_offsets = {
+        ("mppi", "K=200"): (-4, 5, "right"),
+        ("mppi", "K=400"): (4, -6, "left"),
+        ("mppi", "K=800"): (0, 6, "center"),
+        ("mppi", "K=1600"): (-4, 5, "right"),
+        ("icem_fixed_iters", "K=50"): (0, 6, "center"),
+        ("icem_fixed_iters", "K=100"): (3, -6, "left"),
+        ("icem_fixed_iters", "K=200"): (4, 0, "left"),
+        ("icem_fixed_iters", "K=400"): (0, -6, "center"),
+        ("icem_fixed_batch", "it=1"): (4, 0, "left"),
+        ("icem_fixed_batch", "it=2"): (-4, -3, "right"),
+        ("icem_fixed_batch", "it=4"): (4, 0, "left"),
+    }
     for point in tradeoff["points"]:
         family = point["family"]
         color = METHODS["MPPI" if family == "mppi" else "iCEM"][1]
@@ -226,7 +241,22 @@ def draw_tradeoff(ax, tradeoff):
         ax.scatter(point["mean_time_s"], point["mean_negative_cost"],
                    marker=markers[family], s=24, linewidths=0.8,
                    **style, zorder=3)
-    ax.set(xlim=(0, 48), ylim=(-1670, -850),
+        label = point.get("label", "")
+        # K=200, I=3 is the common point in the two iCEM sweeps.
+        if label and (family, label) in label_offsets:
+            dx, dy, ha = label_offsets[(family, label)]
+            text = label.replace("it=", "I=")
+            if family == "icem_fixed_iters" and label == "K=200":
+                text += "\nI=3"
+            leader = None
+            if family == "mppi" and label in ("K=200", "K=400"):
+                leader = dict(arrowstyle="-", color=color, lw=0.45,
+                              shrinkA=0.5, shrinkB=2.5)
+            ax.annotate(text, (point["mean_time_s"], point["mean_negative_cost"]),
+                        xytext=(dx, dy), textcoords="offset points", ha=ha,
+                        va="center", fontsize=6, color=color, zorder=4,
+                        linespacing=0.9, arrowprops=leader)
+    ax.set(xlim=(0, 49), ylim=(-1670, -780),
            xlabel="Mean planning time / step [s]", ylabel="Mean $-$push cost / step")
     ax.set_xticks((0, 10, 20, 30, 40))
     ax.set_yticks((-1600, -1400, -1200, -1000))

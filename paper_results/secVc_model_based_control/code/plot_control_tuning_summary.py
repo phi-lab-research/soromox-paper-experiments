@@ -221,6 +221,8 @@ def build_figure(tracking, cases, snapshots):
             color=color,
             mec="white",
             mew=0.5,
+            clip_on=False,
+            zorder=5,
         )
     ax.set(
         xlim=(0, 5),

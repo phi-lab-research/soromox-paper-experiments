@@ -1,40 +1,5 @@
-% Suggested caption for the revised main figure.
-% The paper's existing figure label can be retained when inserting this.
-\caption{\textbf{Sampling-based contact-rich manipulation with a soft tentacle.}
-(\textbf{A}) The complete Franka--tentacle system during an iCEM-controlled
-push at $t=0.95$\,s. The Franka represents the kinematically prescribed
-motion of the tentacle base; its dynamics are not part of the experiment.
-The soft tentacle is coral, the manipulated box is gold, and the active goal
-and desired path are green. Faint complete-system poses at $t=1.05$ and
-$1.15$\,s show subsequent recorded motion toward the same highlighted goal.
-The cube closes from $83$ to $41$ to $15$\,mm from that goal. These are later
-executed states, rather than MPC predictions; the rigid-arm poses follow the
-recorded tentacle-base poses kinematically.
-(\textbf{B}) Object trajectories for three seeds each of MPPI ($K=800$)
-and iCEM ($K=200,100,50$ over three iterations).
-Colors identify methods and solid, dashed, and dotted lines identify seeds
-0, 1, and 2. The circle marks the start, crosses the final positions, and
-numbered green squares the ordered goals. MPPI completes all four goals in
-1/3 runs, versus 3/3 for iCEM. Planning time is the mean and population standard
-deviation across the three per-seed averages, excluding each run's first MPC
-step: $8.5\pm0.8$\,s for MPPI and $26.5\pm0.2$\,s for iCEM.
-Planning is slower than real time.
-(\textbf{C}) Left to right: three successive iCEM sampling iterations at the
-first planning step, with 200, 100, and 50 candidates respectively, showing
-candidate configurations at horizon step 10.
-Solid coral and gold show the current tentacle and object, respectively,
-with the same recorded poses in all three views. Translucent blue tentacles
-show sampled predictions; opacity decreases with cost rank, and the lowest-cost
-predicted tentacle is highlighted in faint coral. Predicted object poses are
-omitted. All renderings use
-the saved iCEM seed-0 trajectory and the same studio lighting and materials.
-The same fixed crop is applied to each sampling view. The best whole-rollout
-cost decreases by $4.6\%$ in the final iteration.
-(\textbf{D}) Mean planning wall-clock time and mean negative push cost per
-MPC step for the single-goal planner sweep, averaged over three seeds.
-Higher negative cost is better. Triangles denote MPPI with varying sample
-count; crosses denote iCEM with three iterations and varying sample count;
-open circles denote iCEM with $K=200$ and varying iteration count.
-The cross and circle for $K=200$ with three iterations coincide.
-The shared method colors apply to (B) and (D). This sweep is separate from
-the square-push comparison in (B).}
+\caption{\textbf{Sampling-based MPC enables contact-rich manipulation.}
+(\textbf{A}) The Franka--tentacle system pushes toward the green goal. Solid geometry shows the current state. Faint poses show subsequent executed motion toward that goal. The Franka represents kinematically prescribed base motion.
+(\textbf{B}) Box trajectories compare three seeds per method. Line styles distinguish seeds. The circle marks the start, crosses the final positions, and numbered squares the ordered goals.
+(\textbf{C}) Successive iCEM iterations refine sampled predictions. Solid tentacle and box poses show the same current state. Translucent tentacles show horizon-end predictions. Fainter blue indicates higher cost, and faint coral highlights the best prediction.
+(\textbf{D}) Points compare planning time and mean negative push cost for a separate single-goal sweep, averaged over three seeds. Higher values indicate better performance. Labels give sample count $K$ and iteration count $I$.}

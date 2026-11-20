@@ -77,7 +77,7 @@ def target_frame(pose):
     return combine_meshes(meshes)
 
 
-def export(output, motion=False):
+def export(output, motion=False, snapshot_time=5.0):
     tracking, cases, audit = load_data()
     run = load_run_npz(TRACKING)
     tracking_robot = build_problem(run.trajectory_config).robot
@@ -263,7 +263,9 @@ def export(output, motion=False):
     eye, target = fit_camera(
         np.vstack(state_bounds), [-0.25, -1.0, 0.16], 0.72, margin=0.08
     )
-    times = np.linspace(0, 5, 61) if motion else [0.5]
+    if not 0 <= snapshot_time <= d["t_ts"][-1]:
+        raise ValueError("Snapshot time must lie within the recorded rollout")
+    times = np.linspace(0, 5, 61) if motion else [snapshot_time]
     for frame, time in enumerate(times):
         index = int(np.argmin(abs(d["t_ts"] - time)))
         for name, tag, batch in [
@@ -326,5 +328,7 @@ if __name__ == "__main__":
         "--output-dir", type=Path, default=CASE / "outputs/paper_snapshots"
     )
     parser.add_argument("--motion", action="store_true")
+    parser.add_argument("--snapshot-time", type=float, default=5.0,
+                        help="Time of matched tuning snapshots in seconds")
     args = parser.parse_args()
-    export(args.output_dir, args.motion)
+    export(args.output_dir, args.motion, args.snapshot_time)

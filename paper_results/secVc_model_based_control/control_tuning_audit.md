@@ -48,17 +48,18 @@ from the batch median.
 
 - Pose-tracking position RMSE: 2.835925 mm over all 1,001 samples.
 - Pose-tracking geodesic orientation RMSE: 2.290228 degrees, including startup.
-- Tuning snapshots: 0.5 s in both selected runs; position errors are 15.429 mm
-  initially and 1.041 mm after tuning.
+- Tuning snapshots: 5 s in both selected runs; position errors are 9.154 mm
+  initially and 0.122 mm after tuning.
 - Final position errors: 9.153885 mm initially and 0.121556 mm after tuning.
 - The optimized run enters and remains within 5% of the initial Euclidean
   position error (1.095163 mm) at 0.455 s. The selected initial run does not
   settle within this band during 5 s.
 
-The old 0.9 s settling, overshoot, cumulative-error, and 99% variance statements
-are not used as evidence for the new figure: their precise run/metric selection
-was not traceable to the existing text. The manuscript uses the verified loss
-and position-error quantities above, with an explicit sustained-settling rule.
+The initial redesign omitted the old settling, overshoot, cumulative-error,
+and variance statements because their precise definitions and run selections
+were not traced. This did not establish that all of those claims were false.
+The further saved-data recheck below recovers several of them with explicit
+definitions and identifies a baseline mismatch and missing time units.
 
 ## Rendering and layout
 
@@ -125,3 +126,38 @@ The separate JSON manifest records source hashes, model scope, selected runs,
 plot intervals, and displayed loss units. The paper no longer uses the legacy
 pointwise-median response curves or the duplicated operational-space tuning
 panels in its appendix figure.
+
+## Further check of the earlier performance claims
+
+Run `python paper_results/secVc_model_based_control/code/audit_gain_performance.py`
+to recompute these quantities from the six initial rollouts, best stored
+rollouts, and loss histories. No new optimization is performed.
+
+- Loss variance across the six starts falls by 99.8184% (actuation space) and
+  99.9953% (operational space), comparing the first and last iterations. The
+  earlier approximately 99% claim is supported, although this alone does not
+  establish identical trajectories or gains.
+- The time integral of the angular-strain error norm of the best actuation-space
+  run is 0.203392 rad s/m. The analogous Cartesian-position integral for the
+  best operational-space run is 2.911873 mm s. These reproduce the numerical
+  scale of the earlier 0.20 and 3 claims, with time included in the units.
+- The actuation-space integral decreases by 34.20% relative to selected initial
+  start 6, 47.17% relative to the median of the six initial integrals, or 42.66%
+  relative to the integral of the legacy pointwise-median curve. Thus the old
+  34% claim does not describe a reduction from the initial median.
+- The operational-space integral decreases by approximately 95.19% relative to
+  the median initial integral (95.23% relative to the legacy median curve),
+  supporting the earlier approximately 95% claim.
+- The optimized operational-space trajectory overshoots its y-coordinate target
+  by 4.24446 mm. This supplies a coordinate-specific interpretation of the old
+  approximately 4 mm overshoot, whose metric was previously unspecified.
+- The old 0.9 s settling time is not reproduced by the explicit sustained
+  Euclidean-error rule (0.455 s). Requiring each position coordinate to remain
+  within 5% of its initial displacement gives 1.782 s. Neither calculation
+  establishes what definition produced the historical 0.9 s value.
+- The earlier actuation-space 52% settling-time and 29% overshoot improvements
+  remain unverified. They should not be reported without their original metric
+  definitions and run selections.
+
+The manuscript retains its explicitly defined selected-run position and loss
+metrics pending a decision on which additional metrics to report.

@@ -284,3 +284,8 @@ The source is `diagnostics_iter_X_samples[0]` and `diagnostics_iter_cost[0]` in
 `data/square_icem_seed0.npz`; the renderer selects each iteration's minimum-cost
 candidate. The iteration identifiers in the figure distinguish the views, while
 the explanation and candidate counts remain in the caption.
+
+The main tradeoff plot labels each tested sample count `K` and iteration count
+`I`. The shared iCEM point is labeled `K=200, I=3`. Marker shapes retain the
+fixed-iteration and fixed-sample-budget sweep distinction, and MPPI appears
+first in the legend. The main caption defines the two label symbols.

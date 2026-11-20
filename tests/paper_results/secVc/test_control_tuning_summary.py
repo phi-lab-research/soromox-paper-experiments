@@ -55,6 +55,7 @@ def test_matched_views_preserve_physical_tip_target_distance(data):
             atol=1e-7,
         )
         assert meta["num_segments"] == 1
+        np.testing.assert_allclose(meta["time_s"], cases["synergistic"]["t_ts"][-1])
     assert snapshots["tracking"][1]["num_segments"] == 2
 
 
