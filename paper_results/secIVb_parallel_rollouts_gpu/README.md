@@ -79,3 +79,73 @@ throughput by 679.7× and 32-segment GVS throughput by 133.6×.
 
 Use an explicit temporary `--csv` path for validation runs to avoid replacing
 the committed hardware measurements.
+
+## Four-panel figure alternative
+
+```bash
+uv run python paper_results/secIVb_parallel_rollouts_gpu/code/plot_gpu_scaling_summary.py
+```
+
+This generates `final_outputs/gpu_simulation_scaling.{pdf,svg,png,json}`. Pass
+`--force` to replace existing files. The 180 by 116 mm figure uses four aligned
+panels with shared axis scales and a common link/segment-count legend. It reads
+the committed segment sweep without rerunning benchmarks. The original plotter
+and its outputs remain available for supplementary analyses.
+
+The composer requires the complete 264-row model/size/batch grid, rejects
+duplicates and mixed protocol settings, and verifies that aggregate throughput
+is `batch_size * simulated_time_s / wall_time_s`. The JSON records input and
+output hashes, backend assignments, endpoint gains, throughput peaks, and
+provenance limitations. `four_panel_figure_caption.tex` contains its caption.
+Use full text width in the paper so each panel retains its intended typography.
+
+### Measurement audit
+
+All four models have six sizes (1, 2, 4, 8, 16, 32) and eleven batch sizes
+(1 through 1024, powers of two). All measurements use FP64 on an RTX 5090,
+Tsit5 at 0.1 ms for one simulated second, one warm-up, and three timed runs.
+The generator synchronizes device results before ending each timer. Articulated
+models resolve to JAX; planar PCS, spatial PCS, and GVS resolve to Warp.
+
+The GVS aggregate-throughput gains from batch 1 to 1024 are 679.737x (N=1)
+and 133.614x (N=32). N=32 reaches its maximum at batch 512; its final measured
+throughput is below aggregate parity. A throughput factor of one refers to
+aggregate simulated seconds per wall-clock second, not per-environment real-time
+execution. No uncertainty bands are drawn: the archive contains mean runtimes,
+without the individual three timing samples.
+
+The source CSV records revision `0242a70c5c895aed886a2a214f9379e67079b95a`
+with a dirty working tree. All rollout-finiteness flags are true, but maximum
+absolute state entries reach about 4916 for PCS cases; these diagnostics mix
+state components and do not establish physical fidelity or numerical convergence.
+No measurements are removed or reinterpreted as accuracy evidence.
+
+### Preserved original single-panel figure
+
+`outputs/parallel_rollout_benchmark_combined.pdf` is the exact original figure
+used as `figures/benchmarking/batch_simulation_scaling/benchmark_gpu.pdf` in the
+paper. Their SHA-256 hashes match:
+`204b677da19f99234f6ba6304d7925070123e4be15210b0fc4de85b71e56f82d`.
+Its generator is `code/plot_parallel_rollout_benchmark.py`, which remains
+unchanged. Preserve this original and its generator while evaluating alternatives;
+the new four-panel composer writes separate files. The four-panel alternative remains available for detailed comparisons. The
+main paper uses the refined compact version described below.
+
+## Refined compact main-paper figure
+
+```bash
+uv run python paper_results/secIVb_parallel_rollouts_gpu/code/plot_gpu_scaling_compact.py
+```
+
+This creates `final_outputs/gpu_simulation_scaling_compact.{pdf,png,svg,json}`
+at 87 by 67 mm for single-column placement. It uses borderless 3.5%-opacity envelopes spanning the tested model sizes,
+omits the generic title, uses four distinct shared-palette colors for model families, and
+places frameless legends in unused parts of the plot. All 264 measurements
+remain in the curves; symbols mark every second tested batch size to reduce
+clutter. The size encoding matches the alternative's markers and line styles,
+while color here distinguishes model families. Aggregate throughput is explicit
+on the vertical axis. `figure_caption.tex` is the compact manuscript caption.
+
+The compact composer reuses the four-panel composer's data audit. Neither
+composer replaces the original plotter or its output. All three figure versions
+are maintained separately, and `--force` applies only to the selected version.

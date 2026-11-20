@@ -1,0 +1,240 @@
+{
+  "rows": 264,
+  "csv_sha256": "c1dca8827b0238fa9e9561711f1f15f78425aa79615588a22dbeb4de61a036d6",
+  "metric": "batch_size * simulated_time_s / wall_time_s",
+  "units": "aggregate simulated seconds per wall-clock second",
+  "timing": "mean of three synchronized executions after one warm-up; no repeat-level samples saved",
+  "hardware": "NVIDIA GeForce RTX 5090",
+  "source_revision": [
+    "0242a70c5c895aed886a2a214f9379e67079b95a"
+  ],
+  "source_dirty": [
+    true
+  ],
+  "all_rollouts_finite": true,
+  "validity_scope": "Finite states are recorded; this timing dataset alone does not establish physical fidelity or numerical convergence.",
+  "systems": {
+    "articulated_soft_robot": {
+      "backend": "jax",
+      "sizes": {
+        "1": {
+          "throughput_at_1": 0.4198298582840613,
+          "throughput_at_1024": 257.5877183636538,
+          "gain_1024_vs_1": 613.5526411019753,
+          "peak_batch": 1024,
+          "drop_from_peak_percent": 0.0,
+          "monotone_throughput": true
+        },
+        "2": {
+          "throughput_at_1": 0.129607855990867,
+          "throughput_at_1024": 79.26728986240111,
+          "gain_1024_vs_1": 611.5932499337601,
+          "peak_batch": 1024,
+          "drop_from_peak_percent": 0.0,
+          "monotone_throughput": true
+        },
+        "4": {
+          "throughput_at_1": 0.0853387028318688,
+          "throughput_at_1024": 47.919328902288136,
+          "gain_1024_vs_1": 561.519302639238,
+          "peak_batch": 1024,
+          "drop_from_peak_percent": 0.0,
+          "monotone_throughput": true
+        },
+        "8": {
+          "throughput_at_1": 0.0510222419053006,
+          "throughput_at_1024": 27.084721550073905,
+          "gain_1024_vs_1": 530.8414632258667,
+          "peak_batch": 1024,
+          "drop_from_peak_percent": 0.0,
+          "monotone_throughput": true
+        },
+        "16": {
+          "throughput_at_1": 0.0282912416365542,
+          "throughput_at_1024": 14.306567954106924,
+          "gain_1024_vs_1": 505.6889385731968,
+          "peak_batch": 1024,
+          "drop_from_peak_percent": 0.0,
+          "monotone_throughput": true
+        },
+        "32": {
+          "throughput_at_1": 0.0150376011860565,
+          "throughput_at_1024": 7.437936538579425,
+          "gain_1024_vs_1": 494.62254295427084,
+          "peak_batch": 1024,
+          "drop_from_peak_percent": 0.0,
+          "monotone_throughput": true
+        }
+      },
+      "max_abs_saved_state": 9.901754451014371
+    },
+    "planar_pcs": {
+      "backend": "warp",
+      "sizes": {
+        "1": {
+          "throughput_at_1": 0.2035403432246338,
+          "throughput_at_1024": 159.9072720052355,
+          "gain_1024_vs_1": 785.6293719066623,
+          "peak_batch": 1024,
+          "drop_from_peak_percent": 0.0,
+          "monotone_throughput": true
+        },
+        "2": {
+          "throughput_at_1": 0.1544683420146388,
+          "throughput_at_1024": 125.56626436776256,
+          "gain_1024_vs_1": 812.8931969494615,
+          "peak_batch": 1024,
+          "drop_from_peak_percent": 0.0,
+          "monotone_throughput": true
+        },
+        "4": {
+          "throughput_at_1": 0.1197714726141811,
+          "throughput_at_1024": 80.90556283261371,
+          "gain_1024_vs_1": 675.4994412837701,
+          "peak_batch": 1024,
+          "drop_from_peak_percent": 0.0,
+          "monotone_throughput": true
+        },
+        "8": {
+          "throughput_at_1": 0.0756887503368234,
+          "throughput_at_1024": 38.16030595645626,
+          "gain_1024_vs_1": 504.1740785339781,
+          "peak_batch": 1024,
+          "drop_from_peak_percent": 0.0,
+          "monotone_throughput": true
+        },
+        "16": {
+          "throughput_at_1": 0.035978339784832,
+          "throughput_at_1024": 12.28706001469416,
+          "gain_1024_vs_1": 341.5127014803008,
+          "peak_batch": 1024,
+          "drop_from_peak_percent": 0.0,
+          "monotone_throughput": true
+        },
+        "32": {
+          "throughput_at_1": 0.0110314816947738,
+          "throughput_at_1024": 2.2040357840952405,
+          "gain_1024_vs_1": 199.79508148387805,
+          "peak_batch": 512,
+          "drop_from_peak_percent": 14.85385776866719,
+          "monotone_throughput": false
+        }
+      },
+      "max_abs_saved_state": 4916.1489361776285
+    },
+    "pcs": {
+      "backend": "warp",
+      "sizes": {
+        "1": {
+          "throughput_at_1": 0.1178753272891389,
+          "throughput_at_1024": 78.6614845012422,
+          "gain_1024_vs_1": 667.3278141429188,
+          "peak_batch": 1024,
+          "drop_from_peak_percent": 0.0,
+          "monotone_throughput": true
+        },
+        "2": {
+          "throughput_at_1": 0.0985837445751887,
+          "throughput_at_1024": 53.56352061117813,
+          "gain_1024_vs_1": 543.3301488190666,
+          "peak_batch": 1024,
+          "drop_from_peak_percent": 0.0,
+          "monotone_throughput": true
+        },
+        "4": {
+          "throughput_at_1": 0.0710263153493351,
+          "throughput_at_1024": 26.114948990089708,
+          "gain_1024_vs_1": 367.6799065479634,
+          "peak_batch": 1024,
+          "drop_from_peak_percent": 0.0,
+          "monotone_throughput": true
+        },
+        "8": {
+          "throughput_at_1": 0.0392046963187336,
+          "throughput_at_1024": 10.049924079611184,
+          "gain_1024_vs_1": 256.3449031183777,
+          "peak_batch": 1024,
+          "drop_from_peak_percent": 0.0,
+          "monotone_throughput": true
+        },
+        "16": {
+          "throughput_at_1": 0.0148760941645665,
+          "throughput_at_1024": 2.642621535372827,
+          "gain_1024_vs_1": 177.64216239416598,
+          "peak_batch": 1024,
+          "drop_from_peak_percent": 0.0,
+          "monotone_throughput": true
+        },
+        "32": {
+          "throughput_at_1": 0.0028452804393712,
+          "throughput_at_1024": 0.3826930258471809,
+          "gain_1024_vs_1": 134.50098645873908,
+          "peak_batch": 256,
+          "drop_from_peak_percent": 2.301149496451349,
+          "monotone_throughput": false
+        }
+      },
+      "max_abs_saved_state": 4905.668206799845
+    },
+    "gvs": {
+      "backend": "warp",
+      "sizes": {
+        "1": {
+          "throughput_at_1": 0.0958760849219359,
+          "throughput_at_1024": 65.17056038908198,
+          "gain_1024_vs_1": 679.7373968925104,
+          "peak_batch": 1024,
+          "drop_from_peak_percent": 0.0,
+          "monotone_throughput": true
+        },
+        "2": {
+          "throughput_at_1": 0.0794596706418664,
+          "throughput_at_1024": 41.87950650510931,
+          "gain_1024_vs_1": 527.0536130695144,
+          "peak_batch": 1024,
+          "drop_from_peak_percent": 0.0,
+          "monotone_throughput": true
+        },
+        "4": {
+          "throughput_at_1": 0.0542064854200147,
+          "throughput_at_1024": 19.83176232568002,
+          "gain_1024_vs_1": 365.8558966148638,
+          "peak_batch": 1024,
+          "drop_from_peak_percent": 0.0,
+          "monotone_throughput": true
+        },
+        "8": {
+          "throughput_at_1": 0.0289158496456918,
+          "throughput_at_1024": 7.971609526444052,
+          "gain_1024_vs_1": 275.6830466377719,
+          "peak_batch": 1024,
+          "drop_from_peak_percent": 0.0,
+          "monotone_throughput": true
+        },
+        "16": {
+          "throughput_at_1": 0.0119571889437312,
+          "throughput_at_1024": 2.0555509719881004,
+          "gain_1024_vs_1": 171.90921559082372,
+          "peak_batch": 1024,
+          "drop_from_peak_percent": 0.0,
+          "monotone_throughput": true
+        },
+        "32": {
+          "throughput_at_1": 0.0029055739424929,
+          "throughput_at_1024": 0.3882266174391331,
+          "gain_1024_vs_1": 133.61443388566656,
+          "peak_batch": 512,
+          "drop_from_peak_percent": 1.2144089814255077,
+          "monotone_throughput": false
+        }
+      },
+      "max_abs_saved_state": 21.422593830800754
+    }
+  },
+  "dimensions_mm": [
+    180.0,
+    116.0
+  ],
+  "composer_sha256": "f72caab98369bc092791a352db0ca62d704e5e1f758c742a71b58d902b35ccb0",
+  "pdf_sha256": "ca640016327174fa6920ae0c03060c61587f50df736d718f685d699d820980d7"
+}
