@@ -1,7 +1,7 @@
 # Shared paper rendering style
 
 `paper_render_style.py` defines `PAPER_STUDIO`, the shared material palette and
-studio-lighting conventions. Manipulation, safety, and the parallel RL grids share the same
+studio-lighting conventions. Manipulation, safety, parallel RL, and control/tuning share the same
 `paper_rtx_studio.py` lighting and material implementation. Other application
 renderers can adopt these settings as their figures are revised.
 
@@ -154,3 +154,40 @@ GPU batch sizes in ascending order; CPU lines are dashed and GPU lines solid.
 The grid and tracking detail depict execution of the trained policy, while the
 learning curves show training progress. Display repetition is not an additional
 training run or a measured environment count.
+
+## Control and gain-tuning reference
+
+Use one substantial pose-tracking scene beside matched initial/optimized gain
+views, with complete error histories below them. Preserve the distinct physical
+models and mounting: two segments upright for pose tracking; one segment with
+three tendons hanging for tuning. Apply any display rotation to the body,
+target, and recorded motion together. Fit the gain camera to both full motions
+and use it unchanged for both runs and the animation.
+
+The body and mount retain the shared coral/dark materials. A green dashed path
+shows the pose reference; a green ring, normal, and radial spoke encode its
+instantaneous target pose. Path/pose graphics cast no shadows. The tuning
+comparison uses the safety figure's projected white tip dot and green target
+ring. Use blue (`pre_opt_1`) for initial gains and coral (`post_opt_1`) for
+optimized gains in labels and solid error traces, with the initial case first.
+Show the initial min--max range as a pale blue band, and label the solid initial
+trajectory as selected and the optimized trajectory as best. Define the range
+and run-selection rules in the caption.
+
+Render actual recorded runs, never a pointwise median configuration assembled
+from multiple runs. State the run-selection rule and whether the two cases
+come from different optimization starts in the caption. Keep timing, sample
+counts, and reported improvements there as well. The tracking panel includes three faint recorded poses to show its motion
+range. State their times in the caption, keep one solid state facing the reader,
+and suppress ghost shadows and near-coincident proximal geometry. Keep the
+solid pose in front of the faint shapes; record silhouette occlusion in metadata. The tuning
+still comparison uses matched physical times; the full motion clip uses the same selected runs.
+
+Retain original renders. The 180 by 118.5 mm composite applies the same fixed
+vertical crop (pixels 0--1250 of 1400) to all three scenes, preserving robot,
+mount, task graphics, and space for panel letters. The tuning views additionally
+crop horizontal pixels 60--948 to balance the two groups. At full width, use
+8.5 pt axis labels/legends and 8 pt ticks, with similarly wide quantitative plots. Before composition, check
+source hashes, geometry provenance, shared studio settings, and matched
+camera/time/scale for the gain comparison. Reproduction commands and the
+model/run audit are in `secVc_model_based_control/README.md`.

@@ -1,0 +1,106 @@
+{
+  "kind": "initial",
+  "num_segments": 1,
+  "source_sha256": "40810b2099632e340f62ae29b351624c6fd4217cf771c62233c1ba39718fc39b",
+  "batch_zero_based": 4,
+  "timestep": 500,
+  "time_s": 0.5,
+  "camera_eye": [
+    -0.06783504920429162,
+    -0.2867963097115117,
+    0.29284679852722784
+  ],
+  "camera_target": [
+    0.003864028223586311,
+    0.0,
+    0.24695938897338598
+  ],
+  "width": 1008,
+  "height": 1400,
+  "end_effector_world": [
+    0.014159427880955464,
+    0.003525553208840826,
+    0.17481101272380978
+  ],
+  "target_world": [
+    0.01923318170590653,
+    0.004777550873679884,
+    0.18932805908487924
+  ],
+  "display_transform": [
+    [
+      2.220446049250313e-16,
+      -1.0,
+      -1.2246467991473532e-16,
+      0.0
+    ],
+    [
+      -1.0,
+      -2.220446049250313e-16,
+      -2.719262146893782e-32,
+      0.0
+    ],
+    [
+      0.0,
+      1.2246467991473532e-16,
+      -1.0,
+      0.28
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "exporter_sha256": "746c6e3a8817e291e4fd7c91620f402e940a01ddaad0bcc173d5bfe50f519842",
+  "vertical_fov_degrees": 45.0,
+  "current_state_only": true,
+  "tip_geometry": "flat-ended swept PCS surface",
+  "mesh_names": [
+    "robot",
+    "mount"
+  ],
+  "studio": {
+    "version": "paper-studio-v1",
+    "robot": "#F1552E",
+    "mount": "#33363B",
+    "target": "#0EAD69",
+    "obstacle": "#7B2CBF",
+    "manipulated_object": "#E7AC42",
+    "surface": "#DEE1E5",
+    "backdrop": "#C9CDD2",
+    "robot_roughness": 0.72,
+    "backdrop_start": 3.0,
+    "backdrop_radius": [
+      2.0,
+      2.0
+    ],
+    "key_rotation_degrees": [
+      29.0,
+      14.0,
+      0.0
+    ],
+    "key_angle_degrees": 28.0,
+    "fill_rotation_degrees": [
+      -30.0,
+      -25.0,
+      0.0
+    ],
+    "rim_rotation_degrees": [
+      40.0,
+      15.0,
+      180.0
+    ],
+    "fill_angle_degrees": 50.0,
+    "rtx_ambient": 60.0,
+    "rtx_key": 1000.0,
+    "rtx_fill": 160.0,
+    "rtx_rim": 160.0,
+    "rtx_backdrop_emission": 0.08
+  },
+  "samples_per_pixel": 128,
+  "renderer_sha256": "5bf48b07531c3546d00446079f6086da5d4ac4b10481b1fd460f06e32d76bec3",
+  "studio_renderer_sha256": "c1ba185b56467776357df5ebe129050a1506ef2dfd82e3c41731cbadde23baa3",
+  "geometry_sha256": "61f370585fd845d3baa5a72695030ba4358c772febbfc8cae1bbf3e6cf777cfb"
+}

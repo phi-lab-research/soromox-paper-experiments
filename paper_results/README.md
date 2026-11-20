@@ -32,17 +32,20 @@ and all six visual presets. Its captures, generator, and LaTeX inclusion snippet
 live under `rendering/`; the composed PDF, SVG, and PNG are saved as
 `final_outputs/renderers_and_presets.*`.
 
-The model-based-control application composite is regenerated directly from the
-canonical Section Vc data and operational snapshots. Control-gain optimization
-remains a separate Section Vd figure:
+The main control/tuning figure combines the two-segment pose-tracking example
+with a matched initial/optimized comparison for the single-segment,
+three-tendon gain-tuning robot:
 
 ```bash
-uv run --extra paper_results python paper_results/secVc_model_based_control/code/plot_model_based_control.py
+uv run --extra paper_results python paper_results/secVc_model_based_control/code/plot_control_tuning_summary.py --force
 ```
 
-The command writes `model_based_control.pdf` and a matching SVG under the
-Section Vc `outputs/` directory, and requires `--force` before replacing either
-existing output.
+It writes `final_outputs/control_and_gain_optimization.*`. The
+[Section Vc README](secVc_model_based_control/README.md) records the verified
+model and run selection, geometry export, shared studio rendering, and motion
+comparison. Full configuration-space, pose-component, and gain-history figures
+are retained for the appendix. The legacy `plot_model_based_control.py` entry
+point remains available for reproducing the earlier Section Vc composite.
 
 The safety and parallel-RL studies now have separate main figures:
 
@@ -86,9 +89,9 @@ scale.
 
 The shared [rendering style](RENDERING_STYLE.md) defines robot, target, obstacle,
 and object materials, studio lighting, and framing conventions through
-`paper_render_style.py`. The manipulation figure is its first consumer and
-includes a complete-system overview, two contact details, and a separate
-appendix figure for sampling diagnostics.
+`paper_render_style.py`. Manipulation, safety, parallel RL, and control/tuning use the shared studio.
+The manipulation figure combines a complete-system overview, planner comparisons,
+and sampling snapshots; its separate diagnostic figure is excluded from the paper.
 
 Artifact paths remain case-local. Entry points derive their case directory from
 the script location and default to that case's `data/` and `outputs/`

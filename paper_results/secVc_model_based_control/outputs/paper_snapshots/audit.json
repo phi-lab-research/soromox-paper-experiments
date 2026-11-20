@@ -1,0 +1,47 @@
+{
+  "tracking": {
+    "segments": 2,
+    "length_m": 0.2,
+    "source_sha256": "5ca077028a14a4786ec9b621077e7d9f632e63133ab71cd4e9ca166de62a9c0b",
+    "position_rmse_mm": 2.8359252384127522,
+    "orientation_rmse_deg": 2.2902277791469605
+  },
+  "collocated": {
+    "segments": 1,
+    "length_m": 0.1,
+    "tendons": 3,
+    "source_sha256": "c93feaed81b8a5288cf46afd4454adb9da28163479d0212733a23cc413ee6340",
+    "initial_batch_zero_based": 5,
+    "optimized_batch_zero_based": 1,
+    "optimized_iteration_zero_based": 99,
+    "initial_loss_median": 0.0014896657486244236,
+    "selected_initial_loss": 0.001248091322622281,
+    "best_loss": 0.0007961130572712672,
+    "improvement_from_batch_median_percent": 46.557604750837015,
+    "improvement_from_selected_initial_percent": 36.213557226036365,
+    "final_initial_position_error_mm": 0.0012813684519403733,
+    "final_optimized_position_error_mm": 0.0024648728771719916,
+    "five_percent_initial_distance_band_mm": 1.0951631809621056,
+    "optimized_settling_s": 0.321,
+    "initial_settles": true
+  },
+  "synergistic": {
+    "segments": 1,
+    "length_m": 0.1,
+    "tendons": 3,
+    "source_sha256": "40810b2099632e340f62ae29b351624c6fd4217cf771c62233c1ba39718fc39b",
+    "initial_batch_zero_based": 4,
+    "optimized_batch_zero_based": 1,
+    "optimized_iteration_zero_based": 99,
+    "initial_loss_median": 0.014890593490148839,
+    "selected_initial_loss": 0.013613588050559922,
+    "best_loss": 0.0001850827019257576,
+    "improvement_from_batch_median_percent": 98.75704952896469,
+    "improvement_from_selected_initial_percent": 98.64045612928514,
+    "final_initial_position_error_mm": 9.153884630630342,
+    "final_optimized_position_error_mm": 0.12155590851612486,
+    "five_percent_initial_distance_band_mm": 1.0951631809621056,
+    "optimized_settling_s": 0.455,
+    "initial_settles": false
+  }
+}
