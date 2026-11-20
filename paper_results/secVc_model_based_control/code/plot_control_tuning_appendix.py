@@ -102,7 +102,7 @@ def build_figure(run, group, tuning, audit):
             "svg.hashsalt": "soromox-control-appendix",
         }
     )
-    width, height = 180, 143
+    width, height = 180, 132
     fig = plt.figure(figsize=(width / 25.4, height / 25.4))
 
     def axes(x, y, w, h):
@@ -117,7 +117,7 @@ def build_figure(run, group, tuning, audit):
     for row, (index, strain, ylabel) in enumerate(
         zip(run.strain_indices, run.strain_names, labels, strict=True)
     ):
-        ax = axes(15, 113 - row * 21, 161, 17)
+        ax = axes(15, 102 - row * 21, 161, 17)
         config_axes.append(ax)
         ax.plot(
             first["t"],
@@ -158,7 +158,7 @@ def build_figure(run, group, tuning, audit):
         labelspacing=0.3,
     )
 
-    loss_ax = axes(15, 12, 53, 47)
+    loss_ax = axes(15, 12, 53, 36)
     losses = 1000 * np.where(
         tuning["history_finite_mask"], tuning["history_loss"], np.nan
     )
@@ -197,7 +197,7 @@ def build_figure(run, group, tuning, audit):
         labelspacing=0.25,
     )
 
-    response_ax = axes(81.5, 12, 94.5, 47)
+    response_ax = axes(81.5, 12, 94.5, 36)
     selected, best = (
         audit["initial_batch_zero_based"],
         audit["optimized_batch_zero_based"],
@@ -247,14 +247,14 @@ def build_figure(run, group, tuning, audit):
             for axis, c in zip("xyz", colors, strict=True)
         ],
         loc="lower center",
-        bbox_to_anchor=(128.75 / width, 60 / height),
+        bbox_to_anchor=(128.75 / width, 49 / height),
         ncol=3,
         frameon=False,
         columnspacing=1,
         handletextpad=0.2,
         borderaxespad=0,
     )
-    for letter, x, y in [("A", 2, 140), ("B", 2, 65), ("C", 69, 65)]:
+    for letter, x, y in [("A", 2, 129), ("B", 2, 54), ("C", 69, 54)]:
         fig.text(
             x / width, y / height, letter, fontsize=11, fontweight="bold", va="top"
         )
@@ -286,7 +286,7 @@ def main(argv=None):
             dict(
                 audit=data[3],
                 plotter_sha256=sha256(Path(__file__)),
-                dimensions_mm=[180, 143],
+                dimensions_mm=[180, 132],
                 axis_label_pt=8.5,
                 tick_pt=8,
             ),

@@ -36,10 +36,10 @@
     ],
     "displayed_loss_multiplier": 1000
   },
-  "plotter_sha256": "4ac95d662c4f934a7e887ffa6f23e686a911e3e140ec9bffdbff18ace2d97286",
+  "plotter_sha256": "534f9fe6663a374189e2b2191c14e44c0aa9354734fb94d75eb4319f56459ea0",
   "dimensions_mm": [
     180,
-    143
+    132
   ],
   "axis_label_pt": 8.5,
   "tick_pt": 8

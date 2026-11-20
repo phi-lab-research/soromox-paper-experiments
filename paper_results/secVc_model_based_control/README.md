@@ -151,7 +151,7 @@ uv run --extra paper_results python paper_results/secVc_model_based_control/code
 ```
 
 This writes `final_outputs/control_and_gain_optimization_appendix.{pdf,png,svg,json}`.
-The 180 by 143 mm figure uses the same 8.5 pt axis labels, 8 pt ticks, semantic
+The 180 by 132 mm figure uses the same 8.5 pt axis labels, 8 pt ticks, semantic
 palette, and vector plots as the main figure. The source data are unchanged.
 
 - A retains all five controllers and all 30 s of configuration-space regulation
