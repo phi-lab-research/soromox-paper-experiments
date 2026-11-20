@@ -98,3 +98,57 @@ and optimizer metadata needed to validate and rescore the stored rollouts.
 
 Optimization archives and rendered MP4/GIF files use Git LFS. Comparison
 figures remain in normal Git.
+
+## Control-performance metrics
+
+Recompute the reported metrics directly from both saved archives:
+
+```bash
+uv run python paper_results/secVd_control_gain_optimization/code/secvd_metrics.py
+```
+
+The command writes `outputs/control_gain_metrics.json`, with source hashes,
+all six initial-run metrics, the selected initial run, initial metric medians,
+the best optimized run, and percentage reductions for each baseline. Future
+non-placeholder optimization runs also write `performance_metrics.json` beside
+their NPZ archive. No new simulation is required to evaluate existing archives.
+
+The metrics use the three angular strains for actuation-space control and the
+three Cartesian position coordinates for operational-space control, over the
+complete saved 5 s interval:
+
+- Cumulative tracking error is the trapezoidal time integral of the Euclidean
+  error norm, with units rad s/m or mm s.
+- Settling time is the first saved time after which the error norm remains
+  within 5% of its initial magnitude through the last sample. First entry into
+  the band and the stricter coordinatewise settling rule are also exported.
+- Maximum coordinate overshoot is the largest excursion past a coordinate's
+  target in the direction of its initial-to-target step. Coordinates with no
+  commanded step contribute zero to this overshoot metric. The report also
+  includes each coordinate's overshoot and the peak overshoot-vector norm.
+- Initial metric medians are computed after evaluating each initial run.
+  Nonsettled runs are censored above the observation horizon, never discarded.
+  Undefined settling times and reductions are exported as JSON `null`.
+- Loss variance is compared across the six starts at the first and last
+  optimization iterations. A zero baseline has no defined relative reduction.
+
+| Metric | Actuation initial median | Actuation optimized | Operational initial median | Operational optimized |
+| --- | ---: | ---: | ---: | ---: |
+| Cumulative error [rad s/m or mm s] | 0.384958 | 0.203392 | 60.516058 | 2.911873 |
+| Settling time [s] | 0.3785 | 0.137 | Not settled within 5 s | 0.455 |
+| Maximum coordinate overshoot [rad/m or mm] | 1.421849 | 0.806090 | 10.028677 | 4.244458 |
+
+Relative to the initial metric medians, actuation-space cumulative error,
+settling time, and overshoot decrease by 47.17%, 63.80%, and 43.31%.
+Operational-space cumulative error decreases by 95.19%. Loss variance falls
+by 99.8184% and 99.9953%, respectively.
+
+The old figure used a coordinatewise median response curve. Metrics of that
+curve are exported separately as `legacy_pointwise_median_response`; they are
+not the median of metrics evaluated per run. For the earlier first-entry
+wording, the actuation-space median is 0.046 s initially and 0.025 s optimized
+(45.65% reduction). The response subsequently leaves the band, so the paper
+uses sustained settling. Against the actual selected initial run shown in the
+figure, actuation-space settling and overshoot reductions are 53.08% and
+35.65%. These baseline-dependent values do not reproduce the old 52% and 29%
+claims, or the old operational-space settling time of 0.9 s.

@@ -573,6 +573,10 @@
       "sha256": "c3712aba829fc4b800f4a6576c2fb715a5fb5e03120a27a6f5315deaa8832c86",
       "bytes": 294260
     },
+    "paper_results/secVd_control_gain_optimization/outputs/control_gain_metrics.json": {
+      "sha256": "68565b4056108d12b02f3e5ae24e2b24a4b3c1436e031cf3f0b6c85822e534c7",
+      "bytes": 14532
+    },
     "paper_results/secVd_control_gain_optimization/outputs/plot_control_gain_opt.pdf": {
       "sha256": "d1b91f23a1e5f99c73ab1722db88424a89bfe5d15495dd7fa95a1fa3d8c02cf8",
       "bytes": 696819

@@ -1,0 +1,400 @@
+{
+  "collocated": {
+    "method": "collocated",
+    "source": "optimization_results.npz",
+    "source_sha256": "c93feaed81b8a5288cf46afd4454adb9da28163479d0212733a23cc413ee6340",
+    "interval_s": [
+      0.0,
+      5.0
+    ],
+    "coordinate_units": "rad/m",
+    "integrated_error_units": "rad/m s",
+    "definitions": {
+      "integrated_error": "Trapezoidal time integral of Euclidean error norm.",
+      "settling_s": "First saved time after which Euclidean error stays within 5% of its initial magnitude through the last sample.",
+      "first_entry_s": "First entry into that band, without requiring subsequent residence.",
+      "maximum_coordinate_overshoot": "Largest positive coordinate excursion beyond the target in the initial step direction; zero-step coordinates contribute zero.",
+      "initial_metric_median": "Median of metrics evaluated separately for all initial runs; nonsettled times are censored, never omitted.",
+      "legacy_pointwise_median_response": "Metrics of the coordinatewise median response used in the old figure; this is generally not a simulated trajectory."
+    },
+    "selected_initial_start_one_based": 6,
+    "optimized_start_one_based": 2,
+    "initial_runs": [
+      {
+        "integrated_error": 0.6955860334454524,
+        "initial_error": 5.479547199429126,
+        "final_error": 0.0020391282249997995,
+        "settling_band": 0.2739773599714563,
+        "first_entry_s": 0.07,
+        "settling_s": 0.6970000000000001,
+        "coordinate_settling_s": 1.167,
+        "coordinate_overshoot": [
+          0.01746936969567778,
+          1.8556024292676128,
+          0.45823976282491397
+        ],
+        "maximum_coordinate_overshoot": 1.8556024292676128,
+        "peak_overshoot_vector_norm": 1.9113406838520668
+      },
+      {
+        "integrated_error": 0.2970596922914434,
+        "initial_error": 5.479547199429126,
+        "final_error": 0.0009290562367510052,
+        "settling_band": 0.2739773599714563,
+        "first_entry_s": 0.042,
+        "settling_s": 0.291,
+        "coordinate_settling_s": 0.867,
+        "coordinate_overshoot": [
+          0.02141761739531999,
+          1.1711585798495658,
+          0.28852626828188344
+        ],
+        "maximum_coordinate_overshoot": 1.1711585798495658,
+        "peak_overshoot_vector_norm": 1.2061760925282528
+      },
+      {
+        "integrated_error": 0.6066208687418997,
+        "initial_error": 5.479547199429126,
+        "final_error": 0.0017978870981777617,
+        "settling_band": 0.2739773599714563,
+        "first_entry_s": 0.062,
+        "settling_s": 0.652,
+        "coordinate_settling_s": 1.1260000000000001,
+        "coordinate_overshoot": [
+          0.020159994109828733,
+          1.7693832123136444,
+          0.4368499503433594
+        ],
+        "maximum_coordinate_overshoot": 1.7693832123136444,
+        "peak_overshoot_vector_norm": 1.8225134121754767
+      },
+      {
+        "integrated_error": 0.4607855593300991,
+        "initial_error": 5.479547199429126,
+        "final_error": 0.0005875386261958345,
+        "settling_band": 0.2739773599714563,
+        "first_entry_s": 0.05,
+        "settling_s": 0.465,
+        "coordinate_settling_s": 1.053,
+        "coordinate_overshoot": [
+          0.023033288629490407,
+          1.5909565793686458,
+          0.3920461808929827
+        ],
+        "maximum_coordinate_overshoot": 1.5909565793686458,
+        "peak_overshoot_vector_norm": 1.6385520087402075
+      },
+      {
+        "integrated_error": 0.3088498086640093,
+        "initial_error": 5.479547199429126,
+        "final_error": 0.0006666003216000801,
+        "settling_band": 0.2739773599714563,
+        "first_entry_s": 0.041,
+        "settling_s": 0.292,
+        "coordinate_settling_s": 0.87,
+        "coordinate_overshoot": [
+          0.02200164526685561,
+          1.2359805657469964,
+          0.3044272731755886
+        ],
+        "maximum_coordinate_overshoot": 1.2359805657469964,
+        "peak_overshoot_vector_norm": 1.2729210168033338
+      },
+      {
+        "integrated_error": 0.30913114706135425,
+        "initial_error": 5.479547199429126,
+        "final_error": 0.00026828386136575234,
+        "settling_band": 0.2739773599714563,
+        "first_entry_s": 0.04,
+        "settling_s": 0.292,
+        "coordinate_settling_s": 0.87,
+        "coordinate_overshoot": [
+          0.02219578244717373,
+          1.2527410053557455,
+          0.30834311765613975
+        ],
+        "maximum_coordinate_overshoot": 1.2527410053557455,
+        "peak_overshoot_vector_norm": 1.2901322651685845
+      }
+    ],
+    "selected_initial": {
+      "integrated_error": 0.30913114706135425,
+      "initial_error": 5.479547199429126,
+      "final_error": 0.00026828386136575234,
+      "settling_band": 0.2739773599714563,
+      "first_entry_s": 0.04,
+      "settling_s": 0.292,
+      "coordinate_settling_s": 0.87,
+      "coordinate_overshoot": [
+        0.02219578244717373,
+        1.2527410053557455,
+        0.30834311765613975
+      ],
+      "maximum_coordinate_overshoot": 1.2527410053557455,
+      "peak_overshoot_vector_norm": 1.2901322651685845
+    },
+    "initial_metric_median": {
+      "integrated_error": 0.3849583531957267,
+      "first_entry_s": 0.046,
+      "settling_s": 0.3785,
+      "maximum_coordinate_overshoot": 1.4218487923621956
+    },
+    "legacy_pointwise_median_response": {
+      "integrated_error": 0.3546902735394344,
+      "initial_error": 5.479547199429126,
+      "final_error": 0.0007974257638921116,
+      "settling_band": 0.2739773599714563,
+      "first_entry_s": 0.046,
+      "settling_s": 0.317,
+      "coordinate_settling_s": 0.902,
+      "coordinate_overshoot": [
+        0.021507250613148763,
+        1.3301034415173696,
+        0.32799455575580105
+      ],
+      "maximum_coordinate_overshoot": 1.3301034415173696,
+      "peak_overshoot_vector_norm": 1.3699472959722925
+    },
+    "optimized": {
+      "integrated_error": 0.20339233174932292,
+      "initial_error": 5.479547199429126,
+      "final_error": 0.0006292289723871896,
+      "settling_band": 0.2739773599714563,
+      "first_entry_s": 0.025,
+      "settling_s": 0.137,
+      "coordinate_settling_s": 1.252,
+      "coordinate_overshoot": [
+        0.18684200790327768,
+        0.806090498553341,
+        0.11621730269258568
+      ],
+      "maximum_coordinate_overshoot": 0.806090498553341,
+      "peak_overshoot_vector_norm": 0.8072218119890523
+    },
+    "reductions_from_initial_metric_median_percent": {
+      "integrated_error": 47.165107586089725,
+      "first_entry_s": 45.65217391304347,
+      "settling_s": 63.80449141347424,
+      "maximum_coordinate_overshoot": 43.30687602764437
+    },
+    "reductions_from_selected_initial_percent": {
+      "integrated_error": 34.20516383327915,
+      "first_entry_s": 37.5,
+      "settling_s": 53.082191780821915,
+      "maximum_coordinate_overshoot": 35.65385861026936
+    },
+    "reductions_from_legacy_median_response_percent": {
+      "integrated_error": 42.6563548755701,
+      "first_entry_s": 45.65217391304347,
+      "settling_s": 56.782334384858046,
+      "maximum_coordinate_overshoot": 39.396405317637516
+    },
+    "loss": {
+      "initial_median": 0.0014896657486244236,
+      "optimized_best": 0.0007961130572712672,
+      "reduction_percent": 46.557604750837015,
+      "initial_variance": 2.6040920246528775e-07,
+      "final_variance": 4.729606043597229e-10,
+      "variance_reduction_percent": 99.81837792217702
+    }
+  },
+  "synergistic": {
+    "method": "synergistic",
+    "source": "optimization_results.npz",
+    "source_sha256": "40810b2099632e340f62ae29b351624c6fd4217cf771c62233c1ba39718fc39b",
+    "interval_s": [
+      0.0,
+      5.0
+    ],
+    "coordinate_units": "mm",
+    "integrated_error_units": "mm s",
+    "definitions": {
+      "integrated_error": "Trapezoidal time integral of Euclidean error norm.",
+      "settling_s": "First saved time after which Euclidean error stays within 5% of its initial magnitude through the last sample.",
+      "first_entry_s": "First entry into that band, without requiring subsequent residence.",
+      "maximum_coordinate_overshoot": "Largest positive coordinate excursion beyond the target in the initial step direction; zero-step coordinates contribute zero.",
+      "initial_metric_median": "Median of metrics evaluated separately for all initial runs; nonsettled times are censored, never omitted.",
+      "legacy_pointwise_median_response": "Metrics of the coordinatewise median response used in the old figure; this is generally not a simulated trajectory."
+    },
+    "selected_initial_start_one_based": 5,
+    "optimized_start_one_based": 2,
+    "initial_runs": [
+      {
+        "integrated_error": 71.19904145568546,
+        "initial_error": 21.90326361924211,
+        "final_error": 12.841703588107155,
+        "settling_band": 1.0951631809621056,
+        "first_entry_s": null,
+        "settling_s": null,
+        "coordinate_settling_s": null,
+        "coordinate_overshoot": [
+          2.204027629739149,
+          8.869101503779977,
+          0.0
+        ],
+        "maximum_coordinate_overshoot": 8.869101503779977,
+        "peak_overshoot_vector_norm": 9.13885656288607
+      },
+      {
+        "integrated_error": 97.52220899229472,
+        "initial_error": 21.90326361924211,
+        "final_error": 15.488377256789486,
+        "settling_band": 1.0951631809621056,
+        "first_entry_s": null,
+        "settling_s": null,
+        "coordinate_settling_s": null,
+        "coordinate_overshoot": [
+          0.4796196726430493,
+          1.9325556883518509,
+          0.0
+        ],
+        "maximum_coordinate_overshoot": 1.9325556883518509,
+        "peak_overshoot_vector_norm": 1.991182191304282
+      },
+      {
+        "integrated_error": 38.700871350762164,
+        "initial_error": 21.90326361924211,
+        "final_error": 6.927838343503722,
+        "settling_band": 1.0951631809621056,
+        "first_entry_s": null,
+        "settling_s": null,
+        "coordinate_settling_s": null,
+        "coordinate_overshoot": [
+          2.95118590827425,
+          11.848000715435997,
+          0.0
+        ],
+        "maximum_coordinate_overshoot": 11.848000715435997,
+        "peak_overshoot_vector_norm": 12.210021261986746
+      },
+      {
+        "integrated_error": 55.2888980344568,
+        "initial_error": 21.90326361924211,
+        "final_error": 10.629348867943731,
+        "settling_band": 1.0951631809621056,
+        "first_entry_s": null,
+        "settling_s": null,
+        "coordinate_settling_s": null,
+        "coordinate_overshoot": [
+          2.781840455061495,
+          11.181710280343484,
+          0.0
+        ],
+        "maximum_coordinate_overshoot": 11.181710280343484,
+        "peak_overshoot_vector_norm": 11.522555320368651
+      },
+      {
+        "integrated_error": 57.684221288904055,
+        "initial_error": 21.90326361924211,
+        "final_error": 9.153884630630351,
+        "settling_band": 1.0951631809621056,
+        "first_entry_s": null,
+        "settling_s": null,
+        "coordinate_settling_s": null,
+        "coordinate_overshoot": [
+          2.481773657990054,
+          9.983416718748767,
+          0.0
+        ],
+        "maximum_coordinate_overshoot": 9.983416718748767,
+        "peak_overshoot_vector_norm": 10.287264450264985
+      },
+      {
+        "integrated_error": 63.347894494293584,
+        "initial_error": 21.90326361924211,
+        "final_error": 11.508257348543816,
+        "settling_band": 1.0951631809621056,
+        "first_entry_s": null,
+        "settling_s": null,
+        "coordinate_settling_s": null,
+        "coordinate_overshoot": [
+          2.504509366562843,
+          10.073937071414854,
+          0.0
+        ],
+        "maximum_coordinate_overshoot": 10.073937071414854,
+        "peak_overshoot_vector_norm": 10.380582598533346
+      }
+    ],
+    "selected_initial": {
+      "integrated_error": 57.684221288904055,
+      "initial_error": 21.90326361924211,
+      "final_error": 9.153884630630351,
+      "settling_band": 1.0951631809621056,
+      "first_entry_s": null,
+      "settling_s": null,
+      "coordinate_settling_s": null,
+      "coordinate_overshoot": [
+        2.481773657990054,
+        9.983416718748767,
+        0.0
+      ],
+      "maximum_coordinate_overshoot": 9.983416718748767,
+      "peak_overshoot_vector_norm": 10.287264450264985
+    },
+    "initial_metric_median": {
+      "integrated_error": 60.51605789159882,
+      "first_entry_s": null,
+      "settling_s": null,
+      "maximum_coordinate_overshoot": 10.02867689508181
+    },
+    "legacy_pointwise_median_response": {
+      "integrated_error": 61.02738210467131,
+      "initial_error": 21.90326361924211,
+      "final_error": 11.068718305592423,
+      "settling_band": 1.0951631809621056,
+      "first_entry_s": null,
+      "settling_s": null,
+      "coordinate_settling_s": null,
+      "coordinate_overshoot": [
+        2.2945359109164647,
+        9.229529891742274,
+        0.0
+      ],
+      "maximum_coordinate_overshoot": 9.229529891742274,
+      "peak_overshoot_vector_norm": 9.510474071730043
+    },
+    "optimized": {
+      "integrated_error": 2.9118731593258502,
+      "initial_error": 21.90326361924211,
+      "final_error": 0.12155590851612506,
+      "settling_band": 1.0951631809621056,
+      "first_entry_s": 0.455,
+      "settling_s": 0.455,
+      "coordinate_settling_s": 1.782,
+      "coordinate_overshoot": [
+        1.3479336211963124,
+        4.244457649462877,
+        1.580412426298821
+      ],
+      "maximum_coordinate_overshoot": 4.244457649462877,
+      "peak_overshoot_vector_norm": 4.244457649462877
+    },
+    "reductions_from_initial_metric_median_percent": {
+      "integrated_error": 95.18826364311134,
+      "first_entry_s": null,
+      "settling_s": null,
+      "maximum_coordinate_overshoot": 57.67679332111684
+    },
+    "reductions_from_selected_initial_percent": {
+      "integrated_error": 94.95204564738404,
+      "first_entry_s": null,
+      "settling_s": null,
+      "maximum_coordinate_overshoot": 57.48491955172197
+    },
+    "reductions_from_legacy_median_response_percent": {
+      "integrated_error": 95.22857927228216,
+      "first_entry_s": null,
+      "settling_s": null,
+      "maximum_coordinate_overshoot": 54.0122010628036
+    },
+    "loss": {
+      "initial_median": 0.014890593490148839,
+      "optimized_best": 0.0001850827019257576,
+      "reduction_percent": 98.75704952896469,
+      "initial_variance": 0.00010496963203605441,
+      "final_variance": 4.943774740635238e-09,
+      "variance_reduction_percent": 99.99529028096532
+    }
+  }
+}

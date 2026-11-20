@@ -156,8 +156,33 @@ rollouts, and loss histories. No new optimization is performed.
   within 5% of its initial displacement gives 1.782 s. Neither calculation
   establishes what definition produced the historical 0.9 s value.
 - The earlier actuation-space 52% settling-time and 29% overshoot improvements
-  remain unverified. They should not be reported without their original metric
-  definitions and run selections.
+  are superseded by the explicitly computed values below.
 
-The manuscript retains its explicitly defined selected-run position and loss
-metrics pending a decision on which additional metrics to report.
+## Explicit transient metrics and restored manuscript results
+
+The canonical implementation now lives in Section Vd's `code/secvd_metrics.py`.
+The old audit entry point delegates to it. The stored report is
+`paper_results/secVd_control_gain_optimization/outputs/control_gain_metrics.json`.
+Future optimization runs automatically export the same metrics.
+
+Using the median of metrics evaluated separately for all six initial runs:
+
+- Actuation-space sustained settling: 0.3785 to 0.137 s, a 63.8045% reduction.
+- Actuation-space maximum coordinate overshoot: 1.421849 to 0.806090 rad/m,
+  a 43.3069% reduction.
+- Operational-space sustained settling: every initial run is outside the band
+  at 5 s, while the optimized run settles at 0.455 s.
+- Operational-space maximum coordinate overshoot: 10.028677 to 4.244458 mm.
+
+Settling requires the Euclidean error to remain within 5% of its initial
+magnitude through the last sample. Maximum coordinate overshoot is the largest
+positive excursion beyond a target along that coordinate's commanded step.
+The former first-entry wording instead gives 0.046 to 0.025 s (45.6522%) for
+actuation space. Against the selected initial run, the sustained-settling and
+maximum-coordinate-overshoot reductions are 53.0822% and 35.6539%.
+
+The manuscript restores the earlier loss, cumulative-error, transient-response,
+and batch-spread narrative with these explicit definitions, corrected time
+units, and recomputed values. It reports cumulative-error reductions of 47.2%
+and 95.2% relative to the initial metric medians and loss-variance reductions
+of 99.8% and more than 99.99%.
