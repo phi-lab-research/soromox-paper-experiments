@@ -1,0 +1,512 @@
+{
+  "audit": {
+    "schema_version": 1,
+    "stages": [
+      "initial",
+      "identified",
+      "learned",
+      "fitted_residual"
+    ],
+    "metric": "sqrt(mean over configurations and markers of squared Euclidean position error)",
+    "units": "mm",
+    "configurations": 22,
+    "markers_per_configuration": 4,
+    "num_segments": 2,
+    "num_dofs": 9,
+    "first_link_basis": "constant torsion, linear bending in two axes, linear axial strain (7 DOF)",
+    "second_link_basis": "constant bending in two axes (2 DOF)",
+    "exact_identified_parameters": [
+      315093.77022832143,
+      0.45000000000000445,
+      1317.6607097101673
+    ],
+    "residual_model_parameters": [
+      315000.0,
+      0.45,
+      1320.0
+    ],
+    "checkpoint_input_sign": -1.0,
+    "checkpoint_split_provenance": "20/2 indices declared by source; checkpoint contains weights but no training metadata",
+    "declared_nn_test_indices_zero_based": [
+      1,
+      16
+    ],
+    "generalization_scope": "All-22 summary includes fitted and NN-training configurations; not a held-out score. First declared NN test case also belongs to the physical parameter fit set.",
+    "selected_indices_zero_based": [
+      1,
+      5,
+      17
+    ],
+    "selection_rule": "nearest median identified-model per-configuration RMS error within each of tendon 1 only, tendon 2 only, and both tendons; first index breaks ties",
+    "selected_csvs": [
+      "m1_u015.csv",
+      "m2_u015.csv",
+      "m12_u0015002.csv"
+    ],
+    "rmse_mm": {
+      "initial": {
+        "all_22": 49.82362423750546,
+        "parameter_fit_8": 56.9167333827498,
+        "declared_nn_train_20": 49.99009668422573,
+        "declared_nn_test_2": 48.12723957156903
+      },
+      "identified": {
+        "all_22": 19.26060621332788,
+        "parameter_fit_8": 22.927317465207473,
+        "declared_nn_train_20": 19.46120701206023,
+        "declared_nn_test_2": 17.125848448795363
+      },
+      "learned": {
+        "all_22": 6.885330375806392,
+        "parameter_fit_8": 7.1484604835956755,
+        "declared_nn_train_20": 6.734184972897601,
+        "declared_nn_test_2": 8.245789576021538
+      },
+      "fitted_residual": {
+        "all_22": 6.552905460140778,
+        "parameter_fit_8": 6.480296322688114,
+        "declared_nn_train_20": 6.623373587636243,
+        "declared_nn_test_2": 5.80133543686255
+      },
+      "exact_identified": {
+        "all_22": 19.228519795900024,
+        "parameter_fit_8": 22.928577634176815,
+        "declared_nn_train_20": 19.431992690390295,
+        "declared_nn_test_2": 17.06084141420613
+      }
+    },
+    "convergence_max_abs": {
+      "initial": 3.3306690738754696e-15,
+      "identified": 2.165628787409446e-14,
+      "learned": 8.767292447586783e-15,
+      "fitted_residual": 9.92912349562225e-15,
+      "exact_identified": 2.143424326916943e-14
+    },
+    "archive_checks_max_abs": {
+      "initial_eight_errors": 7.761649351012423e-09,
+      "exact_fitted_eight_errors": 2.1709477451836712e-08,
+      "rounded_identified_markers": 2.176749157312141e-08,
+      "fitted_residual_markers": 1.9541719908922062e-08,
+      "identified_archived_error_norms": 1.2504150027903282e-08,
+      "learned_archived_error_norms": 8.639776212168715e-09,
+      "fitted_residual_archived_error_norms": 6.29363276251349e-09,
+      "misnamed_old_rmse_is_mean_norm": 1.1666919166875012e-09
+    },
+    "source_sha256": {
+      "E_hat.npy": "a06b0b9ff9cf9b2dd210b7d66523a38bf801c0b8f396f1550673b835f2d5545b",
+      "curves_hat.npy": "9c71ef321a74e16d1cab9bac62af9c5ba0c70d7cdd88e568d40eea7f7b6d3941",
+      "curves_orig.npy": "2fae20ba0909322facd98c25c3c469e4b6b4ef5b3630a8f2b4c3f0f393b4caaa",
+      "curves_tau_star.npy": "d661c34666effe58c1038f715fcd008048de316984a3491cb39f802559c48023",
+      "errnorm_before_id.npy": "6671b0cfc162a67dc692594b7043ee1586b0240ca1c52c53707c5153fa0b06e7",
+      "errnorm_pred.npy": "32b432136aa7c38033a5f407af71ce46709a8fede9c08dadd92ecf159987359d",
+      "errnorm_star.npy": "5873ae8a3cfab069a6caf8842d677222b3b86d532e771f555e073c11a6f1877f",
+      "errnorm_zero.npy": "33dbf3c114b4fb803e3241d4c77a7d076c920ae122ebd8765cc2a79634b8c94a",
+      "errors_after.npy": "61dd7e1ec8431f79f44e1604c9379647b4f7245c13b164488550d25500103018",
+      "errors_before.npy": "1e6d31fa4f066fafc82d1f2824e5f078f4a0843ea67009e14e5987a0dac14806",
+      "loss_history.npy": "abf84714bc4435835cbb52902dc90aaf3a0fa744e2427c550dbac087e0390077",
+      "m12_u00050010.csv": "c5a7a2f7fc62abfbfbb03fb8bbc9d5c4e356ba4f276999fc6e17899dd97d3143",
+      "m12_u001.csv": "ccce21c2fd5ec355561b8da4094e7c1a3fb124faf8e997b46583b193795e40ba",
+      "m12_u00100005.csv": "8e0e7ac433d2490e0b014db0e37d5fc689210655cb31bc709a7b66de62d52faa",
+      "m12_u001002.csv": "9a02255e59fe53450bb2ef930b39167c7186fde4a4fff0840a618e48dfe94f70",
+      "m12_u0015002.csv": "b4f19715aaaf18e2eda03dfb21b9e69b139fed2e9fb09b85c5173f78b228971b",
+      "m12_u002.csv": "4eb4c07a6f2b975a50c9588d49ad4428303a061de66513bde8d3d1f75a544dc2",
+      "m12_u002001.csv": "407e0c81a35ef28610392a75b13c528d1d7b56bdfd9d9fcf6e555e75129091b1",
+      "m12_u0020015.csv": "c56d74efebc133821f02832303c092ea5ea84d71abe62a5758864e83690fc9e7",
+      "m1_u005.csv": "cb8395f105e72d2f717a637b3c04f4195db6ebaa8f9863d07950847760a695db",
+      "m1_u01.csv": "b15940e84387588451a1b237293ddb509799105f93f7e3b2963e6916ea278b27",
+      "m1_u012.csv": "2f1b3fb7b62ec8c654630733ef5d28de751be9f8c6d87c38be6df36848794cd0",
+      "m1_u015.csv": "4055afafaf7da56b54dd51e48c0e791d9eddc716fab7f11a3c020b87071ddd67",
+      "m1_u018.csv": "824cf4026b034ebdeffeda2716ae5f40236ae662facdc51d67aed06f264b9e68",
+      "m1_u02.csv": "91bf546c85d1b5d6fc61f60750880be480bb7f54b0253edcaa8416f06572a9b5",
+      "m1_u025.csv": "81c6e88d7b112166c02aef77417e5eb9738768ffd63d7e00c7e88d6710b89a6d",
+      "m2_u005.csv": "5559b5bf9e6f6373b5e4ff3b5598a3981e243b29a0ce4d6591e2d6371805f0ee",
+      "m2_u01.csv": "c78735bf9959d041ed633a899c00008ab708ab6ad3c71fc9451de033ca1f1f7c",
+      "m2_u012.csv": "0d460dcaa70bd77951490cdc2978151fbc97d2a1fc745e907e0bb7c76af5d46d",
+      "m2_u015.csv": "85982b89428ab56071732b457a20dd4dbee91577d8b7c9c0598a8e898dc436ea",
+      "m2_u018.csv": "567dee02a44e41f1e815482d73361902e210e429eba629e72b79c7c7366970ea",
+      "m2_u02.csv": "d81b878327a4f8c7977919e8ab5fb190874d352ca9d8c05f05ff904f1447d0ef",
+      "m2_u025.csv": "92ea256dae62c2dfddd2ec9915b4e7e62152ad747ca3a73966a21435466f70ed",
+      "markers_hat.npy": "a70af98362f0ba79c343b0607a7d3ab092eda7be02c8353430b75e194a711371",
+      "markers_orig.npy": "c031fa9a22f7e8a8d936ecd46f042238f5de71edeed1366c85061f53cabc5096",
+      "markers_tau_star.npy": "e29a4ab5d6bcbce923ddf65cb5ac12ac34546c75bbe98ce7c48bdfb53b4efcd1",
+      "measured_pts.npy": "d5b38ae515b59828db1ef76b975c5e7eda5096e764854ba7f885429a9967a45b",
+      "nu_hat.npy": "9be656d9933fe055cd59b7d5b00ec3d8c2568b5a6bb69066c2f0e0ac0b0b553e",
+      "rho_hat.npy": "c8512e9db4aea0b05e2f33f93e08f0eaebb8d00d71bbf4313d88321b82c99df9",
+      "rmse_after.npy": "f892986a8b4ecce335256352947c805b856e6b9825e67c1770f462694ea50a57",
+      "rmse_after_id.npy": "f892986a8b4ecce335256352947c805b856e6b9825e67c1770f462694ea50a57",
+      "rmse_before.npy": "9b29d1533a90a4582b583d97ef74fa138bb1e98cc8cce605e27d1cb9160e5442",
+      "rmse_before_id.npy": "9b29d1533a90a4582b583d97ef74fa138bb1e98cc8cce605e27d1cb9160e5442",
+      "rmse_overall.npy": "aa93b2e3000a974c774be0fd205ac5ed5e1b602c460760781cb4e14b2af80980",
+      "tau_nn_model.eqx": "073c27e95d906c359e71f59fc7560197f1fc3b333781de16c402431b46d58c26",
+      "tau_star_batch_1actpt1.npy": "7188c7b292016c522de2902a195b3b374c0338af1f69291d215be4e779eebf9c",
+      "tau_star_batch_1actpt2.npy": "b902eec614d75acb03ee395da7cccdc4825bb3b89a4491e5039b683e7e6cec16",
+      "tau_star_batch_2act.npy": "aba05f3229bdb96f9436bf57e097db9eb2f5efd78c8298a46b4d59a3ec9b1689",
+      "violin_data.csv": "a7f88c7428c2c340cbf56688e0e22742fd8bba93174a43be2ff62df4c740d17f"
+    },
+    "evaluator_sha256": "b72e7f0785237b59466bacd669609b64719b69d411faaaa0ecb8c0857a6b3b0f",
+    "evaluation_sha256": "8c2549270f4e86a427d5f85ea8dadc9057f323d6a43da04025ede5e1cdc4a2fb"
+  },
+  "dimensions_mm": [
+    180,
+    90
+  ],
+  "marker_geometry_sha256": "cc5685555786ffc9c49570cd45570c6d36e895d1efa654c31035c343cce5a040",
+  "overview_crop_pixels": [
+    0,
+    280,
+    1152,
+    1720
+  ],
+  "comparison_crop_pixels": [
+    0,
+    130,
+    680,
+    1080
+  ],
+  "render_status": "RTX studio",
+  "composer_sha256": "d5e63b9e595b5610d476119dcc6bca1dc4f17388877f31057e53d7bacae40329",
+  "renders": {
+    "overview": {
+      "image_sha256": "72aabe49d6d37f94ed53f058e07f1181f98836930bc9aadbf774a08b0aadc05b",
+      "metadata": {
+        "kind": "overview",
+        "configuration_index_zero_based": 17,
+        "csv": "m12_u0015002.csv",
+        "geometry_source": "learned residual static equilibrium; no measured continuous surface is available",
+        "mounting": "schematic mount from the shared model renderer; not hardware CAD",
+        "display_translation": [
+          0.0,
+          0.0,
+          0.43
+        ],
+        "width": 1152,
+        "height": 1962,
+        "camera_eye": [
+          0.07682358440797185,
+          -0.5167604646734784,
+          0.4810908261525281
+        ],
+        "camera_target": [
+          0.07682358440797185,
+          -0.005914056271981237,
+          0.3533792240521538
+        ],
+        "vertical_fov_degrees": 45.0,
+        "mesh_names": [
+          "robot",
+          "mount",
+          "measurements"
+        ],
+        "mesh_colors": {
+          "robot": "#F1552E",
+          "mount": "#33363B",
+          "measurements": "#FFBC42"
+        },
+        "mesh_opacity": {
+          "robot": 1.0
+        },
+        "evaluation_sha256": "8c2549270f4e86a427d5f85ea8dadc9057f323d6a43da04025ede5e1cdc4a2fb",
+        "marker_geometry_sha256": "cc5685555786ffc9c49570cd45570c6d36e895d1efa654c31035c343cce5a040",
+        "exporter_sha256": "5df242d0a0fb22249e8d64aa681ed4ce5fd4a72afd02e9d7706ad098e4e72baf",
+        "studio": {
+          "version": "paper-studio-v1",
+          "robot": "#F1552E",
+          "mount": "#33363B",
+          "target": "#0EAD69",
+          "obstacle": "#7B2CBF",
+          "manipulated_object": "#E7AC42",
+          "surface": "#DEE1E5",
+          "backdrop": "#C9CDD2",
+          "robot_roughness": 0.72,
+          "backdrop_start": 3.0,
+          "backdrop_radius": [
+            2.0,
+            2.0
+          ],
+          "key_rotation_degrees": [
+            29.0,
+            14.0,
+            0.0
+          ],
+          "key_angle_degrees": 28.0,
+          "fill_rotation_degrees": [
+            -30.0,
+            -25.0,
+            0.0
+          ],
+          "rim_rotation_degrees": [
+            40.0,
+            15.0,
+            180.0
+          ],
+          "fill_angle_degrees": 50.0,
+          "rtx_ambient": 60.0,
+          "rtx_key": 1000.0,
+          "rtx_fill": 160.0,
+          "rtx_rim": 160.0,
+          "rtx_backdrop_emission": 0.08
+        },
+        "samples_per_pixel": 128,
+        "renderer_sha256": "a1842c421d31e7041716a70b933d2a9d19808de816f95ea72da91df68f3b14df",
+        "studio_renderer_sha256": "c1ba185b56467776357df5ebe129050a1506ef2dfd82e3c41731cbadde23baa3",
+        "geometry_sha256": "d816887f563bb7b3c6312cba882d4a79eb2932d1127bc8ac6758c1b89099d576"
+      }
+    },
+    "comparison_1": {
+      "image_sha256": "0b150062d01bb01a60ca0ecddbcf979a9bb92f34b8aff2ec8194edeb98ddde58",
+      "metadata": {
+        "kind": "comparison_1",
+        "configuration_index_zero_based": 1,
+        "csv": "m1_u015.csv",
+        "geometry_source": "learned residual static equilibrium; no measured continuous surface is available",
+        "mounting": "schematic mount from the shared model renderer; not hardware CAD",
+        "display_translation": [
+          0.0,
+          0.0,
+          0.43
+        ],
+        "width": 680,
+        "height": 1140,
+        "camera_eye": [
+          0.08332358440797186,
+          -0.6625546714983853,
+          0.4610834973856658
+        ],
+        "camera_target": [
+          0.08332358440797186,
+          -0.0008075634035189239,
+          0.2956467203619492
+        ],
+        "vertical_fov_degrees": 45.0,
+        "mesh_names": [
+          "robot",
+          "mount"
+        ],
+        "mesh_colors": {
+          "robot": "#F1552E",
+          "mount": "#33363B",
+          "measurements": "#FFBC42"
+        },
+        "mesh_opacity": {
+          "robot": 0.32
+        },
+        "evaluation_sha256": "8c2549270f4e86a427d5f85ea8dadc9057f323d6a43da04025ede5e1cdc4a2fb",
+        "marker_geometry_sha256": "cc5685555786ffc9c49570cd45570c6d36e895d1efa654c31035c343cce5a040",
+        "exporter_sha256": "5df242d0a0fb22249e8d64aa681ed4ce5fd4a72afd02e9d7706ad098e4e72baf",
+        "studio": {
+          "version": "paper-studio-v1",
+          "robot": "#F1552E",
+          "mount": "#33363B",
+          "target": "#0EAD69",
+          "obstacle": "#7B2CBF",
+          "manipulated_object": "#E7AC42",
+          "surface": "#DEE1E5",
+          "backdrop": "#C9CDD2",
+          "robot_roughness": 0.72,
+          "backdrop_start": 3.0,
+          "backdrop_radius": [
+            2.0,
+            2.0
+          ],
+          "key_rotation_degrees": [
+            29.0,
+            14.0,
+            0.0
+          ],
+          "key_angle_degrees": 28.0,
+          "fill_rotation_degrees": [
+            -30.0,
+            -25.0,
+            0.0
+          ],
+          "rim_rotation_degrees": [
+            40.0,
+            15.0,
+            180.0
+          ],
+          "fill_angle_degrees": 50.0,
+          "rtx_ambient": 60.0,
+          "rtx_key": 1000.0,
+          "rtx_fill": 160.0,
+          "rtx_rim": 160.0,
+          "rtx_backdrop_emission": 0.08
+        },
+        "samples_per_pixel": 128,
+        "renderer_sha256": "a1842c421d31e7041716a70b933d2a9d19808de816f95ea72da91df68f3b14df",
+        "studio_renderer_sha256": "c1ba185b56467776357df5ebe129050a1506ef2dfd82e3c41731cbadde23baa3",
+        "geometry_sha256": "9abe8d61d633043c01231b0d4b51002afad8f1e9a4a615bec5d6f1beb8d71d5a"
+      }
+    },
+    "comparison_2": {
+      "image_sha256": "67d114935bdc3155ae6015a415fbbae9edeb262608d9be09d8d910b32aafdf0f",
+      "metadata": {
+        "kind": "comparison_2",
+        "configuration_index_zero_based": 5,
+        "csv": "m2_u015.csv",
+        "geometry_source": "learned residual static equilibrium; no measured continuous surface is available",
+        "mounting": "schematic mount from the shared model renderer; not hardware CAD",
+        "display_translation": [
+          0.0,
+          0.0,
+          0.43
+        ],
+        "width": 680,
+        "height": 1140,
+        "camera_eye": [
+          0.08332358440797186,
+          -0.6625546714983853,
+          0.4610834973856658
+        ],
+        "camera_target": [
+          0.08332358440797186,
+          -0.0008075634035189239,
+          0.2956467203619492
+        ],
+        "vertical_fov_degrees": 45.0,
+        "mesh_names": [
+          "robot",
+          "mount"
+        ],
+        "mesh_colors": {
+          "robot": "#F1552E",
+          "mount": "#33363B",
+          "measurements": "#FFBC42"
+        },
+        "mesh_opacity": {
+          "robot": 0.32
+        },
+        "evaluation_sha256": "8c2549270f4e86a427d5f85ea8dadc9057f323d6a43da04025ede5e1cdc4a2fb",
+        "marker_geometry_sha256": "cc5685555786ffc9c49570cd45570c6d36e895d1efa654c31035c343cce5a040",
+        "exporter_sha256": "5df242d0a0fb22249e8d64aa681ed4ce5fd4a72afd02e9d7706ad098e4e72baf",
+        "studio": {
+          "version": "paper-studio-v1",
+          "robot": "#F1552E",
+          "mount": "#33363B",
+          "target": "#0EAD69",
+          "obstacle": "#7B2CBF",
+          "manipulated_object": "#E7AC42",
+          "surface": "#DEE1E5",
+          "backdrop": "#C9CDD2",
+          "robot_roughness": 0.72,
+          "backdrop_start": 3.0,
+          "backdrop_radius": [
+            2.0,
+            2.0
+          ],
+          "key_rotation_degrees": [
+            29.0,
+            14.0,
+            0.0
+          ],
+          "key_angle_degrees": 28.0,
+          "fill_rotation_degrees": [
+            -30.0,
+            -25.0,
+            0.0
+          ],
+          "rim_rotation_degrees": [
+            40.0,
+            15.0,
+            180.0
+          ],
+          "fill_angle_degrees": 50.0,
+          "rtx_ambient": 60.0,
+          "rtx_key": 1000.0,
+          "rtx_fill": 160.0,
+          "rtx_rim": 160.0,
+          "rtx_backdrop_emission": 0.08
+        },
+        "samples_per_pixel": 128,
+        "renderer_sha256": "a1842c421d31e7041716a70b933d2a9d19808de816f95ea72da91df68f3b14df",
+        "studio_renderer_sha256": "c1ba185b56467776357df5ebe129050a1506ef2dfd82e3c41731cbadde23baa3",
+        "geometry_sha256": "34093e9452b59020eb2faec179610f9b2d780cfb85d7c7d269b9b4ddd25c9e34"
+      }
+    },
+    "comparison_3": {
+      "image_sha256": "090ce9689593e7f6cc653dfbb3c26936f7e8544d3cd27fc0bd5fac5717c75532",
+      "metadata": {
+        "kind": "comparison_3",
+        "configuration_index_zero_based": 17,
+        "csv": "m12_u0015002.csv",
+        "geometry_source": "learned residual static equilibrium; no measured continuous surface is available",
+        "mounting": "schematic mount from the shared model renderer; not hardware CAD",
+        "display_translation": [
+          0.0,
+          0.0,
+          0.43
+        ],
+        "width": 680,
+        "height": 1140,
+        "camera_eye": [
+          0.08332358440797186,
+          -0.6625546714983853,
+          0.4610834973856658
+        ],
+        "camera_target": [
+          0.08332358440797186,
+          -0.0008075634035189239,
+          0.2956467203619492
+        ],
+        "vertical_fov_degrees": 45.0,
+        "mesh_names": [
+          "robot",
+          "mount"
+        ],
+        "mesh_colors": {
+          "robot": "#F1552E",
+          "mount": "#33363B",
+          "measurements": "#FFBC42"
+        },
+        "mesh_opacity": {
+          "robot": 0.32
+        },
+        "evaluation_sha256": "8c2549270f4e86a427d5f85ea8dadc9057f323d6a43da04025ede5e1cdc4a2fb",
+        "marker_geometry_sha256": "cc5685555786ffc9c49570cd45570c6d36e895d1efa654c31035c343cce5a040",
+        "exporter_sha256": "5df242d0a0fb22249e8d64aa681ed4ce5fd4a72afd02e9d7706ad098e4e72baf",
+        "studio": {
+          "version": "paper-studio-v1",
+          "robot": "#F1552E",
+          "mount": "#33363B",
+          "target": "#0EAD69",
+          "obstacle": "#7B2CBF",
+          "manipulated_object": "#E7AC42",
+          "surface": "#DEE1E5",
+          "backdrop": "#C9CDD2",
+          "robot_roughness": 0.72,
+          "backdrop_start": 3.0,
+          "backdrop_radius": [
+            2.0,
+            2.0
+          ],
+          "key_rotation_degrees": [
+            29.0,
+            14.0,
+            0.0
+          ],
+          "key_angle_degrees": 28.0,
+          "fill_rotation_degrees": [
+            -30.0,
+            -25.0,
+            0.0
+          ],
+          "rim_rotation_degrees": [
+            40.0,
+            15.0,
+            180.0
+          ],
+          "fill_angle_degrees": 50.0,
+          "rtx_ambient": 60.0,
+          "rtx_key": 1000.0,
+          "rtx_fill": 160.0,
+          "rtx_rim": 160.0,
+          "rtx_backdrop_emission": 0.08
+        },
+        "samples_per_pixel": 128,
+        "renderer_sha256": "a1842c421d31e7041716a70b933d2a9d19808de816f95ea72da91df68f3b14df",
+        "studio_renderer_sha256": "c1ba185b56467776357df5ebe129050a1506ef2dfd82e3c41731cbadde23baa3",
+        "geometry_sha256": "ba8f20cab95d9d0104dd6622032152e6ae62c4eea3462c126f1f1c605c3d5981"
+      }
+    }
+  },
+  "pdf_sha256": "684aef37d4f146cfa721a809bf2f42271090bb07bd3c59213d604266f90f517b"
+}

@@ -1,0 +1,82 @@
+{
+  "kind": "comparison_3",
+  "configuration_index_zero_based": 17,
+  "csv": "m12_u0015002.csv",
+  "geometry_source": "learned residual static equilibrium; no measured continuous surface is available",
+  "mounting": "schematic mount from the shared model renderer; not hardware CAD",
+  "display_translation": [
+    0.0,
+    0.0,
+    0.43
+  ],
+  "width": 680,
+  "height": 1140,
+  "camera_eye": [
+    0.08332358440797186,
+    -0.6625546714983853,
+    0.4610834973856658
+  ],
+  "camera_target": [
+    0.08332358440797186,
+    -0.0008075634035189239,
+    0.2956467203619492
+  ],
+  "vertical_fov_degrees": 45.0,
+  "mesh_names": [
+    "robot",
+    "mount"
+  ],
+  "mesh_colors": {
+    "robot": "#F1552E",
+    "mount": "#33363B",
+    "measurements": "#FFBC42"
+  },
+  "mesh_opacity": {
+    "robot": 0.32
+  },
+  "evaluation_sha256": "8c2549270f4e86a427d5f85ea8dadc9057f323d6a43da04025ede5e1cdc4a2fb",
+  "marker_geometry_sha256": "cc5685555786ffc9c49570cd45570c6d36e895d1efa654c31035c343cce5a040",
+  "exporter_sha256": "5df242d0a0fb22249e8d64aa681ed4ce5fd4a72afd02e9d7706ad098e4e72baf",
+  "studio": {
+    "version": "paper-studio-v1",
+    "robot": "#F1552E",
+    "mount": "#33363B",
+    "target": "#0EAD69",
+    "obstacle": "#7B2CBF",
+    "manipulated_object": "#E7AC42",
+    "surface": "#DEE1E5",
+    "backdrop": "#C9CDD2",
+    "robot_roughness": 0.72,
+    "backdrop_start": 3.0,
+    "backdrop_radius": [
+      2.0,
+      2.0
+    ],
+    "key_rotation_degrees": [
+      29.0,
+      14.0,
+      0.0
+    ],
+    "key_angle_degrees": 28.0,
+    "fill_rotation_degrees": [
+      -30.0,
+      -25.0,
+      0.0
+    ],
+    "rim_rotation_degrees": [
+      40.0,
+      15.0,
+      180.0
+    ],
+    "fill_angle_degrees": 50.0,
+    "rtx_ambient": 60.0,
+    "rtx_key": 1000.0,
+    "rtx_fill": 160.0,
+    "rtx_rim": 160.0,
+    "rtx_backdrop_emission": 0.08
+  },
+  "samples_per_pixel": 128,
+  "renderer_sha256": "a1842c421d31e7041716a70b933d2a9d19808de816f95ea72da91df68f3b14df",
+  "studio_renderer_sha256": "c1ba185b56467776357df5ebe129050a1506ef2dfd82e3c41731cbadde23baa3",
+  "geometry_sha256": "ba8f20cab95d9d0104dd6622032152e6ae62c4eea3462c126f1f1c605c3d5981"
+}

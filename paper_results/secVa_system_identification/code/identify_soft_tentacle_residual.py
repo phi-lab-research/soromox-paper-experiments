@@ -306,6 +306,16 @@ class TauNN(eqx.Module):
         return self.mlp(x)
 
 
+def checkpoint_features(positive_tensions):
+    """Preserve the negative input convention used by the archived NN weights.
+
+    The current robot API accepts positive tendon tensions. The saved network
+    predates that convention and must receive the negated tensions, both when
+    evaluating its weights and when retraining a compatible checkpoint.
+    """
+    return -positive_tensions
+
+
 def train_tau_nn(
     u_batch: jnp.ndarray,  # (na, M)
     tau_star_batch: jnp.ndarray,  # (dof, M)
@@ -323,7 +333,7 @@ def train_tau_nn(
     dof = tau_star_batch.shape[0]
 
     # Build features X: (M, na)
-    X = u_batch.T  # (M, na)
+    X = checkpoint_features(u_batch.T)  # (M, na)
     Y = tau_star_batch.T  # (M, dof)
 
     model = TauNN(in_dim=na, out_dim=dof, width=width, depth=depth, key=key)
@@ -1216,7 +1226,7 @@ if __name__ == "__main__":
     tau_pred = []
     for m in range(M):
         u_i = u_batch[:, m]
-        tau_pred_i = model(u_i)  # (dof,)
+        tau_pred_i = model(checkpoint_features(u_i))  # (dof,)
         tau_pred.append(tau_pred_i)
 
     tau_pred_batch = jnp.stack(tau_pred, axis=1)  # (dof, M)
