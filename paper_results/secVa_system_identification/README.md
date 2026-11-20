@@ -65,3 +65,27 @@ The old combined CPU/identification figure and its plotting script are retained
 as legacy assets; their aggregate bars must not be interpreted as true RMSE.
 
 A local layout preview can be rendered with `code/render_identification_preview.py` using the same geometry arguments. Its metadata identifies Open3D preview rendering separately from the RTX studio output. The current figure uses the shared RTX studio with 128 samples per pixel; the local preview renderer remains available for layout work.
+
+## Appendix figure
+
+```bash
+uv run python paper_results/secVa_system_identification/code/plot_identification_appendix.py
+```
+
+`final_outputs/model_identification_residual_learning_appendix.pdf` combines one
+3D overlay of the eight physical-parameter fitting configurations, the per-marker
+RMSE spiderweb plot, and the empirical distribution of all 88 Euclidean marker
+errors per model stage. The shape overlay compares initial and identified models
+and displays only markers M2 and M4, following the original paper figure.
+Colors, line styles, and marker conventions match the main figure; both
+quantitative plots use all 22 configurations and all four markers. The spiderweb
+uses a shared linear scale and recomputes RMS Euclidean errors from the audited
+arrays; the historical `errnorm_*.npy` means are not used as RMSE. A JSON manifest
+records every plotted per-marker value and the input hashes.
+
+The script checks that the RMS of the four marker RMSEs reproduces each audited
+pooled RMSE. It generates PDF, SVG, and PNG files without a GPU render; use
+`--force` to replace existing outputs. `appendix_figure_caption.tex` provides
+the manuscript caption. This composite supersedes the two preliminary appendix
+outputs `identification_shape_comparisons` and `identification_error_details`,
+which remain available from the main composer.
